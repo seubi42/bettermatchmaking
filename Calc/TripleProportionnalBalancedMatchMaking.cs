@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BetterMatchMaking.Data;
+
+namespace BetterMatchMaking.Calc
+{
+    public class TripleProportionnalBalancedMatchMaking : IMatchMaking
+    {
+        public List<Split> Splits { get; private set; }
+
+        IMatchMaking c;
+
+
+        internal virtual int GetiRatingLimit()
+        {
+            return 1750;
+        }
+
+
+        internal virtual IMatchMaking GetGroupMatchMaker()
+        {
+            return new ClassicMatchMaking();
+        }
+
+
+        public void Compute(List<Line> data, int fieldSize)
+        {
+            int totalcount = data.Count;
+
+            int limit = GetiRatingLimit();
+
+            // count the cars registrated with an irating upper than the limit
+            int moreThanLimitCars = (from r in data where r.rating > limit select r).Count();
+            int moreThanLimitSplits = Convert.ToInt32(
+                Math.Floor(
+                    Convert.ToDouble(moreThanLimitCars) / Convert.ToDouble(fieldSize)
+                    )
+                );
+            // and round it to be a multiple of field size
+            moreThanLimitCars = moreThanLimitSplits * fieldSize;
+
+
+            // create two lists : moreThanLimit and lessThanLimit
+            var moreThanLimit2 = (from r in data orderby r.rating descending select r).Take(moreThanLimitCars).ToList();
+
+            var lessThanLimit = new List<Line>();
+            foreach (var line in data)
+            {
+                if (!moreThanLimit2.Contains(line)) lessThanLimit.Add(line);
+            }
+
+
+            // now we when to cut the moreThanLimit2 in 2 parts, by the middle
+            int middlevalue = moreThanLimit2[moreThanLimit2.Count / 2].rating;
+            moreThanLimitCars = (from r in data where r.rating >= middlevalue select r).Count();
+            moreThanLimitSplits = Convert.ToInt32(
+                Math.Floor(
+                    Convert.ToDouble(moreThanLimitCars) / Convert.ToDouble(fieldSize)
+                    )
+                );
+            moreThanLimitCars = moreThanLimitSplits * fieldSize;
+            var moreThanLimit1 = (from r in data orderby r.rating descending select r).Take(moreThanLimitCars).ToList();
+
+
+            moreThanLimit2.Clear();
+            foreach (var line in data)
+            {
+                if (!moreThanLimit1.Contains(line) && !lessThanLimit.Contains(line)) moreThanLimit2.Add(line);
+            }
+
+
+            // compute both list separatly
+
+            // more than limit 1 split calculation
+            c = GetGroupMatchMaker();
+            c.Compute(moreThanLimit1, fieldSize);
+            Splits = c.Splits;
+
+            // less than limit 2 split calculation
+            c = GetGroupMatchMaker();
+            c.Compute(moreThanLimit2, fieldSize);
+            Splits.AddRange(c.Splits); // merge the two lists
+
+            // less than limit split calculation
+            c = GetGroupMatchMaker();
+            c.Compute(lessThanLimit, fieldSize);
+            Splits.AddRange(c.Splits); // merge the two lists
+
+            // re count splits
+            int counter = 1;
+            foreach (var s in Splits)
+            {
+                s.Number = counter;
+                counter++;
+            }
+
+        }
+
+
+
+
+    }
+}

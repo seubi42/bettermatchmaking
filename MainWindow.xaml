@@ -54,8 +54,9 @@
                         <ComboBoxItem Tag="ClassicMatchMaking" Content="Classic (Very close to iRacing)" />
                         <ComboBoxItem Tag="ProportionnalMatchMaking" Content="Proportionnal" />
                         <ComboBoxItem Tag="ProportionnalBalancedMatchMaking" Content="Proportionnal and Balanced" />
-                        <ComboBoxItem Tag="DoubleClassicMatchMaking" Content="Double Classic (+ and - 2000 iR)" />
-                        <ComboBoxItem Tag="DoubleProportionnalBalancedMatchMaking" Content="Double Proportionnal and Balanced (+ and - 2000 iR)" />
+                        <ComboBoxItem Tag="DoubleClassicMatchMaking" Content="Double Classic (+ and - 1750 iR)" />
+                        <ComboBoxItem Tag="DoubleProportionnalBalancedMatchMaking" Content="Double Proportionnal and Balanced (+ and - 1750 iR)" />
+                        <ComboBoxItem Tag="TripleProportionnalBalancedMatchMaking" Content="Triple Proportionnal and Balanced (+ and - 1750 iR, + and - middle value)" />
                     </ComboBox>
                     <TextBox x:Name="tbxFieldSize" Grid.Row="1" Grid.Column="1" Text="45" Margin="5" />
 

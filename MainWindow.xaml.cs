@@ -105,6 +105,10 @@ namespace BetterMatchMaking
             {
                 mm = new Calc.DoubleProportionnalBalancedMatchMaking();
             }
+            if(strAlgo == "TripleProportionnalBalancedMatchMaking")
+            {
+                mm = new Calc.TripleProportionnalBalancedMatchMaking();
+            }
 
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;

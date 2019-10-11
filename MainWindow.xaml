@@ -51,6 +51,7 @@
                     <TextBlock VerticalAlignment="Center" Text="Field Size :" Grid.Row="1" />
 
                     <ComboBox x:Name="cboAlgorithm" Grid.Row="0" Grid.Column="1" Margin="5"  SelectedIndex="4">
+                        <ComboBoxItem Tag="RawClassicMatchMaking" Content="Raw Classic (to understand)" />
                         <ComboBoxItem Tag="ClassicMatchMaking" Content="Classic (Very close to iRacing)" />
                         <ComboBoxItem Tag="ProportionnalMatchMaking" Content="Proportionnal" />
                         <ComboBoxItem Tag="ProportionnalBalancedMatchMaking" Content="Proportionnal and Balanced" />

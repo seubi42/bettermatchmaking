@@ -84,32 +84,10 @@ namespace BetterMatchMaking
             string strAlgo = (cboAlgorithm.SelectedItem as ComboBoxItem).Tag.ToString();
 
 
-            // generic please
-            if (strAlgo == "ClassicMatchMaking")
-            {
-                mm = new Calc.ClassicMatchMaking();
-            }
-            if (strAlgo == "ProportionnalMatchMaking")
-            {
-                mm = new Calc.ProportionnalMatchMaking();
-            }
-            if (strAlgo == "ProportionnalBalancedMatchMaking")
-            {
-                mm = new Calc.ProportionnalBalancedMatchMaking();
-            }
-            if (strAlgo == "DoubleClassicMatchMaking")
-            {
-                mm = new Calc.DoubleClassicMatchMaking();
-            }
-            if (strAlgo == "DoubleProportionnalBalancedMatchMaking")
-            {
-                mm = new Calc.DoubleProportionnalBalancedMatchMaking();
-            }
-            if(strAlgo == "TripleProportionnalBalancedMatchMaking")
-            {
-                mm = new Calc.TripleProportionnalBalancedMatchMaking();
-            }
-
+            // instanciate the good algorithm
+            var type = System.Reflection.Assembly.GetExecutingAssembly().GetType("BetterMatchMaking.Calc." + strAlgo);
+            mm = Activator.CreateInstance(type) as Calc.IMatchMaking;
+            
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
         }

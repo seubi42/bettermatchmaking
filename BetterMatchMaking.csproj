@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\RawClassicMatchMaking.cs" />
     <Compile Include="Calc\ClassicMatchMaking.cs" />
     <Compile Include="Calc\DoubleClassicMatchMaking.cs" />
     <Compile Include="Calc\DoubleProportionnalBalancedMatchMaking.cs" />

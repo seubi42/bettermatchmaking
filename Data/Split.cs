@@ -138,38 +138,18 @@ namespace BetterMatchMaking.Data
 
         public int GetClassTarget(int i)
         {
-            if (i == 0) return Class1Target;
-            else if (i == 1) return Class2Target;
-            else if (i == 2) return Class3Target;
-            else if (i == 3) return Class4Target;
-            return -1;
-
-
-            // should be generic... but i want something easy to read.
-
+            int ret = Tools.GetProperty<int>(this, "Class{i}Target", i);
+            return ret;
         }
 
         public void SetClassTarget(int i, int target)
         {
-            if (i == 0) Class1Target = target;
-            else if (i == 1) Class2Target = target;
-            else if (i == 2) Class3Target = target;
-            else if (i == 3) Class4Target = target;
-
-           
-
-            // should be generic... but i want something easy to read.
-
+            Tools.SetProperty(this, "Class{i}Target", i, target);
         }
 
         public void SetClass(int i, List<Line> cars, int id)
         {
-            if (i == 0) Class1Cars = cars;
-            else if (i == 1) Class2Cars = cars;
-            else if (i == 2) Class3Cars = cars;
-            else if (i == 3) Class4Cars = cars;
-
-            // should be generic... but i want something easy to read.
+            Tools.SetProperty<List<Line>>(this, "Class{i}Cars", i, cars);
 
             string classname = "cars";
             try
@@ -177,10 +157,7 @@ namespace BetterMatchMaking.Data
                 string betterclassname = ReadClassName(id);
                 if (betterclassname != null) classname = betterclassname;
 
-                if (i == 0) Class1Name = classname;
-                else if (i == 1) Class2Name = classname;
-                else if (i == 2) Class3Name = classname;
-                else if (i == 3) Class4Name = classname;
+                Tools.SetProperty<string>(this, "Class{i}Name", i, classname);
             }
             catch { }
 
@@ -215,7 +192,6 @@ namespace BetterMatchMaking.Data
                 if (Class2Cars != null) ret += Class2Cars.Count;
                 if (Class3Cars != null) ret += Class3Cars.Count;
                 if (Class4Cars != null) ret += Class4Cars.Count;
-                // should be generic... but i want something easy to read.
                 return ret;
             }
         }
@@ -229,7 +205,6 @@ namespace BetterMatchMaking.Data
                 if (Class2Cars != null) r.AddRange(Class2Cars);
                 if (Class3Cars != null) r.AddRange(Class3Cars);
                 if (Class4Cars != null) r.AddRange(Class4Cars);
-                // should be generic... but i want something easy to read.
                 return r;
             }
         }
@@ -247,6 +222,27 @@ namespace BetterMatchMaking.Data
 
         }
 
+        public double ClassesSofDiff
+        {
+            get
+            {
+                List<double> sofs = new List<double>();
+                if (Class1Sof > 0) sofs.Add(Class1Sof);
+                if (Class2Sof > 0) sofs.Add(Class2Sof);
+                if (Class3Sof > 0) sofs.Add(Class3Sof);
+                if (Class4Sof > 0) sofs.Add(Class4Sof);
+
+                double min = sofs.Min();
+                double max = sofs.Max();
+
+                var delta = max - min;
+
+                double pcent = Math.Round(delta / max * 100);
+
+                return pcent;
+            }
+        }
+
         public string ClassesSofDifference
         {
             get
@@ -260,11 +256,14 @@ namespace BetterMatchMaking.Data
                 double min = sofs.Min();
                 double max = sofs.Max();
 
-                double globalsof = GlobalSof;
+                var delta = max - min;
+                
 
-                double eqmin = Math.Abs(min - globalsof);
-                double eqmax = Math.Abs(max - globalsof);
-                double delta = Math.Max(eqmin, eqmax);
+                //double globalsof = GlobalSof;
+
+                //double eqmin = Math.Abs(min - globalsof);
+                //double eqmax = Math.Abs(max - globalsof);
+                //double delta = Math.Max(eqmin, eqmax);
 
                 if (delta > 0)
                 {
@@ -281,7 +280,7 @@ namespace BetterMatchMaking.Data
         }
 
 
-        internal int GetClassesCount()
+        public int GetClassesCount()
         {
             int i = 0;
             if (Class1Cars != null && Class1Cars.Count > 0) i++;

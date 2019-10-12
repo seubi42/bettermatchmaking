@@ -45,6 +45,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+
                     </Grid.RowDefinitions>
 
                     <TextBlock VerticalAlignment="Center" Text="Algorithm :" Grid.Row="0" />
@@ -79,8 +81,11 @@
                     </DataGrid>
 
 
-                    <TextBox  Grid.Row="3" Grid.Column="2" Margin="10,10,0,0" x:Name="tbxDetails" IsReadOnly="True"></TextBox>
-                    
+                    <TextBox  Grid.Row="3" Grid.Column="2" Margin="10,10,0,0" x:Name="tbxDetails" IsReadOnly="True"
+                              HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"></TextBox>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" x:Name="tbxStats" />
+
                 </Grid>
                 
             </TabItem>

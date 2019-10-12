@@ -90,6 +90,13 @@ namespace BetterMatchMaking
             
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
+
+
+            string morestats = mm.Splits.Count + " splits. ";
+            morestats += (from r in mm.Splits select r.AllCars.Count).Sum() + " car. ";
+            morestats += "Average split car classes difference: ";
+            morestats += Math.Round((from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average()) + "%";
+            tbxStats.Text = morestats;
         }
 
         private void GridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)

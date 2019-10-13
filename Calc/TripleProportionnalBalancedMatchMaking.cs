@@ -16,7 +16,7 @@ namespace BetterMatchMaking.Calc
 
         internal virtual int GetiRatingLimit()
         {
-            return 1750;
+            return 1900;
         }
 
 

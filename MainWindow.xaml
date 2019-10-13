@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:BetterMatchMaking"
         mc:Ignorable="d"
         Title="A better Match Making for iRacing" Height="768" Width="1024" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:ColorConverter x:Key="colorConverter1" />
+    </Window.Resources>
     <Grid Margin="10">
         <TabControl>
             <TabItem Header="Source">
@@ -74,7 +77,13 @@
                             <DataGridTextColumn Header="Class4" Binding="{Binding Class4}" />
                             <DataGridTextColumn Header="Total Cars" Binding="{Binding TotalCarsCount}" />
                             <DataGridTextColumn Header="Split SoF" Binding="{Binding GlobalSof}" />
-                            <DataGridTextColumn Header="Classes SoF Difference" Binding="{Binding ClassesSofDifference}" />
+                            <DataGridTextColumn Header="Classes SoF Difference" Binding="{Binding ClassesSofDifference}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background" Value="{Binding ClassesSofDifference, Converter={StaticResource colorConverter1}}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
 
                             
                         </DataGrid.Columns>

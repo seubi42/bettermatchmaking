@@ -72,6 +72,7 @@
     <Compile Include="Calc\ProportionnalMatchMaking.cs" />
     <Compile Include="Calc\Tools.cs" />
     <Compile Include="Calc\TripleProportionnalBalancedMatchMaking.cs" />
+    <Compile Include="ColorConverter.cs" />
     <Compile Include="Data\CarsPerClass.cs" />
     <Compile Include="Data\CsvParser.cs" />
     <Compile Include="Data\Line.cs" />

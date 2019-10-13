@@ -270,6 +270,7 @@ namespace BetterMatchMaking.Data
                     string ret = delta.ToString();
                     ret += " (";
                     double pcent = Math.Round(delta / max * 100);
+                    if (pcent < 10) ret += "0";
                     ret += pcent;
                     ret += "%)";
                     return ret;

@@ -10,27 +10,63 @@ namespace BetterMatchMaking.Calc
     public class ProportionnalBalancedMatchMaking : ClassicMatchMaking
     {
 
-        double minRatio = 2f / 3f;
+        double limit = 2f / 5f;
 
         internal override int TakeClassCars(int fieldSize, int remCarClasses,
             Dictionary<int, int> classRemainingCars, int classid, 
             List<CarsPerClass> carsListPerClass, int split)
         {
 
-            double classTotalCars = (from r in carsListPerClass where r.CarClassId == classid select r.Cars.Count).Sum();
-            double allTotalCars = (from r in carsListPerClass select r.Cars.Count).Sum();
+            double allTotalCars = (from r in classRemainingCars select r.Value).Sum();
 
-            double ratio = classTotalCars / allTotalCars;
-            ratio = Math.Max(ratio, minRatio);
+            Dictionary<int, double> classRatio = new Dictionary<int, double>();
+            foreach (var carclass in carsListPerClass)
+            {
+                double classTotalCars = Convert.ToDouble(classRemainingCars[carclass.CarClassId]);
 
-            double x = Convert.ToDouble(base.TakeClassCars(fieldSize, remCarClasses, classRemainingCars, classid, carsListPerClass, split));
 
-            x *= ratio;
+                double rat = classTotalCars / allTotalCars;
+                classRatio.Add(carclass.CarClassId, rat);
 
-            x = Math.Ceiling(x);
+            }
 
-            return Convert.ToInt32(x);
+            double maxRatio = (from r in classRatio select r.Value).Max();
+            double minRatio = (from r in classRatio select r.Value).Min();
+            int maxClass = (from r in classRatio orderby r.Value descending select r.Key).FirstOrDefault();
+
+
+            foreach (var carclass in carsListPerClass)
+            {
+                if(classRatio[carclass.CarClassId] < limit * maxRatio)
+                {
+                    double toAdd = limit * maxRatio - classRatio[carclass.CarClassId];
+                    classRatio[carclass.CarClassId] += toAdd;
+                    classRatio[maxClass] -= toAdd;
+                }
+            }
+            
+            foreach (var carclass in carsListPerClass)
+            {
+                classRatio[carclass.CarClassId] *= fieldSize;
+            }
+
+
+            double sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
+            while(sum < fieldSize)
+            {
+                int classtoround = (from r in classRatio orderby r.Value - Math.Floor(r.Value) descending select r.Key).FirstOrDefault();
+                classRatio[classtoround] = Math.Floor(classRatio[classtoround])+1;
+                sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
+            }
+
+            return Convert.ToInt32(Math.Floor(classRatio[classid]));
+
+
+            
+
         }
+
+
     }
 }
 

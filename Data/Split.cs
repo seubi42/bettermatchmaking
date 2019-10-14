@@ -226,14 +226,21 @@ namespace BetterMatchMaking.Data
         {
             get
             {
+                double min = 0;
+                double max = 0;
+
+                
                 List<double> sofs = new List<double>();
                 if (Class1Sof > 0) sofs.Add(Class1Sof);
                 if (Class2Sof > 0) sofs.Add(Class2Sof);
                 if (Class3Sof > 0) sofs.Add(Class3Sof);
                 if (Class4Sof > 0) sofs.Add(Class4Sof);
 
-                double min = sofs.Min();
-                double max = sofs.Max();
+                if (sofs.Count > 0)
+                {
+                    min = sofs.Min();
+                    max = sofs.Max();
+                }
 
                 var delta = max - min;
 
@@ -247,23 +254,24 @@ namespace BetterMatchMaking.Data
         {
             get
             {
+                double min = 0;
+                double max = 0;
+
                 List<double> sofs = new List<double>();
                 if (Class1Sof > 0) sofs.Add(Class1Sof);
                 if (Class2Sof > 0) sofs.Add(Class2Sof);
                 if (Class3Sof > 0) sofs.Add(Class3Sof);
                 if (Class4Sof > 0) sofs.Add(Class4Sof);
 
-                double min = sofs.Min();
-                double max = sofs.Max();
-
+                if (sofs.Count > 0)
+                {
+                    min = sofs.Min();
+                    max = sofs.Max();
+                }
                 var delta = max - min;
                 
 
-                //double globalsof = GlobalSof;
-
-                //double eqmin = Math.Abs(min - globalsof);
-                //double eqmax = Math.Abs(max - globalsof);
-                //double delta = Math.Max(eqmin, eqmax);
+                
 
                 if (delta > 0)
                 {

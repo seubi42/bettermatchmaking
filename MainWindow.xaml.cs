@@ -93,7 +93,7 @@ namespace BetterMatchMaking
 
             double pcent = Math.Round((from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average());
             string morestats = mm.Splits.Count + " splits. ";
-            morestats += (from r in mm.Splits select r.AllCars.Count).Sum() + " car. ";
+            morestats += (from r in mm.Splits select r.AllCars.Count).Sum() + " cars. ";
             morestats += "Average split car classes difference: ";
             morestats +=  pcent+ "%";
             tbxStats.Text = morestats;

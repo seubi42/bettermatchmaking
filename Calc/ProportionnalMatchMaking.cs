@@ -16,19 +16,39 @@ namespace BetterMatchMaking.Calc
             List<CarsPerClass> carsListPerClass, int split)
         {
 
+            double allTotalCars = (from r in classRemainingCars select r.Value).Sum();
 
-            double classTotalCars = (from r in carsListPerClass where r.CarClassId == classid select r.Cars.Count).Sum();
-            double allTotalCars = (from r in carsListPerClass select r.Cars.Count).Sum();
+            Dictionary<int, double> classRatio = new Dictionary<int, double>();
+            foreach (var carclass in carsListPerClass)
+            {
+                double classTotalCars = Convert.ToDouble(classRemainingCars[carclass.CarClassId]);
 
-            double ratio = classTotalCars / allTotalCars;
 
-            double x = Convert.ToDouble(base.TakeClassCars(fieldSize, remCarClasses, classRemainingCars, classid, carsListPerClass, split));
-            
-            x *= ratio;
-            
-            x = Math.Ceiling(x);
+                double rat = classTotalCars / allTotalCars;
+                classRatio.Add(carclass.CarClassId, rat);
 
-            return Convert.ToInt32(x);
+            }
+
+            double maxRatio = (from r in classRatio select r.Value).Max();
+            double minRatio = (from r in classRatio select r.Value).Min();
+            int maxClass = (from r in classRatio orderby r.Value descending select r.Key).FirstOrDefault();
+
+
+            foreach (var carclass in carsListPerClass)
+            {
+                classRatio[carclass.CarClassId] *= fieldSize;
+            }
+
+
+            double sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
+            while (sum < fieldSize)
+            {
+                int classtoround = (from r in classRatio orderby r.Value - Math.Floor(r.Value) descending select r.Key).FirstOrDefault();
+                classRatio[classtoround] = Math.Floor(classRatio[classtoround]) + 1;
+                sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
+            }
+
+            return Convert.ToInt32(Math.Floor(classRatio[classid]));
         }
     }
 }

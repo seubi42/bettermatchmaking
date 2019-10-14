@@ -51,14 +51,18 @@ namespace BetterMatchMaking.Calc
                 int remCarClasses = (from r in classRemainingCars where r.Value > 0 select r).Count();
 
 
-
+                Dictionary<int, int> classRemainingCarsBeforeChange = new Dictionary<int, int>();
+                foreach (var item in classRemainingCars)
+                {
+                    classRemainingCarsBeforeChange.Add(item.Key, item.Value);
+                }
 
 
                 foreach (var carClass in carsListPerClass)
                 {
                     // count cars to take in this class 
                     int takeCars = fieldSize;
-                    takeCars = TakeClassCars(fieldSize, remCarClasses, classRemainingCars, carClass.CarClassId, carsListPerClass, splitCounter);
+                    takeCars = TakeClassCars(fieldSize, remCarClasses, classRemainingCarsBeforeChange, carClass.CarClassId, carsListPerClass, splitCounter);
 
                     // if not enought remianing cars than wanted, take what is possible
                     int carClassSize = Math.Min(takeCars, classRemainingCars[carClass.CarClassId]);

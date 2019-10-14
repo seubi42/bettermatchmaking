@@ -45,11 +45,15 @@ namespace BetterMatchMaking.Calc
             modes.Add(currentMode);
 
             int splitCounter = 1;
+
+            int tempLastClassCar = 0;
+            int tempLastClassCarPrev = 0;
+
             while (SumValues(classRemainingCars) > 0) // when cars remaings
             {
                 // count classes containing remaining cars
                 int remCarClasses = (from r in classRemainingCars where r.Value > 0 select r).Count();
-
+                
 
 
 
@@ -72,6 +76,7 @@ namespace BetterMatchMaking.Calc
                 var lastClass = carsListPerClass.LastOrDefault(); //get last class, which is the class with more cars then the other
                 if (lastClass != null)
                 {
+                    
 
                     // sum cars in this split
                     int carsInThisSplit = 0;
@@ -157,7 +162,7 @@ namespace BetterMatchMaking.Calc
                 }
             }
 
-            
+
             
 
 
@@ -186,6 +191,30 @@ namespace BetterMatchMaking.Calc
                 }
             }
 
+
+            // manage the rest badly, very raw method
+            var lastSplit = new Split();
+            lastSplit.Number = Splits.Last().Number + 1;
+            bool includeLastSplit = false;
+            for (int i = 0; i < 4; i++) // for each car class
+            {
+                int carsToAddInClass = Splits.Last().GetClassTarget(i); // get the cars count we want
+                if (carsListPerClass.Count > i)
+                {
+
+                    var cars = carsListPerClass[i].GetCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
+                    if (cars.Count > 0)
+                    {
+                        lastSplit.SetClass(i, cars, carsListPerClass[i].CarClassId); // set the class car list
+                    }
+                }
+                if (lastSplit.TotalCarsCount > 0)
+                {
+                    includeLastSplit = true;
+                    
+                }
+            }
+            if(includeLastSplit) Splits.Add(lastSplit);
             // done
             // :-)
 
@@ -201,6 +230,7 @@ namespace BetterMatchMaking.Calc
         internal virtual int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<CarsPerClass> carsListPerClass, int split)
         {
             int carsToTake = fieldSize / remCarClasses;
+            
             return carsToTake;
         }
         

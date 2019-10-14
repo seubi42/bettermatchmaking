@@ -39,6 +39,8 @@ namespace BetterMatchMaking.Calc
 
         public static int Sof(List<int> ratings)
         {
+            if (ratings.Count == 0) return 0;
+
             double log2 = Math.Log(2);
             double ln = Convert.ToDouble(1600) / log2;
 

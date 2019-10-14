@@ -214,11 +214,11 @@ namespace BetterMatchMaking.Data
 
         internal void RefreshSofs()
         {
-            if (Class1Cars != null) Class1Sof = Calc.Tools.Sof((from r in Class1Cars select r.rating).ToList());
-            if (Class2Cars != null) Class2Sof = Calc.Tools.Sof((from r in Class2Cars select r.rating).ToList());
-            if (Class3Cars != null) Class3Sof = Calc.Tools.Sof((from r in Class3Cars select r.rating).ToList());
-            if (Class4Cars != null) Class4Sof = Calc.Tools.Sof((from r in Class4Cars select r.rating).ToList());
-            GlobalSof = Calc.Tools.Sof((from r in AllCars select r.rating).ToList());
+            if (Class1Cars != null) Class1Sof = Calc.Tools.Sof((from r in Class1Cars where r.rating > 0 select r.rating).ToList());
+            if (Class2Cars != null) Class2Sof = Calc.Tools.Sof((from r in Class2Cars where r.rating > 0 select r.rating).ToList());
+            if (Class3Cars != null) Class3Sof = Calc.Tools.Sof((from r in Class3Cars where r.rating > 0 select r.rating).ToList());
+            if (Class4Cars != null) Class4Sof = Calc.Tools.Sof((from r in Class4Cars where r.rating > 0 select r.rating).ToList());
+            GlobalSof = Calc.Tools.Sof((from r in AllCars where r.rating > 0 select r.rating).ToList());
 
         }
 

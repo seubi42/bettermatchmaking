@@ -76,6 +76,10 @@ namespace BetterMatchMaking.Calc
             Splits = c.Splits;
 
             // less than limit split calculation
+            double approxSplitsCount = Convert.ToDouble(lessThanLimit.Count) / fieldSize;
+            double newFieldSize = Convert.ToDouble(lessThanLimit.Count) / Math.Ceiling(approxSplitsCount);
+            fieldSize = Convert.ToInt32(Math.Ceiling(newFieldSize));
+
             c = GetGroupMatchMaker();
             c.ParameterIRValue = this.ParameterIRValue;
             c.ParameterPValue = this.ParameterPValue;

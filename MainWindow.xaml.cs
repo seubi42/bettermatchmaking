@@ -31,7 +31,7 @@ namespace BetterMatchMaking
             InitializeComponent();
             parser = new Data.CsvParser();
 
-            sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 1, 66, 33);
+            sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 1, 66, 37);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
             sspP.Visible = false;
             sspIR.Visible = false;

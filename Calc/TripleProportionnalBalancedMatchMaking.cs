@@ -12,11 +12,11 @@ namespace BetterMatchMaking.Calc
         // parameters
         public bool UseParameterP
         {
-            get { return false; }
+            get { return true; }
         }
         public bool UseParameterIR
         {
-            get { return false; }
+            get { return true; }
         }
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
@@ -29,13 +29,16 @@ namespace BetterMatchMaking.Calc
 
         internal virtual int GetiRatingLimit()
         {
-            return 1900;
+            return ParameterIRValue;
         }
 
 
         internal virtual IMatchMaking GetGroupMatchMaker()
         {
-            return new ClassicMatchMaking();
+            var c= new ProportionnalBalancedMatchMaking();
+            c.ParameterPValue = this.ParameterPValue;
+            c.ParameterIRValue = this.ParameterIRValue;
+            return c;
         }
 
 
@@ -86,6 +89,7 @@ namespace BetterMatchMaking.Calc
 
 
             // compute both list separatly
+            int originalFieldSize = fieldSize;
 
             // more than limit 1 split calculation
             c = GetGroupMatchMaker();
@@ -93,11 +97,19 @@ namespace BetterMatchMaking.Calc
             Splits = c.Splits;
 
             // less than limit 2 split calculation
+            double approxSplitsCount = Convert.ToDouble(moreThanLimit2.Count) / originalFieldSize;
+            double newFieldSize = Convert.ToDouble(moreThanLimit2.Count) / Math.Ceiling(approxSplitsCount);
+            fieldSize = Convert.ToInt32(Math.Ceiling(newFieldSize));
+
             c = GetGroupMatchMaker();
             c.Compute(moreThanLimit2, fieldSize);
             Splits.AddRange(c.Splits); // merge the two lists
 
             // less than limit split calculation
+            approxSplitsCount = Convert.ToDouble(lessThanLimit.Count) / originalFieldSize;
+            newFieldSize = Convert.ToDouble(lessThanLimit.Count) / Math.Ceiling(approxSplitsCount);
+            fieldSize = Convert.ToInt32(Math.Ceiling(newFieldSize));
+
             c = GetGroupMatchMaker();
             c.Compute(lessThanLimit, fieldSize);
             Splits.AddRange(c.Splits); // merge the two lists

@@ -9,6 +9,19 @@ namespace BetterMatchMaking.Calc
 {
     public class DoubleClassicMatchMaking : IMatchMaking
     {
+        // parameters
+        public virtual bool UseParameterP
+        {
+            get { return false; }
+        }
+        public bool UseParameterIR
+        {
+            get { return true; }
+        }
+        public int ParameterPValue { get; set; }
+        public int ParameterIRValue { get; set; }
+        // -->
+
         public List<Split> Splits { get; private set; }
 
         IMatchMaking c;
@@ -16,7 +29,7 @@ namespace BetterMatchMaking.Calc
 
         internal virtual int GetiRatingLimit()
         {
-            return 1900;
+            return ParameterIRValue;
         }
 
 
@@ -57,11 +70,15 @@ namespace BetterMatchMaking.Calc
 
             // more than limit split calculation
             c = GetGroupMatchMaker();
+            c.ParameterIRValue = this.ParameterIRValue;
+            c.ParameterPValue = this.ParameterPValue;
             c.Compute(moreThanLimit, fieldSize);
             Splits = c.Splits;
 
             // less than limit split calculation
             c = GetGroupMatchMaker();
+            c.ParameterIRValue = this.ParameterIRValue;
+            c.ParameterPValue = this.ParameterPValue;
             c.Compute(lessThanLimit, fieldSize);
             Splits.AddRange(c.Splits); // merge the two lists
 

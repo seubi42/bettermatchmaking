@@ -9,8 +9,6 @@ namespace BetterMatchMaking.Calc
 {
     public class ProportionnalMatchMaking : ClassicMatchMaking
     {
-
-
         internal override int TakeClassCars(int fieldSize, int remCarClasses,
             Dictionary<int, int> classRemainingCars, int classid,
             List<CarsPerClass> carsListPerClass, int split)

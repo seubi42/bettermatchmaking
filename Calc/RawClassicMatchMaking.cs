@@ -9,6 +9,19 @@ namespace BetterMatchMaking.Calc
 {
     public class RawClassicMatchMaking : IMatchMaking
     {
+        // parameters
+        public bool UseParameterP
+        {
+            get { return false; }
+        }
+        public bool UseParameterIR
+        {
+            get { return false; }
+        }
+        public int ParameterPValue { get; set; }
+        public int ParameterIRValue { get; set; }
+        // -->
+
         public List<Split> Splits { get; private set; }
 
         public List<int> CarClassesId { get; private set; }

@@ -10,7 +10,13 @@ namespace BetterMatchMaking.Calc
     {
         List<Data.Split> Splits {get;}
 
-       
+        bool UseParameterP { get;  }
+        bool UseParameterIR { get;  }
+
+        int ParameterPValue { get; set; }
+        int ParameterIRValue { get; set; }
+
+
 
         void Compute(List<Data.Line> data, int fieldSize);
     }

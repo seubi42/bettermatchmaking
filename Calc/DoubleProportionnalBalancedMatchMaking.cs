@@ -9,6 +9,11 @@ namespace BetterMatchMaking.Calc
 {
     class DoubleProportionnalBalancedMatchMaking : DoubleClassicMatchMaking
     {
+        public override bool UseParameterP
+        {
+            get { return true; }
+        }
+
         internal override IMatchMaking GetGroupMatchMaker()
         {
             return new ProportionnalBalancedMatchMaking();

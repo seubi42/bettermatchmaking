@@ -9,13 +9,22 @@ namespace BetterMatchMaking.Calc
 {
     public class ProportionnalBalancedMatchMaking : ClassicMatchMaking
     {
+        // parameters
+        public override bool UseParameterP
+        {
+            get { return true; }
+        }
+        // -->
 
-        double limit = 2f / 5f;
+        
 
         internal override int TakeClassCars(int fieldSize, int remCarClasses,
             Dictionary<int, int> classRemainingCars, int classid, 
             List<CarsPerClass> carsListPerClass, int split)
         {
+
+            double limit = Convert.ToDouble(ParameterPValue) / 100d;
+
 
             double allTotalCars = (from r in classRemainingCars select r.Value).Sum();
 

@@ -8,10 +8,25 @@ using BetterMatchMaking.Data;
 namespace BetterMatchMaking.Calc
 {
     public class ClassicMatchMaking : IMatchMaking
-    {
+    { 
+        // parameters
+        public virtual bool UseParameterP
+        {
+            get { return false; }
+        }
+        public bool UseParameterIR
+        {
+            get { return false; }
+        }
+        public int ParameterPValue { get; set; }
+        public int ParameterIRValue { get; set; }
+        // -->
+
+
         public List<Split> Splits { get; private set; }
 
         public List<int> CarClassesId { get; private set; }
+
 
         public void Compute(List<Line> data, int fieldSize)
         {

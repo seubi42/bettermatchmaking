@@ -23,10 +23,19 @@ namespace BetterMatchMaking
     {
         Data.CsvParser parser;
 
+        SyncSliderBox sspP;
+        SyncSliderBox sspIR;
+
         public MainWindow()
         {
             InitializeComponent();
             parser = new Data.CsvParser();
+
+            sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 1, 66, 33);
+            sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
+            sspP.Visible = false;
+            sspIR.Visible = false;
+
         }
 
         private void BtnBrowseRegistrationFile_Click(object sender, RoutedEventArgs e)
@@ -62,8 +71,9 @@ namespace BetterMatchMaking
                 //-->
 
                 grid.ItemsSource = parser.DistinctCars;
+                gridResult.ItemsSource = null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -71,11 +81,14 @@ namespace BetterMatchMaking
 
         private void BtnCompute_Click(object sender, RoutedEventArgs e)
         {
+            if (parser.Data == null) return;
+            if (parser.Data.Count == 0) return;
+
             int defaultFieldSizeValue = 45;
 
             int fieldSize = defaultFieldSizeValue;
             int.TryParse(tbxFieldSize.Text, out fieldSize);
-            if(fieldSize == 0) fieldSize = defaultFieldSizeValue;
+            if (fieldSize == 0) fieldSize = defaultFieldSizeValue;
             tbxFieldSize.Text = fieldSize.ToString();
 
 
@@ -87,15 +100,19 @@ namespace BetterMatchMaking
             // instanciate the good algorithm
             var type = System.Reflection.Assembly.GetExecutingAssembly().GetType("BetterMatchMaking.Calc." + strAlgo);
             mm = Activator.CreateInstance(type) as Calc.IMatchMaking;
-            
+            mm.ParameterPValue = sspP.Value;
+            mm.ParameterIRValue = sspIR.Value;
+
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
 
-            double pcent = Math.Round((from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average());
+            double pcent = 0;
+            int splitsHavingDiffClassesSof = (from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Count();
+            if(splitsHavingDiffClassesSof > 0) pcent = Math.Round((from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average());
             string morestats = mm.Splits.Count + " splits. ";
             morestats += (from r in mm.Splits select r.AllCars.Count).Sum() + " cars. ";
             morestats += "Average split car classes difference: ";
-            morestats +=  pcent+ "%";
+            morestats += pcent + "%";
             tbxStats.Text = morestats;
 
             tbxStats.Background = ColorConverter.GetPercentColor(Convert.ToInt32(pcent));
@@ -105,7 +122,7 @@ namespace BetterMatchMaking
         {
             var split = gridResult.SelectedItem as Data.Split;
 
-            if(split == null)
+            if (split == null)
             {
                 tbxDetails.Text = "";
                 return;
@@ -124,7 +141,7 @@ namespace BetterMatchMaking
                 }
                 sb.AppendLine(" ");
             }
-            
+
             if (split.Class2Cars != null)
             {
                 sb.AppendLine("CLASS " + split.Class2Name + ", SoF " + split.Class2Sof);
@@ -157,8 +174,29 @@ namespace BetterMatchMaking
 
             tbxDetails.Text = sb.ToString();
 
-            
 
+
+        }
+
+        private void CboAlgorithm_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sspP == null) return;
+
+            if (cboAlgorithm.SelectedIndex >= 0)
+            {
+                string strAlgo = (cboAlgorithm.SelectedItem as ComboBoxItem).Tag.ToString();
+                var type = System.Reflection.Assembly.GetExecutingAssembly().GetType("BetterMatchMaking.Calc." + strAlgo);
+                var mm = Activator.CreateInstance(type) as Calc.IMatchMaking;
+
+                sspP.Visible = mm.UseParameterP;
+                sspIR.Visible = mm.UseParameterIR;
+            }
+            else
+            {
+                sspP.Visible = false;
+                sspIR.Visible = false;
+            }
         }
     }
 }
+

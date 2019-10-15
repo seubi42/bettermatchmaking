@@ -197,6 +197,18 @@ namespace BetterMatchMaking
                 sspIR.Visible = false;
             }
         }
+
+        private void btnDownloadCsv_Click(object sender, RoutedEventArgs e)
+        {
+            PopupDownloadCsv w = new PopupDownloadCsv();
+            w.Owner = this;
+            w.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            if(w.ShowDialog()==true)
+            {
+                tbxRegistrationFile.Text = w.File;
+                BtnLoadRegistrationFile_Click(sender, e);
+            }
+        }
     }
 }
 

@@ -15,6 +15,7 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         
                     </Grid.RowDefinitions>
@@ -23,14 +24,18 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Registration file:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
                     <TextBox x:Name="tbxRegistrationFile" Grid.Row="0" Grid.Column="1" Text="petit-le-mans-2019-fieldsize45.csv" />
-                    <Button x:Name="btnBrowseRegistrationFile" Click="BtnBrowseRegistrationFile_Click" Content="Browse..." Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" Height="20" VerticalAlignment="Top" />
-                    <Button x:Name="btnLoadRegistrationFile" Click="BtnLoadRegistrationFile_Click" Content="LOAD" Grid.Row="0" Grid.Column="3" FontWeight="Bold" Margin="5,0,0,0" MinWidth="100" />
+                    <Button x:Name="btnBrowseRegistrationFile" Click="BtnBrowseRegistrationFile_Click" Content="Browse..." Grid.Row="0" Grid.Column="3" Margin="5,0,0,0" Height="20" VerticalAlignment="Top" />
+                    <Button x:Name="btnLoadRegistrationFile" Click="BtnLoadRegistrationFile_Click" Content="LOAD" Grid.Row="0" Grid.Column="4" FontWeight="Bold" Margin="5,0,0,0" MinWidth="100" />
 
-                    <DataGrid Grid.Row="1" Grid.ColumnSpan="4" IsReadOnly="True" x:Name="grid" Margin="0,10,0,0">
+                    <Button x:Name="btnDownloadCsv" Click="btnDownloadCsv_Click" Content="Download other race..." Grid.Row="1" Grid.Column="3" Margin="5,10,0,0" Height="20" VerticalAlignment="Top" />
+
+
+                    <DataGrid Grid.Row="2" Grid.ColumnSpan="5" IsReadOnly="True" x:Name="grid" Margin="0,10,0,0">
                         
                     </DataGrid>
                     

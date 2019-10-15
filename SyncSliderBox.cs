@@ -124,7 +124,7 @@ namespace BetterMatchMaking
         }
 
         private static readonly System.Text.RegularExpressions.Regex rxNonDigits = new System.Text.RegularExpressions.Regex(@"[^\d]+");
-        private string CleanStringOfNonDigits(string s)
+        public static string CleanStringOfNonDigits(string s)
         {
             if (string.IsNullOrEmpty(s)) return s;
             string cleaned = rxNonDigits.Replace(s, "");

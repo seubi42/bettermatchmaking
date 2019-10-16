@@ -82,7 +82,7 @@ namespace BetterMatchMaking
             }
             else
             {
-                lblName2.Text = "-" + raceid + "-fieldsize";
+                lblName2.Text = "-" + name + "-fieldsize";
                 cbxDataAvailable.IsChecked = true;
                 btnSave.Visibility = Visibility.Visible;
                 gridResult.Visibility = Visibility.Visible;
@@ -98,7 +98,7 @@ namespace BetterMatchMaking
 
             string filename = tbxCustomName.Text;
             filename += "-";
-            filename += raceid;
+            filename += name;
             filename += "-fieldsize";
             filename += fieldsize;
             filename += ".csv";

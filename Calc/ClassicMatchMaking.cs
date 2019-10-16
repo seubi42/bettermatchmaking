@@ -88,8 +88,10 @@ namespace BetterMatchMaking.Calc
 
                 }
 
-                var lastClass = carsListPerClass.LastOrDefault(); //get last class, which is the class with more cars then the other
-                if (lastClass != null)
+                
+
+
+                for (int i = 0; i < carsListPerClass.Count; i++) // do a pass per class
                 {
 
                     // sum cars in this split
@@ -98,22 +100,44 @@ namespace BetterMatchMaking.Calc
                     {
                         carsInThisSplit += classSplitsCount[carClass.CarClassId].Last();
                     }
+                    int availableSlots = fieldSize - carsInThisSplit;
                     // -->
 
-                    // available slots ?
-                    if (carsInThisSplit < fieldSize)
+                    var lastClass = carsListPerClass.LastOrDefault(); //get last class, which is the class with more cars then the other
+                                                                     
+                    foreach (var item in classRemainingCars)  // if there is a better class, containing less remaning cars than available slots ?
                     {
-                        int availableSlots = fieldSize - carsInThisSplit;
+                        if (item.Value < availableSlots && item.Value > 0 && item.Key != lastClass.CarClassId)
+                        {
+                            int classid = item.Key;
+                            lastClass = (from r in carsListPerClass where r.CarClassId == classid select r).FirstOrDefault();
+                            if (lastClass == null) lastClass = carsListPerClass.LastOrDefault();
+                            else
+                            {
+                                availableSlots = Math.Min(availableSlots, item.Value);
+                                break;
+                            }
+                        }
+                    }
 
+                   
 
-                        // fill this availableSlots with last class cars to match the maximum field size..
-                        var splitclasslist = classSplitsCount[lastClass.CarClassId];
-                        splitclasslist[splitclasslist.Count - 1] += availableSlots;
+                    if (lastClass != null)
+                    {
+                        // available slots ?
+                        if (carsInThisSplit < fieldSize)
+                        {
+                            // fill this availableSlots with last class cars to match the maximum field size..
+                            var splitclasslist = classSplitsCount[lastClass.CarClassId];
+                            splitclasslist[splitclasslist.Count - 1] += availableSlots;
 
-                        // and decremement remaining cars if this last class
-                        classRemainingCars[lastClass.CarClassId] -= availableSlots;
+                            // and decremement remaining cars if this last class
+                            classRemainingCars[lastClass.CarClassId] -= availableSlots;
+                        }
                     }
                 }
+
+
 
                 // iis there always the same number of car class than the previous split ?
                 if (remCarClasses == currentMode.ClassesCount)

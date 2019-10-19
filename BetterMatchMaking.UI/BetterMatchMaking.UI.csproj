@@ -115,9 +115,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BetterMatchMaking.Library\BetterMatchMaking.Library.csproj">
       <Project>{a1235ef3-120f-4492-9a79-da01581d19c9}</Project>
       <Name>BetterMatchMaking.Library</Name>

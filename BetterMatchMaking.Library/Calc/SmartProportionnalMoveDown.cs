@@ -101,7 +101,7 @@ namespace BetterMatchMaking.Library.Calc
 
 
             // si plusieurs split single class à la toute fin, les regrouper
-            GroupEndedSingleClassSplits();
+            //GroupEndedSingleClassSplits();
 
         }
 
@@ -123,6 +123,7 @@ namespace BetterMatchMaking.Library.Calc
             // end splits to merge
             if (splitsCount > 0)
             {
+                
                 List<int> carsCount = new List<int>();
                 List<Line> data = new List<Line>();
                 for (int i = 0; i < splitsCount; i++)
@@ -143,6 +144,7 @@ namespace BetterMatchMaking.Library.Calc
                     }
                     
                 }
+                
             }
         }
 
@@ -171,9 +173,15 @@ namespace BetterMatchMaking.Library.Calc
             // and it is a single class last split
             if (lastSplitContainingThisClass.GetClassesCount() == 1)
             {
-                minToEnsure = (from r in Splits
+                int min = (from r in Splits
                                where r.TotalCarsCount > fieldSize / 2
                                select r.TotalCarsCount).Min();
+
+                int max = (from r in Splits
+                               where r.TotalCarsCount > fieldSize / 2
+                               select r.TotalCarsCount).Max();
+
+                minToEnsure = min;
             }
             
 
@@ -502,6 +510,11 @@ namespace BetterMatchMaking.Library.Calc
             int min = classSof; //  Math.Min(classSof, mostPopulatedClassSof);
             //int max = mostPopulatedClassSof; // Math.Max(classSof, mostPopulatedClassSof);
             int max = s.GlobalSof;
+            max = Math.Max(max, s.Class1Sof);
+            max = Math.Max(max, s.Class2Sof);
+            max = Math.Max(max, s.Class3Sof);
+            max = Math.Max(max, s.Class4Sof);
+
 
             if (min == 0 && max == 0) return false;
 

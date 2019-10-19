@@ -191,6 +191,7 @@ namespace BetterMatchMaking.Library.Data
         public void AddClassCars(int carclass, List<Line> newcars)
         {
             List<Line> theClass = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", carclass);
+            if (theClass == null) theClass = new List<Line>();
             theClass.AddRange(newcars);
             theClass = (from r in theClass orderby r.rating descending select r).ToList();
             Tools.SetProperty<List<Line>>(this, "Class{i}Cars", carclass, theClass);

@@ -39,11 +39,11 @@ namespace BetterMatchMaking.UI
 
             sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 1, 66, 37);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
-            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 1, 100, 18);
+            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 1, 100, 15);
             sspMaxSofFx = new SyncSliderBox(lblParameterMaxSoffFunctX, tbxParameterMaxSoffFunctX, sldParameterMaxSoffFunctX, 0, 9999, 1000);
             sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 150, 12);
             sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
-            sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 1);
+            sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
 
             sspP.Visible = false;
             sspIR.Visible = false;
@@ -110,6 +110,7 @@ namespace BetterMatchMaking.UI
         }
 
         List<Library.Data.Split> result;
+        int fieldsize;
 
         private void BtnCompute_Click(object sender, RoutedEventArgs e)
         {
@@ -133,6 +134,7 @@ namespace BetterMatchMaking.UI
 
             int fieldSize = defaultFieldSizeValue;
             int.TryParse(tbxFieldSize.Text, out fieldSize);
+            this.fieldsize = fieldSize;
             if (fieldSize == 0) fieldSize = defaultFieldSizeValue;
             tbxFieldSize.Text = fieldSize.ToString();
 
@@ -173,7 +175,7 @@ namespace BetterMatchMaking.UI
             tbxStats.Background = ColorConverter.GetPercentColor(Convert.ToInt32(pcent));
 
 
-            CheckNobodyIsMissing();
+            CheckNobodyIsMissingAndFieldSize();
         }
 
         private void AddClassNamesToResults(List<Split> result)
@@ -207,7 +209,7 @@ namespace BetterMatchMaking.UI
             return null;
         }
 
-        private void CheckNobodyIsMissing()
+        private void CheckNobodyIsMissingAndFieldSize()
         {
             int missingInList = 0;
 
@@ -225,6 +227,11 @@ namespace BetterMatchMaking.UI
                     {
                         missingInList++;
                     }
+                }
+
+                if (split.TotalCarsCount > fieldsize)
+                {
+                    MessageBox.Show("Split " + split.Number + " exceed field size !");
                 }
             }
 

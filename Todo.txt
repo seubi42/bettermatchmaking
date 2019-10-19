@@ -1,1 +1,1 @@
-Regarder le cas, imsa sprint quand p = 45
+imls quand p < 19

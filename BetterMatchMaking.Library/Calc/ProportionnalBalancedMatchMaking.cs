@@ -41,6 +41,7 @@ namespace BetterMatchMaking.Library.Calc
                 }
             }
 
+            if (classRatio.Count == 0) return 0;
             double maxRatio = (from r in classRatio select r.Value).Max();
             double minRatio = (from r in classRatio select r.Value).Min();
             int maxClass = (from r in classRatio orderby r.Value descending select r.Key).FirstOrDefault();

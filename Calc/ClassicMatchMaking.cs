@@ -18,8 +18,21 @@ namespace BetterMatchMaking.Calc
         {
             get { return false; }
         }
+        public bool UseParameterMaxSofDiff
+        {
+            get { return false; }
+        }
+        public bool UseParameterTopSplitException
+        {
+            get { return false; }
+        }
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
+        public int ParameterMaxSofDiff { get; set; }
+        public int ParameterMaxSofFunctA { get; set; }
+        public int ParameterMaxSofFunctB { get; set; }
+        public int ParameterMaxSofFunctX { get; set; }
+        public int ParameterTopSplitException { get; set; }
         // -->
 
 

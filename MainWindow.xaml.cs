@@ -25,6 +25,11 @@ namespace BetterMatchMaking
 
         SyncSliderBox sspP;
         SyncSliderBox sspIR;
+        SyncSliderBox sspMaxSofDiff;
+        SyncSliderBox sspMaxSofFx;
+        SyncSliderBox sspMaxSofFa;
+        SyncSliderBox sspMaxSofFb;
+        SyncSliderBox sspTopSplitExc;
 
         public MainWindow()
         {
@@ -33,9 +38,29 @@ namespace BetterMatchMaking
 
             sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 1, 66, 37);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
+            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 1, 100, 18);
+            sspMaxSofFx = new SyncSliderBox(lblParameterMaxSoffFunctX, tbxParameterMaxSoffFunctX, sldParameterMaxSoffFunctX, 0, 9999, 1000);
+            sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 150, 12);
+            sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
+            sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 1);
+
             sspP.Visible = false;
             sspIR.Visible = false;
+            sspMaxSofDiff.Visible = false;
+            sspMaxSofFx.Visible = false;
+            sspMaxSofFa.Visible = false;
+            sspMaxSofFb.Visible = false;
+            sspTopSplitExc.Visible = false;
 
+            this.Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (cboAlgorithm.SelectedIndex >= 0)
+            {
+                OnAlgorithmChanged();
+            }
         }
 
         private void BtnBrowseRegistrationFile_Click(object sender, RoutedEventArgs e)
@@ -47,6 +72,10 @@ namespace BetterMatchMaking
             if (openFileDialog.ShowDialog() == true)
             {
                 tbxRegistrationFile.Text = openFileDialog.FileName;
+                if(tbxRegistrationFile.Text.StartsWith(openFileDialog.InitialDirectory + "\\"))
+                {
+                    tbxRegistrationFile.Text = openFileDialog.FileName.Substring(openFileDialog.InitialDirectory.Length + 1);
+                }
             }
         }
 
@@ -79,10 +108,25 @@ namespace BetterMatchMaking
             }
         }
 
+        List<Data.Split> result;
+
         private void BtnCompute_Click(object sender, RoutedEventArgs e)
         {
-            if (parser.Data == null) return;
-            if (parser.Data.Count == 0) return;
+            bool nodata = false;
+            if (parser.Data == null) nodata = true;
+            if (parser.Data.Count == 0) nodata = true;
+
+            if (nodata)
+            {
+                if (!String.IsNullOrWhiteSpace(tbxRegistrationFile.Text))
+                {
+                    BtnLoadRegistrationFile_Click(sender, e);
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             int defaultFieldSizeValue = 45;
 
@@ -102,9 +146,15 @@ namespace BetterMatchMaking
             mm = Activator.CreateInstance(type) as Calc.IMatchMaking;
             mm.ParameterPValue = sspP.Value;
             mm.ParameterIRValue = sspIR.Value;
+            mm.ParameterMaxSofDiff = sspMaxSofDiff.Value;
+            mm.ParameterMaxSofFunctA = sspMaxSofFa.Value;
+            mm.ParameterMaxSofFunctX = sspMaxSofFx.Value;
+            mm.ParameterMaxSofFunctB = sspMaxSofFb.Value;
+            mm.ParameterTopSplitException = sspTopSplitExc.Value;
 
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
+            result = mm.Splits;
 
             double pcent = 0;
             int splitsHavingDiffClassesSof = (from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Count();
@@ -116,6 +166,39 @@ namespace BetterMatchMaking
             tbxStats.Text = morestats;
 
             tbxStats.Background = ColorConverter.GetPercentColor(Convert.ToInt32(pcent));
+
+
+            CheckNobodyIsMissing();
+        }
+
+
+        private void CheckNobodyIsMissing()
+        {
+            int missingInList = 0;
+
+            List<int> allcars = (from r in parser.DistinctCars select r.car_id).ToList();
+            foreach (var split in result)
+            {
+                foreach (var car in split.AllCars)
+                {
+                    int car_id = car.car_id;
+                    if(allcars.Contains(car_id))
+                    {
+                        allcars.Remove(car_id);
+                    }
+                    else
+                    {
+                        missingInList++;
+                    }
+                }
+            }
+
+
+
+            if(allcars.Count > 0 || missingInList > 0)
+            {
+                MessageBox.Show("Error in algorithm, cars are missing !");
+            }
         }
 
         private void GridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -182,6 +265,11 @@ namespace BetterMatchMaking
         {
             if (sspP == null) return;
 
+            OnAlgorithmChanged();
+        }
+
+        private void OnAlgorithmChanged()
+        {
             if (cboAlgorithm.SelectedIndex >= 0)
             {
                 string strAlgo = (cboAlgorithm.SelectedItem as ComboBoxItem).Tag.ToString();
@@ -190,11 +278,21 @@ namespace BetterMatchMaking
 
                 sspP.Visible = mm.UseParameterP;
                 sspIR.Visible = mm.UseParameterIR;
+                sspMaxSofDiff.Visible = mm.UseParameterMaxSofDiff;
+                sspMaxSofFa.Visible = mm.UseParameterMaxSofDiff;
+                sspMaxSofFb.Visible = mm.UseParameterMaxSofDiff;
+                sspMaxSofFx.Visible = mm.UseParameterMaxSofDiff;
+                sspTopSplitExc.Visible = mm.UseParameterTopSplitException;
             }
             else
             {
                 sspP.Visible = false;
                 sspIR.Visible = false;
+                sspMaxSofDiff.Visible = false;
+                sspMaxSofFa.Visible = false;
+                sspMaxSofFb.Visible = false;
+                sspMaxSofFx.Visible = false;
+                sspTopSplitExc.Visible = false;
             }
         }
 
@@ -208,6 +306,17 @@ namespace BetterMatchMaking
                 tbxRegistrationFile.Text = w.File;
                 BtnLoadRegistrationFile_Click(sender, e);
             }
+        }
+
+        private void LblParameterMaxSoffDiff_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PopupPreviewFunctionTable p = new PopupPreviewFunctionTable();
+            p.X = sspMaxSofFx.Value;
+            p.A = sspMaxSofFa.Value;
+            p.B = sspMaxSofFb.Value;
+            p.Min = sspMaxSofDiff.Value;
+            p.Render();
+            p.Show();
         }
     }
 }

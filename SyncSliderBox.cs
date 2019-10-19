@@ -73,9 +73,20 @@ namespace BetterMatchMaking
             sld.ValueChanged += Sld_ValueChanged;
             tbx.KeyUp += Tbx_KeyUp;
             tbx.TextChanged += Tbx_TextChanged;
+
+            tbx.MouseRightButtonUp += Tbx_MouseRightButtonUp;
+            sld.MouseRightButtonUp += Sld_MouseRightButtonUp;
         }
 
+        private void Sld_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Value = DefaultValue;
+        }
 
+        private void Tbx_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Value = DefaultValue;
+        }
 
         private void Tbx_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -98,7 +109,7 @@ namespace BetterMatchMaking
                 int tbxValue = -1;
                 if (int.TryParse(Tbx.Text, out tbxValue))
                 {
-                    if (Max < 100)
+                    if (Max < 150)
                     {
                         if (e.Key == System.Windows.Input.Key.Up) tbxValue++;
                         else tbxValue--;
@@ -123,12 +134,10 @@ namespace BetterMatchMaking
                 OnSliderChange();
         }
 
-        private static readonly System.Text.RegularExpressions.Regex rxNonDigits = new System.Text.RegularExpressions.Regex(@"[^\d]+");
+        //private static readonly System.Text.RegularExpressions.Regex rxNonDigits = new System.Text.RegularExpressions.Regex(@"[^\d]+");
         public static string CleanStringOfNonDigits(string s)
         {
-            if (string.IsNullOrEmpty(s)) return s;
-            string cleaned = rxNonDigits.Replace(s, "");
-            return cleaned;
+            return new string(s.Where(c => char.IsDigit(c) || c == '-').ToArray());
         }
 
 

@@ -131,9 +131,88 @@ namespace BetterMatchMaking.Data
         public int Class4Sof { get; set; }
 
 
+        public string Info { get; set; }
+
+        public List<Line> PickClassCars(int carclass, int? maxcars = null, bool lastests = false)
+        {
+            List<Line> pick = new List<Line>();
+            List<Line> theClass = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", carclass);
+
+            if(theClass == null)
+            {
+                return pick;
+            }
+
+            if(maxcars == null)
+            {
+                pick = (from r in theClass select r).ToList();
+            }
+            else
+            {
+                if (lastests)
+                {
+                    pick = (from r in theClass orderby r.rating ascending select r).Take(maxcars.Value).ToList();
+                }
+                else
+                {
+                    pick = (from r in theClass orderby r.rating descending select r).Take(maxcars.Value).ToList();
+                }
+            }
+
+            foreach (var r in pick)
+            {
+                theClass.Remove(r);
+            }
+
+            RefreshSofs();
+
+            if(theClass.Count == 0)
+            {
+                Tools.SetProperty<List<Line>>(this, "Class{i}Cars", carclass, null);
+                Tools.SetProperty<List<Line>>(this, "Class{i}Name", carclass, null);
+            }
+
+            return pick;
+        }
+
+        public void AddClassCars(int carclass, List<Line> newcars)
+        {
+            List<Line> theClass = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", carclass);
+            theClass.AddRange(newcars);
+            theClass = (from r in theClass orderby r.rating descending select r).ToList();
+            Tools.SetProperty<List<Line>>(this, "Class{i}Cars", carclass, theClass);
+
+            RefreshSofs();
+        }
+
+        internal void CleanEmptyClasses()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                List<Line> theClass = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", i);
+                if(theClass != null && theClass.Count == 0)
+                {
+                    Tools.SetProperty<List<Line>>(this, "Class{i}Cars", i, null);
+                }
+            }
+        }
+
+        public int CountClassCars(int carclass)
+        {
+            List<Line> theClass = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", carclass);
+            if (theClass == null) return 0;
+            return theClass.Count;
+        }
 
 
         public int GlobalSof { get; set; }
+
+
+        public int GetClassSof(int i)
+        {
+            int ret = Tools.GetProperty<int>(this, "Class{i}Sof", i);
+            return ret;
+        }
 
 
         public int GetClassTarget(int i)
@@ -149,6 +228,7 @@ namespace BetterMatchMaking.Data
 
         public void SetClass(int i, List<Line> cars, int id)
         {
+           
             Tools.SetProperty<List<Line>>(this, "Class{i}Cars", i, cars);
 
             string classname = "cars";
@@ -162,6 +242,26 @@ namespace BetterMatchMaking.Data
             catch { }
 
             RefreshSofs();
+        }
+
+        public void SetClass(int i, int id)
+        {
+            var t = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", i);
+            if(t == null)
+            {
+                t = new List<Line>();
+                Tools.SetProperty<List<Line>>(this, "Class{i}Cars", i, t);
+            }
+
+            string classname = "cars";
+            try
+            {
+                string betterclassname = ReadClassName(id);
+                if (betterclassname != null) classname = betterclassname;
+
+                Tools.SetProperty<string>(this, "Class{i}Name", i, classname);
+            }
+            catch { }
         }
 
         private string ReadClassName(int id)

@@ -14,6 +14,7 @@ namespace BetterMatchMaking.Library.Calc
         bool UseParameterIR { get;  }
         bool UseParameterMaxSofDiff { get;  }
         bool UseParameterTopSplitException { get;  }
+        bool UseParameterEqualizeSplits { get;  }
 
        
 
@@ -24,9 +25,17 @@ namespace BetterMatchMaking.Library.Calc
         int ParameterMaxSofFunctB { get; set; }
         int ParameterMaxSofFunctX { get; set; }
         int ParameterTopSplitException { get; set; }
+        int ParameterEqualizeSplits { get; set; }
 
 
 
         void Compute(List<Data.Line> data, int fieldSize);
+    }
+
+    public interface ITakeCarsProportionCalculator
+    {
+        int TakeClassCars(int fieldSize, int remCarClasses,
+            Dictionary<int, int> classRemainingCars, int classid,
+            List<Data.CarsPerClass> carsListPerClass, int split);
     }
 }

@@ -49,6 +49,7 @@
     <Compile Include="Calc\ProportionnalBalancedMatchMaking.cs" />
     <Compile Include="Calc\ProportionnalMatchMaking.cs" />
     <Compile Include="Calc\RawClassicMatchMaking.cs" />
+    <Compile Include="Calc\SmartClassicMoveDown.cs" />
     <Compile Include="Calc\SmartProportionnalMoveDown.cs" />
     <Compile Include="Calc\Tools.cs" />
     <Compile Include="Calc\TripleProportionnalBalancedMatchMaking.cs" />

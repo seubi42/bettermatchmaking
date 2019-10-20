@@ -7,7 +7,7 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class RawClassicMatchMaking : IMatchMaking
+    public class RawClassicMatchMaking : IMatchMaking, ITakeCarsProportionCalculator
     {
         // parameters
         public bool UseParameterP
@@ -26,6 +26,11 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return false; }
         }
+        public bool UseParameterEqualizeSplits
+        {
+            get { return false; }
+        }
+        public int ParameterEqualizeSplits { get; set; }
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
         public int ParameterMaxSofDiff { get; set; }
@@ -253,7 +258,7 @@ namespace BetterMatchMaking.Library.Calc
         }
 
 
-        internal virtual int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<CarsPerClass> carsListPerClass, int split)
+        public virtual int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<CarsPerClass> carsListPerClass, int split)
         {
             int carsToTake = fieldSize / remCarClasses;
             

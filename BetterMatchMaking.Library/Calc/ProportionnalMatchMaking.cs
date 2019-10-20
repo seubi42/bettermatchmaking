@@ -7,9 +7,9 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class ProportionnalMatchMaking : ClassicMatchMaking
+    public class ProportionnalMatchMaking : ClassicMatchMaking, ITakeCarsProportionCalculator
     {
-        internal override int TakeClassCars(int fieldSize, int remCarClasses,
+        public override int TakeClassCars(int fieldSize, int remCarClasses,
             Dictionary<int, int> classRemainingCars, int classid,
             List<CarsPerClass> carsListPerClass, int split)
         {

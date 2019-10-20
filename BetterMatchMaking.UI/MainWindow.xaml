@@ -31,7 +31,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Registration file:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
-                    <TextBox x:Name="tbxRegistrationFile" Grid.Row="0" Grid.Column="1" Text="petit-le-mans-2019-fieldsize45.csv" />
+                    <TextBox x:Name="tbxRegistrationFile" Grid.Row="0" Grid.Column="1" Text="ilms-29033477-fieldsize45.csv" />
                     <Button x:Name="btnBrowseRegistrationFile" Click="BtnBrowseRegistrationFile_Click" Content="Browse..." Grid.Row="0" Grid.Column="3" Margin="5,0,0,0" Height="20" VerticalAlignment="Top" />
                     <Button x:Name="btnLoadRegistrationFile" Click="BtnLoadRegistrationFile_Click" Content="LOAD" Grid.Row="0" Grid.Column="4" FontWeight="Bold" Margin="5,0,0,0" MinWidth="100" />
 
@@ -74,7 +74,7 @@
                                 <TextBlock VerticalAlignment="Center" Text="Algorithm :" Grid.Row="0" />
                                 <TextBlock VerticalAlignment="Center" Text="Field Size :" Grid.Row="1" />
 
-                                <ComboBox x:Name="cboAlgorithm" Grid.Row="0" Grid.Column="1" Margin="5"  SelectedIndex="7" SelectionChanged="CboAlgorithm_SelectionChanged">
+                                <ComboBox x:Name="cboAlgorithm" Grid.Row="0" Grid.Column="1" Margin="5"  SelectedIndex="8" SelectionChanged="CboAlgorithm_SelectionChanged">
                                     <ComboBoxItem Tag="RawClassicMatchMaking" Content="Raw Classic (to understand)" />
                                     <ComboBoxItem Tag="ClassicMatchMaking" Content="Classic (Very close to iRacing)" FontWeight="Bold" />
                                     <ComboBoxItem Tag="ProportionnalMatchMaking" Content="Car Class distribution : proportionnal" />
@@ -82,6 +82,7 @@
                                     <ComboBoxItem Tag="DoubleClassicMatchMaking" Content="Double list: rating threshold" />
                                     <ComboBoxItem Tag="DoubleProportionnalBalancedMatchMaking" Content="Double list &amp; Car Class distribution" FontWeight="Bold" />
                                     <ComboBoxItem Tag="TripleProportionnalBalancedMatchMaking" Content="Triple list &amp; Car Class distribution" />
+                                    <ComboBoxItem Tag="SmartClassicMoveDown" Content="Smart Classic Move Down"  />
                                     <ComboBoxItem Tag="SmartProportionnalMoveDown" Content="Smart Proportionnal Move Down" FontWeight="Bold" />
                                 </ComboBox>
                                 <TextBox x:Name="tbxFieldSize" Grid.Row="1" Grid.Column="1" Text="45" Margin="5" />
@@ -136,6 +137,11 @@
                             <TextBlock x:Name="lblParameterMaxSoffFunctB" Text="Max SoF f() b" Grid.Row="4" Grid.Column="3" TextAlignment="Center" />
                             <TextBox x:Name="tbxParameterMaxSoffFunctB" Grid.Row="5" Grid.Column="3" TextAlignment="Center" Width="80"  />
                             <Slider x:Name="sldParameterMaxSoffFunctB" Grid.Row="6" Grid.Column="3" Width="80" />
+
+
+                            <TextBlock x:Name="lblParameterEqualize" Text="Equalize" Grid.Row="4" Grid.Column="0" TextAlignment="Center" />
+                            <TextBox x:Name="tbxParameterEqualize" Grid.Row="5" Grid.Column="0" TextAlignment="Center" Width="80" />
+                            <Slider x:Name="sldParameterEqualize" Grid.Row="6" Grid.Column="0" Width="80" />
 
                         </Grid>
                     </Grid>

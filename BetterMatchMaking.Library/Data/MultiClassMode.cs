@@ -13,5 +13,24 @@ namespace BetterMatchMaking.Library.Data
         public int ClassesCount { get; set; }
 
         public Dictionary<int, int> ClassCarsTarget { get; set; }
+
+        public string ClassesKey
+        {
+            get
+            {
+                string ret = "";
+                List<int> ids = (from r in ClassCarsTarget orderby r.Key ascending select r.Key).ToList();
+                foreach (var id in ids)
+                {
+                    ret += id + ";";
+                }
+                return ret;
+            }
+        }
+
+        public int CountTotalTargets()
+        {
+            return (from r in ClassCarsTarget select r.Value).Sum();
+        }
     }
 }

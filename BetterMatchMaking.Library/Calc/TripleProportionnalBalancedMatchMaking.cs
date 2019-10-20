@@ -27,6 +27,12 @@ namespace BetterMatchMaking.Library.Calc
             get { return false; }
         }
 
+        public bool UseParameterEqualizeSplits
+        {
+            get { return false; }
+        }
+        public int ParameterEqualizeSplits { get; set; }
+
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
         public int ParameterMaxSofDiff { get; set; }

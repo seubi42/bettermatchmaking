@@ -12,7 +12,7 @@ namespace BetterMatchMaking.Library.Calc
         public List<Split> Splits { get; private set; }
 
         // parameters
-        public bool UseParameterP
+        public virtual bool UseParameterP
         {
             get { return true; }
         }
@@ -37,6 +37,12 @@ namespace BetterMatchMaking.Library.Calc
 
         }
 
+        public bool UseParameterEqualizeSplits
+        {
+            get { return true; }
+        }
+        public int ParameterEqualizeSplits { get; set; }
+
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
         public int ParameterMaxSofDiff { get; set; }
@@ -51,28 +57,53 @@ namespace BetterMatchMaking.Library.Calc
         List<CarsPerClass> carclasses;
         List<int> carClassesIds;
 
-        
 
-        ProportionnalBalancedMatchMaking firstpart;
+
+        ITakeCarsProportionCalculator firstpart;
 
         int fieldSize;
+
+        
+
+        internal virtual ITakeCarsProportionCalculator GetFirstPassCalculator()
+        {
+            return new ProportionnalBalancedMatchMaking();
+        }
+
+        //Dictionary<int, int> avgFieldSize;
 
 
         public void Compute(List<Line> data, int fieldSize)
         {
-           
+            //avgFieldSize = new Dictionary<int, int>();
 
-            // Split cars per class
+             // Split cars per class
             carclasses = Tools.SplitCarsPerClass(data);
             carClassesIds = (from r in carclasses select r.CarClassId).ToList();
 
             // first pass with a simple algoritm
             this.fieldSize = fieldSize;
-            firstpart = new ProportionnalBalancedMatchMaking();
-            BetterMatchMaking.Library.BetterMatchMakingCalculator.CopyParameters(this, firstpart);
-            firstpart.Compute(data, fieldSize);
+            firstpart = GetFirstPassCalculator();
+            BetterMatchMaking.Library.BetterMatchMakingCalculator.CopyParameters(this, firstpart as IMatchMaking);
+            (firstpart as IMatchMaking).Compute(data, fieldSize);
             
-            Splits = firstpart.Splits;
+            Splits = (firstpart as IMatchMaking).Splits;
+
+
+            /*
+            foreach (var cc in carclasses)
+            {
+                int classIndex = carClassesIds.IndexOf(cc.CarClassId);
+                double avg = Convert.ToDouble(cc.Cars.Count);
+
+                avg /= Convert.ToDouble((from r in Splits
+                                         where r.CountClassCars(classIndex) > 0
+                                         select r).Count());
+
+                avg = Math.Ceiling(avg);
+                avgFieldSize.Add(cc.CarClassId, Convert.ToInt32(avg));
+            }
+            */
 
             SmartProcess();
             
@@ -89,223 +120,209 @@ namespace BetterMatchMaking.Library.Calc
                 CleanEmptySplits();
             }
 
-            
+            GroupLastSplit();
+            CleanEmptySplits();
 
 
-            foreach (var classId in carClassesIds)
+            if (ParameterEqualizeSplits > 0)
             {
-                EnsureMinCarsInClassSplits(classId);
+                EqualizeSplits();
+
             }
-
-
-
-
-            // si plusieurs split single class à la toute fin, les regrouper
-            GroupEndedSingleClassSplits();
 
         }
 
-        private void GroupEndedSingleClassSplits()
+
+        private void EqualizeSplits()
         {
-            int splitsCount = 0;
-            for (int i = Splits.Count - 1; i >= 0; i--)
+            // describe modes
+            List<MultiClassChanges> modes = new List<MultiClassChanges>();
+            foreach (var item in Splits)
             {
-                if(Splits[i].GetClassesCount() == 1)
+                MultiClassChanges m = new MultiClassChanges();
+                m.FromSplit = item.Number;
+                m.ToSplit = item.Number;
+                m.ClassesCount = item.GetClassesCount();
+                m.ClassCarsTarget = new Dictionary<int, int>();
+
+                foreach (var classid in carClassesIds)
                 {
-                    splitsCount++;
+                    int classIndex = carClassesIds.IndexOf(classid);
+                    int classCarCount = item.CountClassCars(classIndex);
+                    if (classCarCount > 0)
+                    {
+                        m.ClassCarsTarget.Add(classid, classCarCount);
+                    }
                 }
-                else
+
+                modes.Add(m);
+            }
+
+
+            
+            
+
+            var lastmode = modes.Last();
+            var classesToEqualize = lastmode.ClassCarsTarget.Keys.ToList();
+            foreach (var classid in classesToEqualize)
+            {
+                double lastsplitcars = lastmode.ClassCarsTarget[classid];
+
+                double totalcars = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select r.ClassCarsTarget[classid]).Sum();
+
+                double avgcars = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select 
+                                  r.ClassCarsTarget[classid] / (1d / Convert.ToDouble(r.ClassCarsTarget.Count))
+                                  ).Average();
+
+                double lastsplitcarstarget = avgcars / Convert.ToDouble(lastmode.ClassCarsTarget.Count);
+
+                double splitscontainingcars = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select r).Count();
+
+                if(avgcars - lastsplitcarstarget > 3)
                 {
-                    break;
+                    double carstofind = lastsplitcarstarget - lastsplitcars;
+                    double ratio =  carstofind / totalcars;
+
+                    
+
+                    var splitsToReduce = (from r in modes
+                                          where r.ClassCarsTarget.ContainsKey(classid)
+                                          && r.ToSplit < lastmode.FromSplit
+                                          select r).ToList();
+
+                    foreach (var splitToReduce in splitsToReduce)
+                    {
+                        double insplitcars = Convert.ToDouble(splitToReduce.ClassCarsTarget[classid]);
+                        int toremove = Convert.ToInt32(insplitcars * ratio);
+                        splitToReduce.ClassCarsTarget[classid] = Convert.ToInt32(insplitcars - toremove);
+
+
+                        lastmode.ClassCarsTarget[classid] += toremove;
+                    }
                 }
             }
 
-            // end splits to merge
-            if (splitsCount > 1)
+            /*
+            foreach (var mode in modes)
             {
-                
-                List<int> carsCount = new List<int>();
-                List<Line> data = new List<Line>();
-                for (int i = 0; i < splitsCount; i++)
+                if(mode.ClassesKey == "100;116;")
                 {
-                    data.AddRange(Splits[Splits.Count - 1 - i].AllCars);
 
-                    carsCount.Add(Splits[Splits.Count - 1 - i].AllCars.Count);
                 }
-
-                
-                firstpart.Compute(data, fieldSize);
-                for (int i = 0; i < splitsCount; i++)
+                var allsamemodes = (from r in modes where r.ClassesKey == mode.ClassesKey select r).ToList();
+                if (allsamemodes.Count > 1)
                 {
-                    if (i < firstpart.Splits.Count)
+                    foreach (var classid in carClassesIds)
                     {
-                        //Splits[Splits.Count - splitsCount + i] = firstpart.Splits[i];
-                        Splits[Splits.Count - splitsCount + i] = new Split();
-
-                        var src = firstpart.Splits[i];
-                        for (int o = 0; o < 4; o++)
+                        if (mode.ClassCarsTarget.ContainsKey(classid))
                         {
-                            var classid = src.GetClassId(o);
-                            var classindex = carClassesIds.IndexOf(classid);
-                            if (classindex >= 0)
+
+                            List<int> classTarget = new List<int>();
+                            //int classIndex = carClassesIds.IndexOf(classid);
+                            foreach (var samemode in allsamemodes)
                             {
-                                var classcars = src.GetClassCars(o);
-                                Splits[Splits.Count - splitsCount + i].SetClass(classindex, classcars, classid);
+                                classTarget.Add(samemode.ClassCarsTarget[classid]);
+                            }
+
+                            int classTargetAvg = Convert.ToInt32(classTarget.Average());
+                            foreach (var samemode in allsamemodes)
+                            {
+                                samemode.ClassCarsTarget[classid] = classTargetAvg;
                             }
                         }
-
-                        Splits[Splits.Count - splitsCount + i].Number = Splits.Count - splitsCount + i + 1;
                     }
-                    else
+                }
+
+            }*/
+
+
+
+
+            foreach (var mode in modes)
+            {
+                while (mode.CountTotalTargets() > fieldSize)
+                {
+                    var excess = (from r in mode.ClassCarsTarget orderby r.Value descending select r).FirstOrDefault();
+
+                    var modewithless = (from r in modes where
+                                        r.ClassCarsTarget.ContainsKey(excess.Key)
+                                        && r.CountTotalTargets() < fieldSize
+                                        orderby r.ClassCarsTarget[excess.Key] ascending
+                                        select r).FirstOrDefault();
+
+                    if (modewithless == null)
                     {
-                        Splits.RemoveAt(Splits.Count - splitsCount + i);
+
+                        // titanic pinpin lapinou excess
+                        /*modewithless = (from r in modes
+                                        where
+                                        r.ClassCarsTarget.ContainsKey(excess.Key)
+                                        && r.CountTotalTargets() < fieldSize
+                                        orderby r.ClassCarsTarget[excess.Key] ascending
+                                        select r).FirstOrDefault();*/
+                        break;
+                    }
+
+                    if (modewithless != null)
+                    {
+                        modewithless.ClassCarsTarget[excess.Key]++;
+                        mode.ClassCarsTarget[excess.Key]--;
                     }
                     
-                }
-                
+                } 
             }
+
+            // implement final splits
+            
+
+            List<Data.Split> splits2 = new List<Split>();
+            
+
+            int number = 1;
+            foreach (var mode in modes)
+            {
+                Data.Split split = new Split();
+                split.Number = number;
+                foreach (var classid in mode.ClassCarsTarget.Keys)
+                {
+                    int take = mode.ClassCarsTarget[classid];
+                    int classIndex = carClassesIds.IndexOf(classid);
+
+                    var cars = carclasses[classIndex].GetCars(take);
+                    split.SetClass(classIndex, cars, classid);
+                }
+
+                number++;
+                splits2.Add(split);
+            }
+            Splits = splits2;
         }
 
-        private void EnsureMinCarsInClassSplits(int classId)
+
+        private void GroupLastSplit()
         {
-            
-
-            int classIndex = carClassesIds.IndexOf(classId);
-
-            
-
-
-
-
-            var splitsContainingThisClass = (from r in Splits
-                                             where r.CountClassCars(classIndex) > 0
-                                             select r).ToList();
-
-            var lastSplitContainingThisClass = splitsContainingThisClass.Last();
-
-            
-            Dictionary<int, int> fakeRemCars = new Dictionary<int, int>();
-            List<CarsPerClass> fakeCars = new List<CarsPerClass>();
-            foreach (var item in carClassesIds)
+            if(Splits.Count > 3)
             {
-                if (lastSplitContainingThisClass.CountClassCars(carClassesIds.IndexOf(item)) > 0)
+                var lastSplit1 = Splits[Splits.Count - 1];
+                var lastSplit2 = Splits[Splits.Count - 2];
+
+                if(lastSplit1.TotalCarsCount + lastSplit2.TotalCarsCount < fieldSize)
                 {
-
-                    fakeRemCars.Add(item, 999);
-
-
-                    fakeCars.Add(new CarsPerClass
+                    for (int i = 0; i < 4; i++)
                     {
-                        CarClassId = item,
-                        Cars = new List<Line>()
-                    });
-                }
-            }
-
-            int take = firstpart.TakeClassCars(this.fieldSize,
-                lastSplitContainingThisClass.GetClassesCount(),
-                fakeRemCars,
-                carClassesIds[classIndex],
-                fakeCars,
-                lastSplitContainingThisClass.Number-1);
-
-            
-
-            var otherSplitsOnSameCase = (from r in Splits
-             where
-                r.CountClassCars(classIndex) > 0
-                && r.GetClassesCount() == lastSplitContainingThisClass.GetClassesCount()
-                && r.Number < lastSplitContainingThisClass.Number
-             select r).ToList();
-
-            if(otherSplitsOnSameCase.Count > 0)
-            {
-                int take2 = Convert.ToInt32((from r in otherSplitsOnSameCase select r.CountClassCars(classIndex)).Average());
-                take = Math.Min(take, take2);
-            }
-            else
-            {
-                int take2 = Convert.ToInt32((from r in splitsContainingThisClass select r.CountClassCars(classIndex)).Average());
-                take = Math.Min(take, take2);
-            }
-
-
-
-            //int avgCarsInSplit = Convert.ToInt32((from r in splitsContainingThisClass select r.CountClassCars(classIndex)).Average());
-
-
-
-
-
-            //int minToEnsure = ParameterMinCarsInLastSplitClass;
-            //minToEnsure = Math.Min(minToEnsure, avgCarsInSplit);
-
-            // int minToEnsure = Convert.ToInt32(Convert.ToDouble(avgCarsInSplit) * 0.75);
-            int minToEnsure = take;
-
-
-            
-            
-
-            
-
-            int missingcars = Math.Max(0, minToEnsure - lastSplitContainingThisClass.CountClassCars(classIndex));
-            missingcars = Math.Min(missingcars, fieldSize - lastSplitContainingThisClass.TotalCarsCount);
-            if (missingcars == 0) return;
-            int collectedcars = 0;
-
-            int totalcarsupper = (from r in splitsContainingThisClass select r.CountClassCars(classIndex)).Sum();
-            totalcarsupper -= lastSplitContainingThisClass.CountClassCars(classIndex);
-
-            double percentToCollectInUpperSplits = Convert.ToDouble(missingcars) / Convert.ToDouble(totalcarsupper);
-
-            for (int i = splitsContainingThisClass.Count - 2; i >= 0; i--)
-            {
-
-                if (i == 1)
-                {
-
-                }
-                int cars = splitsContainingThisClass[i].CountClassCars(classIndex);
-                int toCollect = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(cars) * percentToCollectInUpperSplits));
-                toCollect = Math.Max(1, toCollect);
-
-                if(toCollect > missingcars - collectedcars)
-                {
-                    toCollect = missingcars - collectedcars;
+                        var pick = lastSplit1.PickClassCars(i);
+                        if (pick.Count > 0)
+                        {
+                            lastSplit2.AddClassCars(i, pick);
+                        }
+                    }
                 }
 
-
-                if (toCollect > 0)
-                {
-                    toCollect = MoveDownCarsLastToLastOfChain(toCollect, classIndex,
-                        splitsContainingThisClass, splitsContainingThisClass[i].Number);
-                }
-
-                collectedcars += toCollect;
-
-                
             }
-            
         }
 
-        private int MoveDownCarsLastToLastOfChain(int carToCollect, int classIndex, List<Split> splitsChain, int sourceSplitNumber)
-        {
-            int ret = Int32.MaxValue;
 
-            var split = (from r in splitsChain where r.Number == sourceSplitNumber select r).FirstOrDefault();
-            int startSplitIndex = splitsChain.IndexOf(split);
-
-            for (int i = startSplitIndex; i < splitsChain.Count - 1; i++)
-            {
-                var pick = splitsChain[i].PickClassCars(classIndex, carToCollect, true);
-                splitsChain[i + 1].AddClassCars(classIndex, pick);
-                ret = Math.Min(pick.Count, ret);
-            }
-
-            if (ret == Int32.MaxValue) ret = 0;
-            return ret;
-        }
+        
 
         private void CleanEmptySplits()
         {
@@ -348,9 +365,9 @@ namespace BetterMatchMaking.Library.Calc
 
             List<int> movedCategories = new List<int>();
 
-            int classesToCompute = classesSof.Count - 1;
-
-            for (int i = 0; i < classesToCompute; i++)
+            
+            // move cars down
+            for (int i = 0; i < classesSof.Count; i++)
             {
                 if (HaveToMoveDown(s, i, classesSof))
                 {
@@ -366,11 +383,12 @@ namespace BetterMatchMaking.Library.Calc
                     }
                 }
             }
+            // -->
+
+
 
 
             
-
-
             for (int j = 0; j < classesSof.Count; j++)
             {
                 int classId = carClassesIds[j];
@@ -380,8 +398,7 @@ namespace BetterMatchMaking.Library.Calc
                     {
 
                        
-                        List<int> exception = null;
-                        /*if (spi == splitIndex) */exception = movedCategories;
+                        List<int> exception = movedCategories;
 
                         var daSplit = GetSplit(spi);
                         
@@ -394,9 +411,17 @@ namespace BetterMatchMaking.Library.Calc
 
                             int availableSlots = fieldSize - daSplit.TotalCarsCount;
 
+                            
+
                             carsToAdd = Math.Max(0, maxcars - currentCars);
                             carsToAdd = Math.Min(carsToAdd, availableSlots);
                             carsToAdd = Math.Max(0, carsToAdd);
+
+                            if (carClassesIds.IndexOf(classId) == carClassesIds.Count - 1)
+                            {
+                                // last class
+                                //carsToAdd = availableSlots;
+                            }
 
                             if (carsToAdd == 0)
                             {
@@ -449,7 +474,8 @@ namespace BetterMatchMaking.Library.Calc
                 // for next splits, move down cars excess
                 for (int j = splitIndex + 1; j < Splits.Count; j++)
                 {
-                    int maxcars = TakeCars(Splits[j], j, i, null);
+                    int maxcars =TakeCars(Splits[j], j, i, null);
+                    
                     int currentCars = Splits[j].CountClassCars(i);
 
                     int carsToRemove = Math.Max(0, currentCars - maxcars);
@@ -625,5 +651,224 @@ namespace BetterMatchMaking.Library.Calc
         }
 
 
+
+        #region deprecated
+
+
+        private void deprecated_EnsureMinCarsInClassSplits(int classId)
+        {
+
+
+            int classIndex = carClassesIds.IndexOf(classId);
+
+
+
+            var splitsContainingThisClass = (from r in Splits
+                                             where r.CountClassCars(classIndex) > 0
+                                             select r).ToList();
+
+            var lastSplitContainingThisClass = (from r in splitsContainingThisClass
+                                                orderby r.Number descending
+                                                select r).FirstOrDefault();
+
+
+
+
+            int carsInUpperSplits = Convert.ToInt32((from r in Splits select r.TotalCarsCount).Average());
+
+            int take = carsInUpperSplits;
+            foreach (var otherClassId in carClassesIds)
+            {
+                if (otherClassId != classId)
+                {
+                    int otherClassIndex = carClassesIds.IndexOf(otherClassId);
+                    take -= lastSplitContainingThisClass.CountClassCars(otherClassIndex);
+                }
+            }
+            take--;
+
+            /*
+
+            int take = 0;
+
+            foreach (var s in splitsContainingThisClass)
+            {
+                int carscount = s.CountClassCars(classIndex);
+                int totalcars = s.TotalCarsCount;
+
+                double p = Convert.ToDouble(carscount) / Convert.ToDouble(totalcars);
+
+                p = Convert.ToDouble(carscount) / p;
+
+                take += Convert.ToInt32(p);
+            }
+            if (splitsContainingThisClass.Count > 0)
+            {
+                take /= splitsContainingThisClass.Count;
+            }
+            take = Math.Min(take, carsInUpperSplits); // numer of cars to take if this class was alone
+
+
+
+            Dictionary<int, int> fakeRemCars = new Dictionary<int, int>();
+            List<CarsPerClass> fakeCars = new List<CarsPerClass>();
+            foreach (var item in carClassesIds)
+            {
+                int lsClassIndex = carClassesIds.IndexOf(item);
+                int lsClassIndexCarCount = lastSplitContainingThisClass.CountClassCars(lsClassIndex);
+                if(lsClassIndex == classIndex)
+                {
+                    lsClassIndexCarCount = take;
+                }
+                if (lsClassIndexCarCount > 0)
+                {
+
+                    fakeRemCars.Add(item, lsClassIndexCarCount);
+                    fakeCars.Add(new CarsPerClass
+                    {
+                        CarClassId = item,
+                        Cars = new List<Line>()
+                    });
+                }
+            }
+            Calc.ProportionnalBalancedMatchMaking pbm = new ProportionnalBalancedMatchMaking();
+            BetterMatchMakingCalculator.CopyParameters(this, pbm);
+            int take2 = pbm.TakeClassCars(carsInUpperSplits,
+                lastSplitContainingThisClass.GetClassesCount(),
+                fakeRemCars,
+                carClassesIds[classIndex],
+                fakeCars,
+                lastSplitContainingThisClass.Number - 1);
+
+            take = Math.Min(take, take2);
+            */
+            int minToEnsure = take;
+
+
+
+
+
+            int missingcars = Math.Max(0, minToEnsure - lastSplitContainingThisClass.CountClassCars(classIndex));
+            missingcars = Math.Min(missingcars, fieldSize - lastSplitContainingThisClass.TotalCarsCount);
+            if (missingcars == 0) return;
+            int collectedcars = 0;
+
+            int totalcarsupper = (from r in splitsContainingThisClass select r.CountClassCars(classIndex)).Sum();
+            totalcarsupper -= lastSplitContainingThisClass.CountClassCars(classIndex);
+
+            double percentToCollectInUpperSplits = Convert.ToDouble(missingcars) / Convert.ToDouble(totalcarsupper);
+
+            for (int i = splitsContainingThisClass.Count - 2; i >= 0; i--)
+            {
+
+                if (i == 1)
+                {
+
+                }
+                int cars = splitsContainingThisClass[i].CountClassCars(classIndex);
+                int toCollect = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(cars) * percentToCollectInUpperSplits));
+                toCollect = Math.Max(1, toCollect);
+
+                if (toCollect > missingcars - collectedcars)
+                {
+                    toCollect = missingcars - collectedcars;
+                }
+
+
+                if (toCollect > 0)
+                {
+                    toCollect = MoveDownCarsLastToLastOfChain(toCollect, classIndex,
+                        splitsContainingThisClass, splitsContainingThisClass[i].Number);
+                }
+
+                collectedcars += toCollect;
+
+
+            }
+
+        }
+
+        private int MoveDownCarsLastToLastOfChain(int carToCollect, int classIndex, List<Split> splitsChain, int sourceSplitNumber)
+        {
+            int ret = Int32.MaxValue;
+
+            var split = (from r in splitsChain where r.Number == sourceSplitNumber select r).FirstOrDefault();
+            int startSplitIndex = splitsChain.IndexOf(split);
+
+            for (int i = startSplitIndex; i < splitsChain.Count - 1; i++)
+            {
+                var pick = splitsChain[i].PickClassCars(classIndex, carToCollect, true);
+                splitsChain[i + 1].AddClassCars(classIndex, pick);
+                ret = Math.Min(pick.Count, ret);
+            }
+
+            if (ret == Int32.MaxValue) ret = 0;
+            return ret;
+        }
+
+
+
+        private void deprecated_GroupEndedSingleClassSplits()
+        {
+            int splitsCount = 0;
+            for (int i = Splits.Count - 1; i >= 0; i--)
+            {
+                if (Splits[i].GetClassesCount() == 1)
+                {
+                    splitsCount++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // end splits to merge
+            if (splitsCount > 1)
+            {
+
+                List<int> carsCount = new List<int>();
+                List<Line> data = new List<Line>();
+                for (int i = 0; i < splitsCount; i++)
+                {
+                    data.AddRange(Splits[Splits.Count - 1 - i].AllCars);
+
+                    carsCount.Add(Splits[Splits.Count - 1 - i].AllCars.Count);
+                }
+
+
+                (firstpart as IMatchMaking).Compute(data, fieldSize);
+                for (int i = 0; i < splitsCount; i++)
+                {
+                    if (i < (firstpart as IMatchMaking).Splits.Count)
+                    {
+                        //Splits[Splits.Count - splitsCount + i] = firstpart.Splits[i];
+                        Splits[Splits.Count - splitsCount + i] = new Split();
+
+                        var src = (firstpart as IMatchMaking).Splits[i];
+                        for (int o = 0; o < 4; o++)
+                        {
+                            var classid = src.GetClassId(o);
+                            var classindex = carClassesIds.IndexOf(classid);
+                            if (classindex >= 0)
+                            {
+                                var classcars = src.GetClassCars(o);
+                                Splits[Splits.Count - splitsCount + i].SetClass(classindex, classcars, classid);
+                            }
+                        }
+
+                        Splits[Splits.Count - splitsCount + i].Number = Splits.Count - splitsCount + i + 1;
+                    }
+                    else
+                    {
+                        Splits.RemoveAt(Splits.Count - splitsCount + i);
+                    }
+
+                }
+
+            }
+        }
+        #endregion
     }
+
 }

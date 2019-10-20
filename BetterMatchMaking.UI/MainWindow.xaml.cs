@@ -31,6 +31,7 @@ namespace BetterMatchMaking.UI
         SyncSliderBox sspMaxSofFa;
         SyncSliderBox sspMaxSofFb;
         SyncSliderBox sspTopSplitExc;
+        SyncSliderBox sspEqualize;
 
         public MainWindow()
         {
@@ -44,6 +45,7 @@ namespace BetterMatchMaking.UI
             sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 150, 12);
             sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
+            sspEqualize = new SyncSliderBox(lblParameterEqualize, tbxParameterEqualize, sldParameterEqualize, 0, 1, 1);
 
             sspP.Visible = false;
             sspIR.Visible = false;
@@ -52,6 +54,8 @@ namespace BetterMatchMaking.UI
             sspMaxSofFa.Visible = false;
             sspMaxSofFb.Visible = false;
             sspTopSplitExc.Visible = false;
+            sspEqualize.Visible = false;
+
 
             this.Loaded += MainWindow_Loaded;
         }
@@ -154,6 +158,7 @@ namespace BetterMatchMaking.UI
             mm.ParameterMaxSofFunctX = sspMaxSofFx.Value;
             mm.ParameterMaxSofFunctB = sspMaxSofFb.Value;
             mm.ParameterTopSplitException = sspTopSplitExc.Value;
+            mm.ParameterEqualizeSplits = sspEqualize.Value;
 
             DateTime dtStart = DateTime.Now;
             mm.Compute(parser.DistinctCars, fieldSize);
@@ -325,6 +330,7 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFb.Visible = mm.UseParameterMaxSofDiff;
                 sspMaxSofFx.Visible = mm.UseParameterMaxSofDiff;
                 sspTopSplitExc.Visible = mm.UseParameterTopSplitException;
+                sspEqualize.Visible = mm.UseParameterEqualizeSplits;
             }
             else
             {
@@ -335,6 +341,8 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFb.Visible = false;
                 sspMaxSofFx.Visible = false;
                 sspTopSplitExc.Visible = false;
+                sspEqualize.Visible = false;
+
             }
         }
 

@@ -31,7 +31,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Registration file:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
-                    <TextBox x:Name="tbxRegistrationFile" Grid.Row="0" Grid.Column="1" Text="ilms-29033477-fieldsize45.csv" />
+                    <TextBox x:Name="tbxRegistrationFile" Grid.Row="0" Grid.Column="1" Text="petit-le-mans-2019-fieldsize45.csv" />
                     <Button x:Name="btnBrowseRegistrationFile" Click="BtnBrowseRegistrationFile_Click" Content="Browse..." Grid.Row="0" Grid.Column="3" Margin="5,0,0,0" Height="20" VerticalAlignment="Top" />
                     <Button x:Name="btnLoadRegistrationFile" Click="BtnLoadRegistrationFile_Click" Content="LOAD" Grid.Row="0" Grid.Column="4" FontWeight="Bold" Margin="5,0,0,0" MinWidth="100" />
 

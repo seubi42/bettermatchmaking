@@ -38,9 +38,9 @@ namespace BetterMatchMaking.UI
             InitializeComponent();
             parser = new Library.Data.CsvParser();
 
-            sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 1, 66, 37);
+            sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 5, 66, 37);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
-            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 1, 100, 15);
+            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 5, 100, 15);
             sspMaxSofFx = new SyncSliderBox(lblParameterMaxSoffFunctX, tbxParameterMaxSoffFunctX, sldParameterMaxSoffFunctX, 0, 9999, 1000);
             sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 150, 12);
             sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
@@ -143,14 +143,12 @@ namespace BetterMatchMaking.UI
             tbxFieldSize.Text = fieldSize.ToString();
 
 
-            Library.Calc.IMatchMaking mm = null;
-
+  
             string strAlgo = (cboAlgorithm.SelectedItem as ComboBoxItem).Tag.ToString();
 
 
             // instanciate the good algorithm
-            var calc = new BetterMatchMaking.Library.BetterMatchMakingCalculator(strAlgo);
-            mm = calc.Calculator;
+            var mm = new BetterMatchMaking.Library.BetterMatchMakingCalculator(strAlgo);
             mm.ParameterPValue = sspP.Value;
             mm.ParameterIRValue = sspIR.Value;
             mm.ParameterMaxSofDiff = sspMaxSofDiff.Value;
@@ -160,27 +158,24 @@ namespace BetterMatchMaking.UI
             mm.ParameterTopSplitException = sspTopSplitExc.Value;
             mm.ParameterEqualizeSplits = sspEqualize.Value;
 
-            DateTime dtStart = DateTime.Now;
             mm.Compute(parser.DistinctCars, fieldSize);
-            var time = Convert.ToInt32(DateTime.Now.Subtract(dtStart).TotalMilliseconds);
             gridResult.ItemsSource = mm.Splits;
             result = mm.Splits;
 
             AddClassNamesToResults(result);
+            var audit = mm.GetAudit();
 
-            double pcent = 0;
-            int splitsHavingDiffClassesSof = (from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Count();
-            if(splitsHavingDiffClassesSof > 0) pcent = Math.Round((from r in mm.Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average());
+            
             string morestats = mm.Splits.Count + " splits. ";
-            morestats += (from r in mm.Splits select r.AllCars.Count).Sum() + " cars. ";
-            morestats += "Computed in " + time + " ms. Average split car classes difference: ";
-            morestats += pcent + "%";
+            morestats += audit.Cars + " cars. ";
+            morestats += "Computed in " + audit.ComputingTimeInMs + " ms. Average split car classes difference: ";
+            morestats += audit.AverageSplitClassesSofDifference + "%";
             tbxStats.Text = morestats;
 
-            tbxStats.Background = ColorConverter.GetPercentColor(Convert.ToInt32(pcent));
+            tbxStats.Background = ColorConverter.GetPercentColor(audit.AverageSplitClassesSofDifference);
 
 
-            CheckNobodyIsMissingAndFieldSize();
+            CheckAudit(audit);
         }
 
         private void AddClassNamesToResults(List<Split> result)
@@ -214,37 +209,11 @@ namespace BetterMatchMaking.UI
             return null;
         }
 
-        private void CheckNobodyIsMissingAndFieldSize()
+        private void CheckAudit(Library.Data.Audit audit)
         {
-            int missingInList = 0;
-
-            List<int> allcars = (from r in parser.DistinctCars select r.car_id).ToList();
-            foreach (var split in result)
+            if (!audit.Success)
             {
-                foreach (var car in split.AllCars)
-                {
-                    int car_id = car.car_id;
-                    if(allcars.Contains(car_id))
-                    {
-                        allcars.Remove(car_id);
-                    }
-                    else
-                    {
-                        missingInList++;
-                    }
-                }
-
-                if (split.TotalCarsCount > fieldsize)
-                {
-                    MessageBox.Show("Split " + split.Number + " exceed field size !");
-                }
-            }
-
-
-
-            if(allcars.Count > 0 || missingInList > 0)
-            {
-                MessageBox.Show("Error in algorithm, cars are missing !");
+                MessageBox.Show(audit.ToString());
             }
         }
 
@@ -321,16 +290,16 @@ namespace BetterMatchMaking.UI
             {
                 string strAlgo = (cboAlgorithm.SelectedItem as ComboBoxItem).Tag.ToString();
                 BetterMatchMaking.Library.BetterMatchMakingCalculator calc = new Library.BetterMatchMakingCalculator(strAlgo);
-                var mm = calc.Calculator as Library.Calc.IMatchMaking;
+                
 
-                sspP.Visible = mm.UseParameterP;
-                sspIR.Visible = mm.UseParameterIR;
-                sspMaxSofDiff.Visible = mm.UseParameterMaxSofDiff;
-                sspMaxSofFa.Visible = mm.UseParameterMaxSofDiff;
-                sspMaxSofFb.Visible = mm.UseParameterMaxSofDiff;
-                sspMaxSofFx.Visible = mm.UseParameterMaxSofDiff;
-                sspTopSplitExc.Visible = mm.UseParameterTopSplitException;
-                sspEqualize.Visible = mm.UseParameterEqualizeSplits;
+                sspP.Visible = calc.UseParameterP;
+                sspIR.Visible = calc.UseParameterIR;
+                sspMaxSofDiff.Visible = calc.UseParameterMaxSofDiff;
+                sspMaxSofFa.Visible = calc.UseParameterMaxSofDiff;
+                sspMaxSofFb.Visible = calc.UseParameterMaxSofDiff;
+                sspMaxSofFx.Visible = calc.UseParameterMaxSofDiff;
+                sspTopSplitExc.Visible = calc.UseParameterTopSplitException;
+                sspEqualize.Visible = calc.UseParameterEqualizeSplits;
             }
             else
             {

@@ -3,18 +3,96 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library
 {
-    public class BetterMatchMakingCalculator
+    public class BetterMatchMakingCalculator : Calc.IMatchMaking
     {
-        public Calc.IMatchMaking Calculator { get; private set; }
+        Calc.IMatchMaking instance;
 
         public BetterMatchMakingCalculator(string algorithm)
         {
             var type = this.GetType().Assembly.GetType("BetterMatchMaking.Library.Calc." + algorithm);
-            Calculator = Activator.CreateInstance(type) as Calc.IMatchMaking;
+            instance = Activator.CreateInstance(type) as Calc.IMatchMaking;
         }
+
+        #region Wrapping instance
+        public List<Split> Splits
+        {
+            get { return instance.Splits; }
+        }
+
+        public bool UseParameterP
+        {
+            get { return instance.UseParameterP; }
+        }
+
+        public bool UseParameterIR
+        {
+            get { return instance.UseParameterIR; }
+        }
+
+        public bool UseParameterMaxSofDiff
+        {
+            get { return instance.UseParameterMaxSofDiff; }
+        }
+
+        public bool UseParameterTopSplitException
+        {
+            get { return instance.UseParameterTopSplitException; }
+        }
+
+        
+        public bool UseParameterEqualizeSplits
+        {
+            get { return instance.UseParameterEqualizeSplits; }
+        }
+
+        public int ParameterPValue
+        {
+            get { return instance.ParameterPValue; }
+            set { instance.ParameterPValue = value; }
+        }
+        public int ParameterIRValue
+        {
+            get { return instance.ParameterIRValue; }
+            set { instance.ParameterIRValue = value; }
+        }
+        public int ParameterMaxSofDiff
+        {
+            get { return instance.ParameterMaxSofDiff; }
+            set { instance.ParameterMaxSofDiff = value; }
+        }
+        public int ParameterMaxSofFunctA
+        {
+            get { return instance.ParameterMaxSofFunctA; }
+            set { instance.ParameterMaxSofFunctA = value; }
+        }
+        public int ParameterMaxSofFunctB
+        {
+            get { return instance.ParameterMaxSofFunctB; }
+            set { instance.ParameterMaxSofFunctB = value; }
+        }
+        public int ParameterMaxSofFunctX
+        {
+            get { return instance.ParameterMaxSofFunctX; }
+            set { instance.ParameterMaxSofFunctX = value; }
+        }
+        public int ParameterTopSplitException
+        {
+            get { return instance.ParameterTopSplitException; }
+            set { instance.ParameterTopSplitException = value; }
+        }
+        public int ParameterEqualizeSplits
+        {
+            get { return instance.ParameterEqualizeSplits; }
+            set { instance.ParameterEqualizeSplits = value; }
+        }
+        #endregion
+
+        public int FieldSize { get; set; }
+        public List<Line> EntryList { get; private set; }
 
         public static void CopyParameters(Calc.IMatchMaking source, Calc.IMatchMaking target)
         {
@@ -26,6 +104,89 @@ namespace BetterMatchMaking.Library
                 var o = parameter.GetValue(source);
                 parameter.SetValue(target, o);
             }
+        }
+
+        public void Compute(List<Line> data, int fieldSize)
+        {
+            FieldSize = fieldSize;
+            Compute(data);
+        }
+
+        public void Compute(List<Line> data)
+        {
+            EntryList = data;
+            processStart = DateTime.Now;
+            instance.Compute(data, FieldSize);
+            processEnd = DateTime.Now;
+
+        }
+
+
+        DateTime processStart;
+        DateTime processEnd;
+
+        public Data.Audit GetAudit()
+        {
+            Data.Audit ret = new Audit();
+            ret.Success = true;
+            ret.ComputingTimeInMs = Convert.ToInt32(processEnd.Subtract(processStart).TotalMilliseconds);
+            ret.SplitsExceedsFieldSize = new List<int>();
+            ret.CarsMissingInAnySplit = new List<int>();
+            ret.NotExpectedCarsRegistred = new List<int>();
+            ret.Cars = 0;
+            ret.Splits = 0;
+
+
+
+            List<int> allcars = (from r in EntryList select r.driver_id).ToList();
+
+            
+            foreach (var split in Splits)
+            {
+                ret.Cars += split.TotalCarsCount;
+                ret.Splits++;
+                foreach (var car in split.AllCars)
+                {
+                    int car_id = car.driver_id;
+                    if (allcars.Contains(car_id))
+                    {
+                        allcars.Remove(car_id);
+                    }
+                    else
+                    {
+                        ret.NotExpectedCarsRegistred.Add(car_id);
+                        ret.Success = false;
+                    }
+                }
+
+                if (split.TotalCarsCount > FieldSize)
+                {
+                    ret.SplitsExceedsFieldSize.Add(split.Number);
+                    ret.Success = false;
+                }
+            }
+
+
+
+            if (allcars.Count > 0 )
+            {
+                ret.CarsMissingInAnySplit.AddRange(allcars);
+                ret.Success = false;
+            }
+
+            
+            int splitsHavingDiffClassesSof = (from r in Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Count();
+            if (splitsHavingDiffClassesSof > 0)
+            {
+                ret.AverageSplitClassesSofDifference = Convert.ToInt32(Math.Round((from r in Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average()));
+            }
+
+            double splitAvgSize = (from r in Splits select r.TotalCarsCount).Average();
+            double splitMinSize = (from r in Splits select r.TotalCarsCount).Min();
+            ret.MinSplitSizePercent = splitMinSize / splitAvgSize;
+            
+
+            return ret;
         }
     }
 }

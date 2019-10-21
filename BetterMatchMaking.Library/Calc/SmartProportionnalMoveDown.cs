@@ -146,6 +146,8 @@ namespace BetterMatchMaking.Library.Calc
                 m.ToSplit = item.Number;
                 m.ClassesCount = item.GetClassesCount();
                 m.ClassCarsTarget = new Dictionary<int, int>();
+                
+                
 
                 foreach (var classid in carClassesIds)
                 {
@@ -157,6 +159,8 @@ namespace BetterMatchMaking.Library.Calc
                     }
                 }
 
+                m.TempTotal = m.CountTotalTargets();
+
                 modes.Add(m);
             }
 
@@ -165,61 +169,62 @@ namespace BetterMatchMaking.Library.Calc
             
 
             
-            var classesToEqualize = carClassesIds.ToArray();
+            var classesToEqualize = carClassesIds.ToArray().Reverse();
             foreach (var classid in classesToEqualize)
             {
                 var lastmode = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select r).LastOrDefault();
                 if (lastmode != null)
                 {
+                    double totalcars = (from r in modes where r.ClassCarsTarget.ContainsKey(classid)   select r.ClassCarsTarget[classid]).Sum();
 
-                    double lastsplitcars = lastmode.ClassCarsTarget[classid];
+                    List<MultiClassChanges> othermodes = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) where r.ToSplit < lastmode.FromSplit select r).ToList();
+                    if(othermodes.Count == 0) othermodes = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select r).ToList();
+                    var max = (from r in othermodes select r.ClassCarsTarget[classid]).Max();
+                    double avgclass = (from r in othermodes select r.ClassesCount).Average();
 
-                    double totalcars = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select r.ClassCarsTarget[classid]).Sum();
+                    double lastsplitcars = Convert.ToDouble(lastmode.ClassCarsTarget[classid]);
+                    double lastsplitcarstarget = max;
 
-                    double avgcars = (from r in modes
-                                      where r.ClassCarsTarget.ContainsKey(classid)
-                                      select
-                                            r.ClassCarsTarget[classid] / (1d / Convert.ToDouble(r.ClassCarsTarget.Count))
-                                      ).Average();
 
-                    double avgcarsall = (from r in modes
-                                      where r.ClassCarsTarget.ContainsKey(classid)
-                                      select r.CountTotalTargets()).Average();
+                    lastsplitcarstarget = max;
 
-                    if (lastmode.ClassesCount == 1)
+                    if(lastmode.ClassesCount == 1)
                     {
-                        avgcars = (from r in modes select r.CountTotalTargets()).Average();
+                        lastsplitcarstarget = (from r in modes select r.CountTotalTargets()).Average();
                     }
-                    else if(lastmode.ClassesCount < carClassesIds.Count)
+                    else if (lastmode.ClassesCount < Math.Ceiling(avgclass))
                     {
-                        double ratio = avgcars / avgcarsall;
-                        avgcars /= ratio;
+                        lastsplitcarstarget *= avgclass / lastmode.ClassesCount;
                     }
 
-                    double lastsplitcarstarget = avgcars / Convert.ToDouble(lastmode.ClassCarsTarget.Count);
+                    
 
-                    double splitscontainingcars = (from r in modes where r.ClassCarsTarget.ContainsKey(classid) select r).Count();
-
-                    if (avgcars - lastsplitcarstarget > 3 || avgcars - lastsplitcars > 5)
+                    if (true)
                     {
                         double carstofind = lastsplitcarstarget - lastsplitcars;
-                        double ratio = carstofind / totalcars;
+                        double maxcarstofind = fieldSize - lastmode.TempTotal;
+                        carstofind = Math.Min(carstofind, maxcarstofind);
 
-
-
-                        var splitsToReduce = (from r in modes
-                                              where r.ClassCarsTarget.ContainsKey(classid)
-                                              && r.ToSplit < lastmode.FromSplit
-                                              select r).ToList();
-
-                        foreach (var splitToReduce in splitsToReduce)
+                        if (carstofind > 0)
                         {
-                            double insplitcars = Convert.ToDouble(splitToReduce.ClassCarsTarget[classid]);
-                            int toremove = Convert.ToInt32(insplitcars * ratio);
-                            splitToReduce.ClassCarsTarget[classid] = Convert.ToInt32(insplitcars - toremove);
+                            double ratio = carstofind / totalcars;
 
 
-                            lastmode.ClassCarsTarget[classid] += toremove;
+
+                            var splitsToReduce = (from r in modes
+                                                  where r.ClassCarsTarget.ContainsKey(classid)
+                                                  && r.ToSplit < lastmode.FromSplit
+                                                  select r).ToList();
+
+                            foreach (var splitToReduce in splitsToReduce)
+                            {
+                                double insplitcars = Convert.ToDouble(splitToReduce.ClassCarsTarget[classid]);
+                                int toremove = Convert.ToInt32(insplitcars * ratio);
+                                splitToReduce.ClassCarsTarget[classid] = Convert.ToInt32(insplitcars - toremove);
+
+
+                                lastmode.ClassCarsTarget[classid] += toremove;
+                            }
                         }
                     }
                 }

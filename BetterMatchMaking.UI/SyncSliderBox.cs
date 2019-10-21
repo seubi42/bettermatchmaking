@@ -120,6 +120,9 @@ namespace BetterMatchMaking.UI
                         else tbxValue -= 100;
                     }
 
+                    tbxValue = Math.Max(tbxValue, Min);
+                    tbxValue = Math.Min(tbxValue, Max);
+
                     Tbx.Text = tbxValue.ToString();
                 }
             }

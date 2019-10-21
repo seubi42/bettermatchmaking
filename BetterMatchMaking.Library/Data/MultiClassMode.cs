@@ -14,6 +14,8 @@ namespace BetterMatchMaking.Library.Data
 
         public Dictionary<int, int> ClassCarsTarget { get; set; }
 
+        public int TempTotal { get; set; }
+
         public string ClassesKey
         {
             get

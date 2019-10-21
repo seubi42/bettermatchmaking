@@ -206,7 +206,7 @@ namespace BetterMatchMaking.Library.Calc
                     double maxcarstofind = fieldSize - lastmode.TempTotal;
                     carstofind = Math.Min(carstofind, maxcarstofind);
 
-                    if (carstofind > 4)
+                    if (carstofind > 6)
                     {
                         double ratio = carstofind / totalcars;
 
@@ -398,12 +398,13 @@ namespace BetterMatchMaking.Library.Calc
 
         private void GroupLastSplit()
         {
-            if(Splits.Count > 3)
+
+            if (Splits.Count > 1)
             {
                 var lastSplit1 = Splits[Splits.Count - 1];
                 var lastSplit2 = Splits[Splits.Count - 2];
 
-                if(lastSplit1.TotalCarsCount + lastSplit2.TotalCarsCount < fieldSize)
+                if (lastSplit1.TotalCarsCount + lastSplit2.TotalCarsCount < fieldSize)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -415,7 +416,7 @@ namespace BetterMatchMaking.Library.Calc
                     }
                 }
 
-            }
+            }   
         }
 
 

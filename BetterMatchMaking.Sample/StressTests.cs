@@ -15,6 +15,8 @@ namespace BetterMatchMaking.Sample
 
         public void Tests()
         {
+            DateTime dtStart = DateTime.Now;
+
             var di = new DirectoryInfo("..\\..\\..\\BetterMatchMaking.UI\\Bin\\Debug\\");
             var files = di.GetFiles("*-fieldsize*.csv");
             foreach (var file in files)
@@ -25,6 +27,10 @@ namespace BetterMatchMaking.Sample
             Console.WriteLine("Test done: " + tests);
             Console.WriteLine("- Failed: " + testsFailed);
             Console.WriteLine("- Warning Splits Diff: " + testsSplitsDiff);
+
+            var bench = DateTime.Now.Subtract(dtStart);
+            Console.WriteLine("in " + bench.ToString() + " ("+bench.TotalSeconds+" s)");
+
             Console.ReadLine();
         }
 
@@ -81,7 +87,7 @@ namespace BetterMatchMaking.Sample
                     {
                         testsFailed++;
                     }
-                    if(audit.MinSplitSizePercent < 0.7)
+                    if(audit.MinSplitSizePercent < 0.5)
                     {
                         testsSplitsDiff++;
                     }

@@ -350,7 +350,7 @@ namespace BetterMatchMaking.Library.Calc
                     if(carsListPerClass.Count > i)
                     {
                         
-                        var cars = carsListPerClass[i].GetCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
+                        var cars = carsListPerClass[i].PickCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
                         if(cars.Count > 0)
                         {
                             split.SetClass(i, cars, carsListPerClass[i].CarClassId); // set the class car list
@@ -372,7 +372,7 @@ namespace BetterMatchMaking.Library.Calc
         }
 
 
-        public virtual int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<CarsPerClass> carsListPerClass, int split)
+        public virtual int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<ClassCarsQueue> carsListPerClass, int split)
         {
             int carsToTake = fieldSize / remCarClasses;
             return carsToTake;

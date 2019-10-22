@@ -54,7 +54,7 @@ namespace BetterMatchMaking.Library.Calc
 
 
 
-        List<CarsPerClass> carclasses;
+        List<ClassCarsQueue> carclasses;
         List<int> carClassesIds;
 
 
@@ -376,7 +376,7 @@ namespace BetterMatchMaking.Library.Calc
                     int take = mode.ClassCarsTarget[classid];
                     int classIndex = carClassesIds.IndexOf(classid);
 
-                    var cars = carclasses[classIndex].GetCars(take);
+                    var cars = carclasses[classIndex].PickCars(take);
                     split.SetClass(classIndex, cars, classid);
                 }
 

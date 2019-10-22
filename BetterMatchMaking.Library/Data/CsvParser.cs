@@ -7,22 +7,60 @@ using System.IO;
 
 namespace BetterMatchMaking.Library.Data
 {
+    /// <summary>
+    /// This tool can read a CSV file to create a List of Line (the entry list before the split).
+    /// It also include a function to group "distinct lines" of cars (from driver lines) 
+    /// </summary>
     public class CsvParser
     {
-        public List<Line> Data { get; private set; }
-        public List<Line> DistinctCars { get; private set; }
-
+        #region Constructor
         public CsvParser()
         {
             Data = new List<Line>();
             DistinctCars = new List<Line>();
         }
+        #endregion
 
+        /// <summary>
+        /// The raw Lines data. 
+        /// If team event, it will contain 1 line per driver + 1 line for the team itself (with driverid < 0 and no irating)
+        /// So, multiple lines can have same TeamId (when drivers are sharing the same car)
+        /// </summary>
+        public List<Line> Data { get; private set; }
+
+        /// <summary>
+        /// Distinct lines. 1 line per car.
+        /// So, if team event, iRating of this line will be the average of drivers.
+        /// To help debugging, Name property concatenate driver names too.
+        /// </summary>
+        public List<Line> DistinctCars { get; private set; }
+
+        
+        /// <summary>
+        /// To add a line
+        /// </summary>
+        /// <param name="line">Can be a DRIVER line (with driverid more than 0 + and iRating value)
+        /// or TEAM line (with driverid less than 0 + irating = 0)
+        /// </param>
         public void Add(Line line)
         {
             Data.Add(line);
         }
 
+        /// <summary>
+        /// To add a line
+        /// </summary>
+        /// <param name="carId">iRacing Car Id (Ex: 102 = Porsche RSR)</param>
+        /// <param name="carClassId">iRacing Class Id (Ex: 100 = GTE Class)</param>
+        /// <param name="teamId">The iRacing Team Id.
+        /// If not a team event, teamId is same than driverId.</param>
+        /// <param name="driverId">The iRacing Customer Id.
+        /// For a driver line iRacing Id is more than 0.
+        /// For a team line iRacing Id is less than 0 and equals to team_id.
+        /// </param>
+        /// <param name="name">Team Name or Driver Name</param>
+        /// <param name="rating">The iRating of the Driver (or the average iRating of the team if team race).
+        /// For a team line, iRating is 0.</param>
         public void Add(int carId, int carClassId, int teamId, int driverId, string name, int rating)
         {
             Line l = new Line
@@ -37,6 +75,12 @@ namespace BetterMatchMaking.Library.Data
             Add(l);
         }
 
+
+        /// <summary>
+        /// Read a CSV file.
+        /// Columns needed are : car_id;car_class_i;car_class_id;team_id;driver_id;name;%rating%
+        /// </summary>
+        /// <param name="file">The path of the CSV file</param>
         public void Read(string file)
         {
             Data.Clear();
@@ -96,6 +140,10 @@ namespace BetterMatchMaking.Library.Data
             GroupDistinctCars();
         }
 
+        /// <summary>
+        /// This method will bind the DistinctCars List from Data list.
+        /// It will group drivers of the same team using the team_id properties of each lines.
+        /// </summary>
         public void GroupDistinctCars()
         {
             // Get distinct cars

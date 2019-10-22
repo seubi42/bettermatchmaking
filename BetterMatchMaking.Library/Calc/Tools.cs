@@ -16,13 +16,13 @@ namespace BetterMatchMaking.Library.Calc
 
 
 
-        public static List<Data.CarsPerClass> SplitCarsPerClass(List<Data.Line> data)
+        internal static List<Data.ClassCarsQueue> SplitCarsPerClass(List<Data.Line> data)
         {
-            List<Data.CarsPerClass> ret = new List<Data.CarsPerClass>();
+            List<Data.ClassCarsQueue> ret = new List<Data.ClassCarsQueue>();
             List<int> classes = (from r in data select r.car_class_id).Distinct().ToList();
             foreach (var c in classes)
             {
-                ret.Add(new Data.CarsPerClass
+                ret.Add(new Data.ClassCarsQueue
                 {
                     CarClassId = c,
                     Cars = (from r in data where r.car_class_id == c orderby r.rating descending select r).ToList()
@@ -32,7 +32,7 @@ namespace BetterMatchMaking.Library.Calc
             return ret;
         }
 
-        public static int CountRemainingCars(List<Data.CarsPerClass> data)
+        internal static int CountRemainingCars(List<Data.ClassCarsQueue> data)
         {
             return (from r in data select r.Cars.Count).Sum();
         }

@@ -36,6 +36,6 @@ namespace BetterMatchMaking.Library.Calc
     {
         int TakeClassCars(int fieldSize, int remCarClasses,
             Dictionary<int, int> classRemainingCars, int classid,
-            List<Data.CarsPerClass> carsListPerClass, int split);
+            List<Data.ClassCarsQueue> carsListPerClass, int split);
     }
 }

@@ -11,7 +11,7 @@ namespace BetterMatchMaking.Library.Calc
     {
         public override int TakeClassCars(int fieldSize, int remCarClasses,
             Dictionary<int, int> classRemainingCars, int classid,
-            List<CarsPerClass> carsListPerClass, int split)
+            List<ClassCarsQueue> carsListPerClass, int split)
         {
 
             double allTotalCars = (from r in classRemainingCars select r.Value).Sum();

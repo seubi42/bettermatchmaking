@@ -7,40 +7,43 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
+    /// <summary>
+    /// This algorithm override the TakeClassCars of the ClassicEqualitarian.
+    /// Please see and tun the ClassicEqualitarian algorithm first to understand the process.
+    /// 
+    /// The TakeClassCars method implement a fixed rule to get a nice distribution between classes.
+    /// </summary>
     public class ClassicProportionsRuled : ClassicEqualitarian, ITakeCarsProportionCalculator
     {
-        List<int> carClassesIds;
+        #region Initialization
+        // classes in the race (for every splits)
+        List<int> carClassesIds; 
 
         public void Init(List<int> classesid)
         {
             carClassesIds = classesid;
         }
+        #endregion
 
-
-        public override int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<ClassCarsQueue> carsListPerClass, int split)
-        {
-
-            // init carClassesId if not
-            if(carClassesIds == null)
-            {
-                var classesId = (from r in classRemainingCars select r.Key).ToList();
-                Init(classesId);
-            }
-            // -->
-
-            var classesIdWithRemaningCars = (from r in classRemainingCars where r.Value > 0 select r.Key).ToList();
-            int take = TakeCars(classid, classesIdWithRemaningCars, fieldSize);
-
-
-
-            return take;
-        }
-
+        /// <summary>
+        /// The Main idea of this algorithm.
+        /// Return car number depedent to % rules witch gives a good repartition.
+        /// 
+        /// This rule is hardcoded, maybe one day it will be fine to describe it
+        /// in parameters but anyway...
+        /// </summary>
+        /// <param name="classId">class id you need cars</param>
+        /// <param name="classes">list of classes you have in your split (the Ids)</param>
+        /// <param name="fieldSizeOrLimit">how many maximum avaible slot to fill (for all classes)</param>
+        /// <returns></returns>
         private int TakeCars(int classId, List<int> classes, int fieldSizeOrLimit)
         {
-            
             List<double> classesPercent = new List<double>();
 
+            // carClassesIds contains classes ids which are in the race
+            // globally (on all splits, not just this one)
+            
+            // the rules
             if (carClassesIds.Count == 4)
             {
                 // configuration with 4 classes has to be tested
@@ -53,19 +56,22 @@ namespace BetterMatchMaking.Library.Calc
             {
                 classesPercent.Add(0.26d);
                 classesPercent.Add(0.29d);
-                classesPercent.Add(0.45d);                
+                classesPercent.Add(0.45d);
             }
             else if (carClassesIds.Count == 2)
             {
                 classesPercent.Add(0.40d);
                 classesPercent.Add(0.60d);
-                
+
             }
             else if (carClassesIds.Count == 1)
             {
                 classesPercent.Add(1.0d);
             }
+            // -->
 
+
+            // rule of three process
             double pToGet = 0;
             double pCoef = 0;
 
@@ -83,12 +89,31 @@ namespace BetterMatchMaking.Library.Calc
             }
 
             double coef = (pToGet / pCoef);
-            double result = Convert.ToDouble(fieldSizeOrLimit) * coef ;
-
+            double result = Convert.ToDouble(fieldSizeOrLimit) * coef;
+            // -->
 
             return Convert.ToInt32(result);
 
         }
+
+
+        public override int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<ClassCarsQueue> carsListPerClass, int split)
+        {
+            // Automatic Initialization : init carClassesId if not
+            if (carClassesIds == null)
+            {
+                var classesId = (from r in classRemainingCars select r.Key).ToList();
+                Init(classesId);
+            }
+            // -->
+            
+            //get classes with remaining cars
+            var classesIdWithRemaningCars = (from r in classRemainingCars where r.Value > 0 select r.Key).ToList();
+
+            return TakeCars(classid, classesIdWithRemaningCars, fieldSize);
+        }
+
+        
 
     }
 }

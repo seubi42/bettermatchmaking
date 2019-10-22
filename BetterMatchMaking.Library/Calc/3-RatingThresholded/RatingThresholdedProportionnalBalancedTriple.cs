@@ -9,42 +9,49 @@ namespace BetterMatchMaking.Library.Calc
 {
     public class RatingThresholdedProportionnalBalancedTriple : IMatchMaking
     {
-        // parameters
+        #region Active Parameters
         public bool UseParameterClassPropMinPercent
         {
             get { return true; }
         }
+        public int ParameterClassPropMinPercentValue { get; set; }
         public bool UseParameterRatingThreshold
         {
             get { return true; }
         }
-        public bool UseParameterMaxSofDiff
-        {
-            get { return false; }
-        }
+        public int ParameterRatingThresholdValue { get; set; }
+        #endregion
+
+        #region Disabled Parameters
         public bool UseParameterTopSplitException
         {
             get { return false; }
         }
+        public int ParameterTopSplitExceptionValue { get; set; }
+
+        public bool UseParameterMaxSofDiff
+        {
+            get { return false; }
+        }
+        public int ParameterMaxSofDiffValue { get; set; }
+        public int ParameterMaxSofFunctAValue { get; set; }
+        public int ParameterMaxSofFunctBValue { get; set; }
+        public int ParameterMaxSofFunctXValue { get; set; }
+
+
 
         public bool UseParameterMostPopulatedClassInEverySplits
         {
             get { return false; }
         }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
+        #endregion
 
-        public int ParameterClassPropMinPercentValue { get; set; }
-        public int ParameterRatingThresholdValue { get; set; }
-        public int ParameterMaxSofDiffValue { get; set; }
-        public int ParameterMaxSofFunctAValue { get; set; }
-        public int ParameterMaxSofFunctBValue { get; set; }
-        public int ParameterMaxSofFunctXValue { get; set; }
-        public int ParameterTopSplitExceptionValue { get; set; }
-        // -->
 
         public List<Split> Splits { get; private set; }
 
-        IMatchMaking c;
+
+        IMatchMaking c; // this algorithm will use other ones
 
 
         internal virtual int GetiRatingLimit()

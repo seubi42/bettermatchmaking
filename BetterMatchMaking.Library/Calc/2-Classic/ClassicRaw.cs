@@ -7,9 +7,17 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
+    /// <summary>
+    /// This algorithm is a very simple one.
+    /// Result are pretty close to iRacing one.
+    /// But there is no correction to round car number on last split.
+    /// 
+    /// Is was usefull for me to start from zero, and to understand
+    /// problems needed to be solved in a simple case.
+    /// </summary>
     public class ClassicRaw : IMatchMaking, ITakeCarsProportionCalculator
     {
-        // parameters
+        #region Disabled Parameters
         public bool UseParameterClassPropMinPercent
         {
             get { return false; }
@@ -38,7 +46,7 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctBValue { get; set; }
         public int ParameterMaxSofFunctXValue { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
-        // -->
+        #endregion
 
         public List<Split> Splits { get; private set; }
 
@@ -77,18 +85,12 @@ namespace BetterMatchMaking.Library.Calc
 
             int splitCounter = 1;
 
-            int tempLastClassCar = 0;
-            int tempLastClassCarPrev = 0;
 
             while (SumValues(classRemainingCars) > 0) // when cars remaings
             {
                 // count classes containing remaining cars
                 int remCarClasses = (from r in classRemainingCars where r.Value > 0 select r).Count();
                 
-
-
-
-
                 foreach (var carClass in carsListPerClass)
                 {
                     // count cars to take in this class 
@@ -107,8 +109,6 @@ namespace BetterMatchMaking.Library.Calc
                 var lastClass = carsListPerClass.LastOrDefault(); //get last class, which is the class with more cars then the other
                 if (lastClass != null)
                 {
-                    
-
                     // sum cars in this split
                     int carsInThisSplit = 0;
                     foreach (var carClass in carsListPerClass)
@@ -132,7 +132,7 @@ namespace BetterMatchMaking.Library.Calc
                     }
                 }
 
-                // iis there always the same number of car class than the previous split ?
+                // is there always the same number of car class than the previous split ?
                 if (remCarClasses == currentMode.ClassesCount)
                 {
                     // yes, just update the ToSplit number
@@ -152,9 +152,6 @@ namespace BetterMatchMaking.Library.Calc
             }
 
             
-
-
-
             // create the array of splits
             Splits = new List<Split>();
             int maxsplit = (from r in modes select r.ToSplit).Max();
@@ -198,7 +195,7 @@ namespace BetterMatchMaking.Library.Calc
 
 
             // AT THIS POINT :
-            // on the Splits array, all ClassXTarget values are up to date with
+            // on the Splits array, all Class{i}Target values are up to date with
             // number of cars we want
             // for each split, and each class.
 
@@ -211,7 +208,6 @@ namespace BetterMatchMaking.Library.Calc
                     int carsToAddInClass = split.GetClassTarget(i); // get the cars count we want
                     if(carsListPerClass.Count > i)
                     {
-                        
                         var cars = carsListPerClass[i].PickCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
                         if(cars.Count > 0)
                         {
@@ -232,7 +228,6 @@ namespace BetterMatchMaking.Library.Calc
                 int carsToAddInClass = Splits.Last().GetClassTarget(i); // get the cars count we want
                 if (carsListPerClass.Count > i)
                 {
-
                     var cars = carsListPerClass[i].PickCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
                     if (cars.Count > 0)
                     {

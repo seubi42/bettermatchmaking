@@ -7,57 +7,51 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class ClassicProportionnalBalanced : ClassicEqualitarian, ITakeCarsProportionCalculator
+    /// <summary>
+    /// This algorithm extends the ClassicProportionnal
+    /// which makes the % computing for distribution
+    /// 
+    /// Please see and tun the ClassicEqualitarian algorithm first to understand the process.
+    /// 
+    /// This one implements a method ConstraintProportions to ensure the difference
+    /// of less populated class and most populated class in more than value of UseParameterClassPropMinPercent
+    /// 
+    /// </summary>
+    public class ClassicProportionnalBalanced : ClassicProportionnal, ITakeCarsProportionCalculator
     {
-        // parameters
+        #region Active Parameters
         public override bool UseParameterClassPropMinPercent
         {
             get { return true; }
         }
-        // -->
+        #endregion
 
 
 
-        public override int TakeClassCars(int fieldSize, int remCarClasses,
-            Dictionary<int, int> classRemainingCars, int classid,
-            List<ClassCarsQueue> carsListPerClass, int split)
+        internal override void ConstraintProportions(Dictionary<int, double> classRatio,
+            Dictionary<int, int> classRemainingCars ,
+            List<ClassCarsQueue> carsListPerClass)
         {
-
             List<int> availableClasses = (from r in classRemainingCars where r.Value > 0 select r.Key).ToList();
-
             double limit = Convert.ToDouble(ParameterClassPropMinPercentValue) / 100d;
 
-
-            double allTotalCars = (from r in classRemainingCars select r.Value).Sum();
-
-            Dictionary<int, double> classRatio = new Dictionary<int, double>();
-            foreach (var carclass in carsListPerClass)
-            {
-                if (classRemainingCars.ContainsKey(carclass.CarClassId))
-                {
-                    double classTotalCars = Convert.ToDouble(classRemainingCars[carclass.CarClassId]);
-
-
-                    double rat = classTotalCars / allTotalCars;
-                    classRatio.Add(carclass.CarClassId, rat);
-                }
-            }
-
-            if (classRatio.Count == 0) return 0;
-            double maxRatio = (from r in classRatio select r.Value).Max();
-            double minRatio = (from r in classRatio select r.Value).Min();
-            int maxClass = (from r in classRatio orderby r.Value descending select r.Key).FirstOrDefault();
+            
+            double maxRatio = (from r in classRatio select r.Value).Max(); // ratio of less populated class
+            double minRatio = (from r in classRatio select r.Value).Min(); // ratio of most populated class
+            int maxClass = (from r in classRatio orderby r.Value descending select r.Key).FirstOrDefault(); // class id of most populated class
 
 
             foreach (var carclass in carsListPerClass)
             {
-                if (classRemainingCars.ContainsKey(carclass.CarClassId))
+                if (classRemainingCars.ContainsKey(carclass.CarClassId)) // is class still available
                 {
-                    if (classRatio[carclass.CarClassId] < limit * maxRatio)
+
+                    // is it under the limit set with UseParameterClassPropMinPercent ?
+                    if (classRatio[carclass.CarClassId] < limit * maxRatio) 
                     {
-                        double toAdd = limit * maxRatio - classRatio[carclass.CarClassId];
+                        double toAdd = limit * maxRatio - classRatio[carclass.CarClassId]; // amount of ratio missing
 
-                        // MODIF
+                        // rule of three
                         double multiplicator = 0;
                         foreach (var cr in classRatio)
                         {
@@ -66,40 +60,14 @@ namespace BetterMatchMaking.Library.Calc
                                 multiplicator += cr.Value;
                             }
                         }
-                        //toAdd /= multiplicator;
-                        // -->
-
-
+                       
+                        // increment the class ratio
                         classRatio[carclass.CarClassId] += toAdd;
+                        // decrement the most populated class ratio
                         classRatio[maxClass] -= toAdd;
                     }
                 }
             }
-
-            foreach (var carclass in carsListPerClass)
-            {
-                if (classRatio.ContainsKey(carclass.CarClassId))
-                {
-                    classRatio[carclass.CarClassId] *= fieldSize;
-                }
-            }
-
-
-            double sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
-            while (sum < fieldSize)
-            {
-                int classtoround = (from r in classRatio orderby r.Value - Math.Floor(r.Value) descending select r.Key).FirstOrDefault();
-                classRatio[classtoround] = Math.Floor(classRatio[classtoround]) + 1;
-                sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
-            }
-
-            if (!classRatio.ContainsKey(classid)) return 0;
-
-            return Convert.ToInt32(Math.Floor(classRatio[classid]));
-
-
-
-
         }
 
 

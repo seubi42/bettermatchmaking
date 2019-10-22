@@ -9,16 +9,19 @@ namespace BetterMatchMaking.Library.Calc
 {
     public class RatingThresholdedEqualitarian : IMatchMaking
     {
-        // parameters
-        public virtual bool UseParameterClassPropMinPercent
-        {
-            get { return false; }
-        }
+        #region Active Parameters
         public bool UseParameterRatingThreshold
         {
             get { return true; }
         }
+        public int ParameterRatingThresholdValue { get; set; }
+        #endregion
 
+        #region Disabled Parameters
+        public virtual bool UseParameterClassPropMinPercent
+        {
+            get { return false; }
+        }
         public bool UseParameterMaxSofDiff
         {
             get { return false; }
@@ -35,13 +38,15 @@ namespace BetterMatchMaking.Library.Calc
         }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
         public int ParameterClassPropMinPercentValue { get; set; }
-        public int ParameterRatingThresholdValue { get; set; }
+
         public int ParameterMaxSofDiffValue { get; set; }
         public int ParameterMaxSofFunctAValue { get; set; }
         public int ParameterMaxSofFunctBValue { get; set; }
         public int ParameterMaxSofFunctXValue { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
-        // -->
+        #endregion
+
+
 
         public List<Split> Splits { get; private set; }
 

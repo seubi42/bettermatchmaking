@@ -7,9 +7,21 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
+    /// <summary>
+    /// Very close to iRacing Results
+    /// 
+    /// This algorithm is a retro-engineering which try to give very very close
+    /// results to iRacing Match Making.
+    /// 
+    /// Main part of the code is close from ClassicRaw but with some improvments
+    /// and more process to round cars distribution between last split and others
+    /// 
+    /// Do to that I use a after process calculation. You can check the Optimize
+    /// method to run it with step by step debugger.
+    /// </summary>
     public class ClassicEqualitarian : IMatchMaking, ITakeCarsProportionCalculator
-    { 
-        // parameters
+    {
+        #region Disabled Parameters
         public virtual bool UseParameterClassPropMinPercent
         {
             get { return false; }
@@ -39,7 +51,7 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctXValue { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
-        // -->
+        #endregion
 
 
         public List<Split> Splits { get; private set; }
@@ -249,7 +261,43 @@ namespace BetterMatchMaking.Library.Calc
                 }
             }
 
-            
+            // OPTIMIZATIONS
+            // the important points of this algorithm
+            Optimize(fieldSize, classRemainingCars);
+
+            // AT THIS POINT :
+            // on the Splits array, all Class{i}Target values are updated with
+            // number of cars we want
+            // for each split, and each class.
+
+
+            // Implement car lists
+            foreach (var split in Splits) // foreach each split
+            {
+                for (int i = 0; i < 4; i++) // for each car class
+                {
+                    int carsToAddInClass = split.GetClassTarget(i); // get the cars count we want
+                    if(carsListPerClass.Count > i)
+                    {
+                        
+                        var cars = carsListPerClass[i].PickCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
+                        if(cars.Count > 0)
+                        {
+                            split.SetClass(i, cars, carsListPerClass[i].CarClassId); // set the class car list
+                        }
+                    }
+                      
+                }
+            }
+
+            // done
+            // :-)
+
+
+        }
+
+        private void Optimize(int fieldSize, Dictionary<int, int> classRemainingCars)
+        {
             // OPTIMISATION 1 : fill to the limit top splits
 
             // for each split
@@ -306,7 +354,7 @@ namespace BetterMatchMaking.Library.Calc
             {
                 int classId = excess.Key;
                 int classIndex = classRemainingCars.Keys.ToList().IndexOf(classId); // convert the class id to array index
-                
+
                 // count how many splits contains this car class
                 int splitsCount = 0;
                 foreach (var split in Splits)
@@ -324,7 +372,7 @@ namespace BetterMatchMaking.Library.Calc
                 int removedCars = 0;
                 for (int i = Splits.Count - 1; i >= 0; i--) // for each split, start from bottom
                 {
-                    if(removedCars < splitsToRemove)
+                    if (removedCars < splitsToRemove)
                     {
                         var x = Splits[i].GetClassTarget(classIndex); // get the count
                         x -= removeForEachBottomSplit; // decrement it
@@ -333,36 +381,6 @@ namespace BetterMatchMaking.Library.Calc
                     removedCars++;
                 }
             }
-
-
-            // AT THIS POINT :
-            // on the Splits array, all ClassXTarget values are up to date with
-            // number of cars we want
-            // for each split, and each class.
-
-
-            // Implement car lists
-            foreach (var split in Splits) // foreach each split
-            {
-                for (int i = 0; i < 4; i++) // for each car class
-                {
-                    int carsToAddInClass = split.GetClassTarget(i); // get the cars count we want
-                    if(carsListPerClass.Count > i)
-                    {
-                        
-                        var cars = carsListPerClass[i].PickCars(carsToAddInClass); // pick up the cars in the ordered list by iRating DESC
-                        if(cars.Count > 0)
-                        {
-                            split.SetClass(i, cars, carsListPerClass[i].CarClassId); // set the class car list
-                        }
-                    }
-                      
-                }
-            }
-
-            // done
-            // :-)
-
 
         }
 
@@ -374,8 +392,12 @@ namespace BetterMatchMaking.Library.Calc
 
         public virtual int TakeClassCars(int fieldSize, int remCarClasses, Dictionary<int, int> classRemainingCars, int classid, List<ClassCarsQueue> carsListPerClass, int split)
         {
-            int carsToTake = fieldSize / remCarClasses;
-            return carsToTake;
+            /*
+             *  The distribution of the cars is here very simple
+             *  it just divide the field size by the number of classes which are in the split.
+             */
+            return fieldSize / remCarClasses;
+            
         }
         
     }

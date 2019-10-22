@@ -156,7 +156,7 @@ namespace BetterMatchMaking.UI
             mm.ParameterMaxSofFunctX = sspMaxSofFx.Value;
             mm.ParameterMaxSofFunctB = sspMaxSofFb.Value;
             mm.ParameterTopSplitException = sspTopSplitExc.Value;
-            mm.ParameterEqualizeSplits = sspEqualize.Value;
+            mm.ParameterMostPopulatedClassInEverySplits = sspEqualize.Value;
 
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
@@ -299,7 +299,7 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFb.Visible = calc.UseParameterMaxSofDiff;
                 sspMaxSofFx.Visible = calc.UseParameterMaxSofDiff;
                 sspTopSplitExc.Visible = calc.UseParameterTopSplitException;
-                sspEqualize.Visible = calc.UseParameterEqualizeSplits;
+                sspEqualize.Visible = calc.UseParameterMostPopulatedClassInEverySplits;
             }
             else
             {

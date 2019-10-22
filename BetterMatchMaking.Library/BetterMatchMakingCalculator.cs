@@ -43,11 +43,12 @@ namespace BetterMatchMaking.Library
             get { return instance.UseParameterTopSplitException; }
         }
 
-        
-        public bool UseParameterEqualizeSplits
+        public bool UseParameterMostPopulatedClassInEverySplits
         {
-            get { return instance.UseParameterEqualizeSplits; }
+            get { return instance.UseParameterMostPopulatedClassInEverySplits; }
         }
+
+
 
         public int ParameterPValue
         {
@@ -84,10 +85,10 @@ namespace BetterMatchMaking.Library
             get { return instance.ParameterTopSplitException; }
             set { instance.ParameterTopSplitException = value; }
         }
-        public int ParameterEqualizeSplits
+        public int ParameterMostPopulatedClassInEverySplits
         {
-            get { return instance.ParameterEqualizeSplits; }
-            set { instance.ParameterEqualizeSplits = value; }
+            get { return instance.ParameterMostPopulatedClassInEverySplits; }
+            set { instance.ParameterMostPopulatedClassInEverySplits = value; }
         }
         #endregion
 
@@ -133,6 +134,7 @@ namespace BetterMatchMaking.Library
             ret.SplitsExceedsFieldSize = new List<int>();
             ret.CarsMissingInAnySplit = new List<int>();
             ret.NotExpectedCarsRegistred = new List<int>();
+            ret.IROrderInconsistencySplits = new List<int>();
             ret.Cars = 0;
             ret.Splits = 0;
 
@@ -163,6 +165,27 @@ namespace BetterMatchMaking.Library
                 {
                     ret.SplitsExceedsFieldSize.Add(split.Number);
                     ret.Success = false;
+                }
+
+                foreach (int classIndex in split.GetClassesIndex())
+                {
+                    double minIR = (from r in split.GetClassCars(classIndex) select r.rating).Min();
+
+                    var nextSplits = (from r in Splits where r.Number >= split.Number + 1 select r).ToList();
+                    var nextCars = new List<Data.Line>();
+                    foreach (var nextSplit in nextSplits)
+                    {
+                        var cars = nextSplit.GetClassCars(classIndex);
+                        if (cars != null) nextCars.AddRange(cars);
+                    }
+                     
+                    var higherIRs = (from r in nextCars where r.rating > minIR + 1 select r).Count();
+                    if(higherIRs > 0)
+                    {
+                        ret.IROrderInconsistencySplits.Add(split.Number);
+                    }
+
+                    
                 }
             }
 

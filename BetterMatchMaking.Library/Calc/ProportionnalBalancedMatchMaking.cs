@@ -16,12 +16,14 @@ namespace BetterMatchMaking.Library.Calc
         }
         // -->
 
-        
+
 
         public override int TakeClassCars(int fieldSize, int remCarClasses,
-            Dictionary<int, int> classRemainingCars, int classid, 
+            Dictionary<int, int> classRemainingCars, int classid,
             List<CarsPerClass> carsListPerClass, int split)
         {
+
+            List<int> availableClasses = (from r in classRemainingCars where r.Value > 0 select r.Key).ToList();
 
             double limit = Convert.ToDouble(ParameterPValue) / 100d;
 
@@ -54,12 +56,26 @@ namespace BetterMatchMaking.Library.Calc
                     if (classRatio[carclass.CarClassId] < limit * maxRatio)
                     {
                         double toAdd = limit * maxRatio - classRatio[carclass.CarClassId];
+
+                        // MODIF
+                        double multiplicator = 0;
+                        foreach (var cr in classRatio)
+                        {
+                            if (availableClasses.Contains(cr.Key))
+                            {
+                                multiplicator += cr.Value;
+                            }
+                        }
+                        //toAdd /= multiplicator;
+                        // -->
+
+
                         classRatio[carclass.CarClassId] += toAdd;
                         classRatio[maxClass] -= toAdd;
                     }
                 }
             }
-            
+
             foreach (var carclass in carsListPerClass)
             {
                 if (classRatio.ContainsKey(carclass.CarClassId))
@@ -70,10 +86,10 @@ namespace BetterMatchMaking.Library.Calc
 
 
             double sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
-            while(sum < fieldSize)
+            while (sum < fieldSize)
             {
                 int classtoround = (from r in classRatio orderby r.Value - Math.Floor(r.Value) descending select r.Key).FirstOrDefault();
-                classRatio[classtoround] = Math.Floor(classRatio[classtoround])+1;
+                classRatio[classtoround] = Math.Floor(classRatio[classtoround]) + 1;
                 sum = (from r in classRatio select Math.Floor(r.Value)).Sum();
             }
 
@@ -82,7 +98,7 @@ namespace BetterMatchMaking.Library.Calc
             return Convert.ToInt32(Math.Floor(classRatio[classid]));
 
 
-            
+
 
         }
 

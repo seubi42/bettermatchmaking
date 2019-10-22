@@ -60,24 +60,22 @@ namespace BetterMatchMaking.Sample
 
 
             // run algorithm
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartProportionnalMoveDown");
-            for (int p = 5; p < 50; p++)
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartRuledMoveDown");
+            for (int maxsofdiff = 5; maxsofdiff < 40; maxsofdiff++)
             {
-                calculator.ParameterPValue = p;
-                for (int maxsofdiff = 5; maxsofdiff < 40; maxsofdiff++)
+                for (int mostpop = 0; mostpop < 1; mostpop++)
                 {
                     Console.WriteLine("");
                     Console.WriteLine("------------------------------------");
 
                     Console.WriteLine(new FileInfo(csv).Name);
-                    Console.WriteLine("P = " + p);
                     Console.WriteLine("Max Soff Diff = " + maxsofdiff);
                     calculator.ParameterMaxSofDiff = maxsofdiff;
                     calculator.ParameterMaxSofFunctA = 12;
                     calculator.ParameterMaxSofFunctX = 1000;
                     calculator.ParameterMaxSofFunctB = -20;
                     calculator.ParameterTopSplitException = 0;
-                    calculator.ParameterEqualizeSplits = 1;
+                    calculator.ParameterMostPopulatedClassInEverySplits = mostpop;
                     calculator.Compute(entrylist, fieldSize);
                     var audit = calculator.GetAudit();
                     Console.WriteLine(audit.ToString());
@@ -87,20 +85,23 @@ namespace BetterMatchMaking.Sample
                     {
                         testsFailed++;
                     }
-                    if(audit.MinSplitSizePercent < 0.5)
+                    if (audit.MinSplitSizePercent < 0.5)
                     {
                         testsSplitsDiff++;
                     }
+                    if (audit.IROrderInconsistencySplits.Count > 0)
+                    {
+
+                    }
                     tests++;
                 }
-                
             }
 
             // -->
 
 
 
-           
+
         }
     }
 }

@@ -29,11 +29,11 @@ namespace BetterMatchMaking.Library.Calc
             get { return false; }
 
         }
-        public bool UseParameterEqualizeSplits
+        public bool UseParameterMostPopulatedClassInEverySplits
         {
             get { return false; }
         }
-        public int ParameterEqualizeSplits { get; set; }
+        public int ParameterMostPopulatedClassInEverySplits { get; set; }
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
         public int ParameterMaxSofDiff { get; set; }

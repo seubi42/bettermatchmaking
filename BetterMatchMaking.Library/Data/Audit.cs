@@ -22,6 +22,8 @@ namespace BetterMatchMaking.Library.Data
 
         public double MinSplitSizePercent { get; set; }
 
+        public List<int> IROrderInconsistencySplits { get; set; }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -39,6 +41,10 @@ namespace BetterMatchMaking.Library.Data
             if (NotExpectedCarsRegistred.Count > 0)
             {
                 sb.AppendLine("NotExpectedCarsRegistred : " + Contact(NotExpectedCarsRegistred));
+            }
+            if (IROrderInconsistencySplits.Count > 0)
+            {
+                sb.AppendLine("IROrderInconsistencySplits : " + Contact(IROrderInconsistencySplits));
             }
 
             string ret = sb.ToString();

@@ -16,7 +16,7 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return true; }
         }
-        
+
 
 
         public bool UseParameterIR
@@ -37,11 +37,11 @@ namespace BetterMatchMaking.Library.Calc
 
         }
 
-        public bool UseParameterEqualizeSplits
+        public bool UseParameterMostPopulatedClassInEverySplits
         {
             get { return true; }
         }
-        public int ParameterEqualizeSplits { get; set; }
+        public int ParameterMostPopulatedClassInEverySplits { get; set; }
 
         public int ParameterPValue { get; set; }
         public int ParameterIRValue { get; set; }
@@ -78,7 +78,7 @@ namespace BetterMatchMaking.Library.Calc
 
             // Split cars per class
             carclasses = Tools.SplitCarsPerClass(data);
-            
+
             carClassesIds = (from r in carclasses select r.CarClassId).ToList();
 
             // first pass with a simple algoritm
@@ -86,7 +86,7 @@ namespace BetterMatchMaking.Library.Calc
             firstpart = GetFirstPassCalculator();
             BetterMatchMaking.Library.BetterMatchMakingCalculator.CopyParameters(this, firstpart as IMatchMaking);
             (firstpart as IMatchMaking).Compute(data, fieldSize);
-            
+
             Splits = (firstpart as IMatchMaking).Splits;
 
 
@@ -106,9 +106,9 @@ namespace BetterMatchMaking.Library.Calc
             */
 
             SmartProcess();
-            
-            
-            
+
+
+
         }
 
         private void SmartProcess()
@@ -124,13 +124,7 @@ namespace BetterMatchMaking.Library.Calc
             CleanEmptySplits();
 
 
-            if (ParameterEqualizeSplits > 0)
-            {
-                
-                EqualizeSplits();
-
-
-            }
+            EqualizeSplits();
 
         }
 
@@ -229,9 +223,9 @@ namespace BetterMatchMaking.Library.Calc
                     }
                 }
             }
-        
 
-            
+
+
             foreach (var mode in modes)
             {
                 var allsamemodes = (from r in modes where r.ClassesKey == mode.ClassesKey select r).ToList();
@@ -270,7 +264,7 @@ namespace BetterMatchMaking.Library.Calc
                             {
                                 var missingtarget = (from r in modes
                                                      where r.ClassCarsTarget.ContainsKey(classid)
-                                                     
+
                                                      orderby
                                                      r.CountTotalTargets() descending,
                                                      r.ToSplit descending
@@ -280,25 +274,27 @@ namespace BetterMatchMaking.Library.Calc
                                 missingtarget.ClassCarsTarget[classid]--;
                                 missing++;
                             }
-                            while (missing > 0 )
+                            while (missing > 0)
                             {
-                                var missingtarget = (from r in modes where r.ClassCarsTarget.ContainsKey(classid)
-                                                     && r.CountTotalTargets() < fieldSize
-                                                     orderby r.CountTotalTargets() select r).FirstOrDefault();
+                                var missingtarget = (from r in modes
+                                                     where r.ClassCarsTarget.ContainsKey(classid)
+                                     && r.CountTotalTargets() < fieldSize
+                                                     orderby r.CountTotalTargets()
+                                                     select r).FirstOrDefault();
 
                                 if (missingtarget == null)
                                 {
                                     int mostpopulatedclass = carClassesIds.LastOrDefault();
 
                                     var othersplit = (from r in modes
-                                                              where r.ClassCarsTarget.ContainsKey(classid) 
-                                                              && r.ClassCarsTarget.ContainsKey(mostpopulatedclass)
+                                                      where r.ClassCarsTarget.ContainsKey(classid)
+                                                      && r.ClassCarsTarget.ContainsKey(mostpopulatedclass)
                                                       orderby r.CountTotalTargets()
-                                                              select r).FirstOrDefault();
+                                                      select r).FirstOrDefault();
 
                                     othersplit.ClassCarsTarget[classid]++;
 
-                                    
+
                                     othersplit.ClassCarsTarget[mostpopulatedclass]--;
 
                                     othersplit = (from r in modes
@@ -316,28 +312,29 @@ namespace BetterMatchMaking.Library.Calc
                             }
 
                         }
-                        
+
                     }
 
                 }
-                
+
 
             }
 
-            
 
 
 
-            
+
+
             foreach (var mode in modes)
             {
                 while (mode.CountTotalTargets() > fieldSize)
                 {
                     var excess = (from r in mode.ClassCarsTarget orderby r.Value descending select r).FirstOrDefault();
 
-                    var modewithless = (from r in modes where
-                                        r.ClassCarsTarget.ContainsKey(excess.Key)
-                                        && r.CountTotalTargets() < fieldSize
+                    var modewithless = (from r in modes
+                                        where
+                        r.ClassCarsTarget.ContainsKey(excess.Key)
+                        && r.CountTotalTargets() < fieldSize
                                         orderby r.ClassCarsTarget[excess.Key] ascending
                                         select r).FirstOrDefault();
 
@@ -359,15 +356,15 @@ namespace BetterMatchMaking.Library.Calc
                         modewithless.ClassCarsTarget[excess.Key]++;
                         mode.ClassCarsTarget[excess.Key]--;
                     }
-                    
-                } 
+
+                }
             }
 
             // implement final splits
-            
+
 
             List<Data.Split> splits2 = new List<Split>();
-            
+
 
             int number = 1;
             foreach (var mode in modes)
@@ -416,16 +413,16 @@ namespace BetterMatchMaking.Library.Calc
                     }
                 }
 
-            }   
+            }
         }
 
 
-        
+
 
         private void CleanEmptySplits()
         {
             var splits = (from r in Splits where r.TotalCarsCount > 0 select r).ToList();
-            
+
             for (int i = 0; i < splits.Count; i++)
             {
                 splits[i].Number = i + 1;
@@ -463,7 +460,7 @@ namespace BetterMatchMaking.Library.Calc
 
             List<int> movedCategories = new List<int>();
 
-            
+
             // move cars down
             for (int i = 0; i < classesSof.Count - 1; i++)
             {
@@ -486,7 +483,7 @@ namespace BetterMatchMaking.Library.Calc
 
 
 
-            
+
             for (int j = 0; j < classesSof.Count; j++)
             {
                 int classId = carClassesIds[j];
@@ -495,11 +492,11 @@ namespace BetterMatchMaking.Library.Calc
                     for (int spi = splitIndex; spi < Splits.Count; spi++)
                     {
 
-                       
+
                         List<int> exception = movedCategories;
 
                         var daSplit = GetSplit(spi);
-                        
+
 
                         int carsToAdd = 0;
                         do
@@ -509,7 +506,7 @@ namespace BetterMatchMaking.Library.Calc
 
                             int availableSlots = fieldSize - daSplit.TotalCarsCount;
 
-                            
+
 
                             carsToAdd = Math.Max(0, maxcars - currentCars);
                             carsToAdd = Math.Min(carsToAdd, availableSlots);
@@ -539,7 +536,7 @@ namespace BetterMatchMaking.Library.Calc
 
                             if (nextSplitWithSameClass != null)
                             {
-                                
+
 
 
                                 var pick = nextSplitWithSameClass.PickClassCars(j, carsToAdd, false);
@@ -548,9 +545,9 @@ namespace BetterMatchMaking.Library.Calc
                                 carsToAdd -= pick.Count;
 
                             }
-                            
 
-                            if(nextSplitWithSameClass == null)
+
+                            if (nextSplitWithSameClass == null)
                             {
                                 carsToAdd = 0;
                             }
@@ -563,17 +560,17 @@ namespace BetterMatchMaking.Library.Calc
             }
 
 
-            
+
 
             for (int i = 0; i < classesSof.Count; i++)
             {
-                
+
                 int classId = carClassesIds[i];
                 // for next splits, move down cars excess
                 for (int j = splitIndex + 1; j < Splits.Count; j++)
                 {
-                    int maxcars =TakeCars(Splits[j], j, i, null);
-                    
+                    int maxcars = TakeCars(Splits[j], j, i, null);
+
                     int currentCars = Splits[j].CountClassCars(i);
 
                     int carsToRemove = Math.Max(0, currentCars - maxcars);
@@ -585,9 +582,9 @@ namespace BetterMatchMaking.Library.Calc
                 }
             }
 
-            
 
-           
+
+
 
 
 
@@ -618,7 +615,7 @@ namespace BetterMatchMaking.Library.Calc
             return nextSplit;
         }
 
-        
+
 
         private int TakeCars(Split split, int splitIndex, int classIndex, List<int> exceptionClassId = null)
         {
@@ -653,12 +650,12 @@ namespace BetterMatchMaking.Library.Calc
             }
 
             int classesCount = split.GetClassesCount();
-            if(classesCount == 0)
+            if (classesCount == 0)
             {
                 classesCount = (from r in carsInThisSplitAndNexts where r.Value > 0 select r).Count();
             }
 
-            if(classesCount == 0)
+            if (classesCount == 0)
             {
                 return 0;
             }
@@ -714,19 +711,19 @@ namespace BetterMatchMaking.Library.Calc
 
             if (min == 0 && max == 0) return false;
 
-            
+
 
             int diff = 100 * min / max;
             diff = 100 - diff;
 
-            if(diff < 0)
+            if (diff < 0)
             {
                 diff = Math.Abs(diff);
             }
 
             double limit = ParameterMaxSofDiff;
 
-            
+
             double fx = ParameterMaxSofFunctX;
             double fa = ParameterMaxSofFunctA;
             double fb = ParameterMaxSofFunctB;
@@ -737,14 +734,14 @@ namespace BetterMatchMaking.Library.Calc
                 limit = Math.Max(limit, ParameterMaxSofDiff);
                 s.Info = "Diff Target=" + Convert.ToInt32(limit);
             }
-            
-            
+
+
 
             if (diff > limit)
             {
                 return true; // have to move down the class because more than max allowed sof difference
             }
-            
+
 
 
             return false;

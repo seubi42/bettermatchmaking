@@ -389,6 +389,68 @@ namespace BetterMatchMaking.Library.Data
         }
 
 
+        public List<int> GetClassesIndex()
+        {
+            List<int> ret = new List<int>();
+            if (Class1Cars != null && Class1Cars.Count > 0) ret.Add(0);
+            if (Class2Cars != null && Class2Cars.Count > 0) ret.Add(1);
+            if (Class3Cars != null && Class3Cars.Count > 0) ret.Add(2);
+            if (Class4Cars != null && Class4Cars.Count > 0) ret.Add(3);
+            return ret;
+        }
+
+        public override string ToString()
+        {
+            // just to help debuggging,
+            // this function will ouput "Split 1 [10;12;20;0]
+            //      -  split number
+            //      -  [cars to for each class]
+
+            string ret = "Split " + Number;
+
+            ret += "[";
+            if (Class1Cars != null)
+            {
+                ret += Class1Cars.Count;
+            }
+            else
+            {
+                ret += "0";
+            }
+            ret += ";";
+            if (Class2Cars != null)
+            {
+                ret += Class2Cars.Count;
+            }
+            else
+            {
+                ret += "0";
+            }
+            ret += ";";
+            if (Class3Cars != null)
+            {
+                ret += Class3Cars.Count;
+            }
+            else
+            {
+                ret += "0";
+            }
+            ret += ";";
+            if (Class4Cars != null)
+            {
+                ret += Class4Cars.Count;
+            }
+            else
+            {
+                ret += "0";
+            }
+            ret += "]";
+
+            return ret;
+
+        }
+
+
 
 
     }

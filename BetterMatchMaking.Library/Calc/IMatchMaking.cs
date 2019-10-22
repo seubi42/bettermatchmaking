@@ -14,7 +14,7 @@ namespace BetterMatchMaking.Library.Calc
         bool UseParameterIR { get;  }
         bool UseParameterMaxSofDiff { get;  }
         bool UseParameterTopSplitException { get;  }
-        bool UseParameterEqualizeSplits { get;  }
+        bool UseParameterMostPopulatedClassInEverySplits { get;  }
 
        
 
@@ -25,7 +25,7 @@ namespace BetterMatchMaking.Library.Calc
         int ParameterMaxSofFunctB { get; set; }
         int ParameterMaxSofFunctX { get; set; }
         int ParameterTopSplitException { get; set; }
-        int ParameterEqualizeSplits { get; set; }
+        int ParameterMostPopulatedClassInEverySplits { get; set; }
 
 
 

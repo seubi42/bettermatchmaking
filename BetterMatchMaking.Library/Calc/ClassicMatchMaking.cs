@@ -26,9 +26,9 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return false; }
         }
-        public bool UseParameterEqualizeSplits
+        public bool UseParameterMostPopulatedClassInEverySplits
         {
-            get { return false; }
+            get { return true; }
         }
         public int ParameterEqualizeSplits { get; set; }
         public int ParameterPValue { get; set; }
@@ -38,6 +38,7 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctB { get; set; }
         public int ParameterMaxSofFunctX { get; set; }
         public int ParameterTopSplitException { get; set; }
+        public int ParameterMostPopulatedClassInEverySplits { get; set; }
         // -->
 
 

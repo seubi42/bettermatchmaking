@@ -7,14 +7,14 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class ClassicMatchMaking : IMatchMaking, ITakeCarsProportionCalculator
+    public class ClassicEqualitarian : IMatchMaking, ITakeCarsProportionCalculator
     { 
         // parameters
-        public virtual bool UseParameterP
+        public virtual bool UseParameterClassPropMinPercent
         {
             get { return false; }
         }
-        public bool UseParameterIR
+        public bool UseParameterRatingThreshold
         {
             get { return false; }
         }
@@ -28,17 +28,17 @@ namespace BetterMatchMaking.Library.Calc
         }
         public bool UseParameterMostPopulatedClassInEverySplits
         {
-            get { return true; }
+            get { return false; }
         }
         public int ParameterEqualizeSplits { get; set; }
-        public int ParameterPValue { get; set; }
-        public int ParameterIRValue { get; set; }
-        public int ParameterMaxSofDiff { get; set; }
-        public int ParameterMaxSofFunctA { get; set; }
-        public int ParameterMaxSofFunctB { get; set; }
-        public int ParameterMaxSofFunctX { get; set; }
-        public int ParameterTopSplitException { get; set; }
-        public int ParameterMostPopulatedClassInEverySplits { get; set; }
+        public int ParameterClassPropMinPercentValue { get; set; }
+        public int ParameterRatingThresholdValue { get; set; }
+        public int ParameterMaxSofDiffValue { get; set; }
+        public int ParameterMaxSofFunctAValue { get; set; }
+        public int ParameterMaxSofFunctBValue { get; set; }
+        public int ParameterMaxSofFunctXValue { get; set; }
+        public int ParameterTopSplitExceptionValue { get; set; }
+        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
         // -->
 
 

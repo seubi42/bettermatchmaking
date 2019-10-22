@@ -23,14 +23,14 @@ namespace BetterMatchMaking.Library
             get { return instance.Splits; }
         }
 
-        public bool UseParameterP
+        public bool UseParameterClassPropMinPercent
         {
-            get { return instance.UseParameterP; }
+            get { return instance.UseParameterClassPropMinPercent; }
         }
 
-        public bool UseParameterIR
+        public bool UseParameterRatingThreshold
         {
-            get { return instance.UseParameterIR; }
+            get { return instance.UseParameterRatingThreshold; }
         }
 
         public bool UseParameterMaxSofDiff
@@ -50,45 +50,45 @@ namespace BetterMatchMaking.Library
 
 
 
-        public int ParameterPValue
+        public int ParameterClassPropMinPercentValue
         {
-            get { return instance.ParameterPValue; }
-            set { instance.ParameterPValue = value; }
+            get { return instance.ParameterClassPropMinPercentValue; }
+            set { instance.ParameterClassPropMinPercentValue = value; }
         }
-        public int ParameterIRValue
+        public int ParameterRatingThresholdValue
         {
-            get { return instance.ParameterIRValue; }
-            set { instance.ParameterIRValue = value; }
+            get { return instance.ParameterRatingThresholdValue; }
+            set { instance.ParameterRatingThresholdValue = value; }
         }
-        public int ParameterMaxSofDiff
+        public int ParameterMaxSofDiffValue
         {
-            get { return instance.ParameterMaxSofDiff; }
-            set { instance.ParameterMaxSofDiff = value; }
+            get { return instance.ParameterMaxSofDiffValue; }
+            set { instance.ParameterMaxSofDiffValue = value; }
         }
-        public int ParameterMaxSofFunctA
+        public int ParameterMaxSofFunctAValue
         {
-            get { return instance.ParameterMaxSofFunctA; }
-            set { instance.ParameterMaxSofFunctA = value; }
+            get { return instance.ParameterMaxSofFunctAValue; }
+            set { instance.ParameterMaxSofFunctAValue = value; }
         }
-        public int ParameterMaxSofFunctB
+        public int ParameterMaxSofFunctBValue
         {
-            get { return instance.ParameterMaxSofFunctB; }
-            set { instance.ParameterMaxSofFunctB = value; }
+            get { return instance.ParameterMaxSofFunctBValue; }
+            set { instance.ParameterMaxSofFunctBValue = value; }
         }
-        public int ParameterMaxSofFunctX
+        public int ParameterMaxSofFunctXValue
         {
-            get { return instance.ParameterMaxSofFunctX; }
-            set { instance.ParameterMaxSofFunctX = value; }
+            get { return instance.ParameterMaxSofFunctXValue; }
+            set { instance.ParameterMaxSofFunctXValue = value; }
         }
-        public int ParameterTopSplitException
+        public int ParameterTopSplitExceptionValue
         {
-            get { return instance.ParameterTopSplitException; }
-            set { instance.ParameterTopSplitException = value; }
+            get { return instance.ParameterTopSplitExceptionValue; }
+            set { instance.ParameterTopSplitExceptionValue = value; }
         }
-        public int ParameterMostPopulatedClassInEverySplits
+        public int ParameterMostPopulatedClassInEverySplitsValue
         {
-            get { return instance.ParameterMostPopulatedClassInEverySplits; }
-            set { instance.ParameterMostPopulatedClassInEverySplits = value; }
+            get { return instance.ParameterMostPopulatedClassInEverySplitsValue; }
+            set { instance.ParameterMostPopulatedClassInEverySplitsValue = value; }
         }
         #endregion
 

@@ -7,10 +7,10 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class ProportionnalBalancedMatchMaking : ClassicMatchMaking, ITakeCarsProportionCalculator
+    public class ClassicProportionnalBalanced : ClassicEqualitarian, ITakeCarsProportionCalculator
     {
         // parameters
-        public override bool UseParameterP
+        public override bool UseParameterClassPropMinPercent
         {
             get { return true; }
         }
@@ -25,7 +25,7 @@ namespace BetterMatchMaking.Library.Calc
 
             List<int> availableClasses = (from r in classRemainingCars where r.Value > 0 select r.Key).ToList();
 
-            double limit = Convert.ToDouble(ParameterPValue) / 100d;
+            double limit = Convert.ToDouble(ParameterClassPropMinPercentValue) / 100d;
 
 
             double allTotalCars = (from r in classRemainingCars select r.Value).Sum();

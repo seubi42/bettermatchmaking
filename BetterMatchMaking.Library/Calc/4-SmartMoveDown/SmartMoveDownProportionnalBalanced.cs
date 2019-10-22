@@ -7,19 +7,19 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class SmartProportionnalMoveDown : IMatchMaking
+    public class SmartMoveDownProportionnalBalanced : IMatchMaking
     {
         public List<Split> Splits { get; private set; }
 
         // parameters
-        public virtual bool UseParameterP
+        public virtual bool UseParameterClassPropMinPercent
         {
             get { return true; }
         }
 
 
 
-        public bool UseParameterIR
+        public bool UseParameterRatingThreshold
         {
             get { return false; }
 
@@ -41,15 +41,15 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return true; }
         }
-        public int ParameterMostPopulatedClassInEverySplits { get; set; }
+        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
 
-        public int ParameterPValue { get; set; }
-        public int ParameterIRValue { get; set; }
-        public int ParameterMaxSofDiff { get; set; }
-        public int ParameterMaxSofFunctA { get; set; }
-        public int ParameterMaxSofFunctB { get; set; }
-        public int ParameterMaxSofFunctX { get; set; }
-        public int ParameterTopSplitException { get; set; }
+        public int ParameterClassPropMinPercentValue { get; set; }
+        public int ParameterRatingThresholdValue { get; set; }
+        public int ParameterMaxSofDiffValue { get; set; }
+        public int ParameterMaxSofFunctAValue { get; set; }
+        public int ParameterMaxSofFunctBValue { get; set; }
+        public int ParameterMaxSofFunctXValue { get; set; }
+        public int ParameterTopSplitExceptionValue { get; set; }
         // -->
 
 
@@ -66,7 +66,7 @@ namespace BetterMatchMaking.Library.Calc
 
         internal virtual ITakeCarsProportionCalculator GetFirstPassCalculator()
         {
-            return new ProportionnalBalancedMatchMaking();
+            return new ClassicProportionnalBalanced();
         }
 
         //Dictionary<int, int> avgFieldSize;
@@ -681,7 +681,7 @@ namespace BetterMatchMaking.Library.Calc
 
         public bool HaveToMoveDown(Split s, int classIndex, List<int> splitSofs)
         {
-            if (ParameterTopSplitException == 1 && s.Number == 1)
+            if (ParameterTopSplitExceptionValue == 1 && s.Number == 1)
             {
                 return false;
             }
@@ -721,17 +721,17 @@ namespace BetterMatchMaking.Library.Calc
                 diff = Math.Abs(diff);
             }
 
-            double limit = ParameterMaxSofDiff;
+            double limit = ParameterMaxSofDiffValue;
 
 
-            double fx = ParameterMaxSofFunctX;
-            double fa = ParameterMaxSofFunctA;
-            double fb = ParameterMaxSofFunctB;
+            double fx = ParameterMaxSofFunctXValue;
+            double fa = ParameterMaxSofFunctAValue;
+            double fb = ParameterMaxSofFunctBValue;
 
             if (!(fx == 0 || fa == 0 || fb == 0))
             {
                 limit = ((Convert.ToDouble(s.GlobalSof) / fx) * fa) + fb;
-                limit = Math.Max(limit, ParameterMaxSofDiff);
+                limit = Math.Max(limit, ParameterMaxSofDiffValue);
                 s.Info = "Diff Target=" + Convert.ToInt32(limit);
             }
 

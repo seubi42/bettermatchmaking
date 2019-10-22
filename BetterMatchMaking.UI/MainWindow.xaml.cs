@@ -149,14 +149,14 @@ namespace BetterMatchMaking.UI
 
             // instanciate the good algorithm
             var mm = new BetterMatchMaking.Library.BetterMatchMakingCalculator(strAlgo);
-            mm.ParameterPValue = sspP.Value;
-            mm.ParameterIRValue = sspIR.Value;
-            mm.ParameterMaxSofDiff = sspMaxSofDiff.Value;
-            mm.ParameterMaxSofFunctA = sspMaxSofFa.Value;
-            mm.ParameterMaxSofFunctX = sspMaxSofFx.Value;
-            mm.ParameterMaxSofFunctB = sspMaxSofFb.Value;
-            mm.ParameterTopSplitException = sspTopSplitExc.Value;
-            mm.ParameterMostPopulatedClassInEverySplits = sspEqualize.Value;
+            mm.ParameterClassPropMinPercentValue = sspP.Value;
+            mm.ParameterRatingThresholdValue = sspIR.Value;
+            mm.ParameterMaxSofDiffValue = sspMaxSofDiff.Value;
+            mm.ParameterMaxSofFunctAValue = sspMaxSofFa.Value;
+            mm.ParameterMaxSofFunctXValue = sspMaxSofFx.Value;
+            mm.ParameterMaxSofFunctBValue = sspMaxSofFb.Value;
+            mm.ParameterTopSplitExceptionValue = sspTopSplitExc.Value;
+            mm.ParameterMostPopulatedClassInEverySplitsValue = sspEqualize.Value;
 
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
@@ -292,8 +292,8 @@ namespace BetterMatchMaking.UI
                 BetterMatchMaking.Library.BetterMatchMakingCalculator calc = new Library.BetterMatchMakingCalculator(strAlgo);
                 
 
-                sspP.Visible = calc.UseParameterP;
-                sspIR.Visible = calc.UseParameterIR;
+                sspP.Visible = calc.UseParameterClassPropMinPercent;
+                sspIR.Visible = calc.UseParameterRatingThreshold;
                 sspMaxSofDiff.Visible = calc.UseParameterMaxSofDiff;
                 sspMaxSofFa.Visible = calc.UseParameterMaxSofDiff;
                 sspMaxSofFb.Visible = calc.UseParameterMaxSofDiff;

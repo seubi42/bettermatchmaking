@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterMatchMaking.Sample", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{874C09DB-8037-4DDA-A509-406DFB802FB5}"
 	ProjectSection(SolutionItems) = preProject
-		Todo.txt = Todo.txt
+		ProjectHistory.txt = ProjectHistory.txt
 	EndProjectSection
 EndProject
 Global

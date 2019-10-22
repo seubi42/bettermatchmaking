@@ -1,3 +1,0 @@
-imsa-29071299-(4 splits)-fieldsize40.csv 
-	split 3 : 21 cars 
-	split 1 : 29 cars

@@ -7,14 +7,14 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class DoubleClassicMatchMaking : IMatchMaking
+    public class RatingThresholdedEqualitarian : IMatchMaking
     {
         // parameters
-        public virtual bool UseParameterP
+        public virtual bool UseParameterClassPropMinPercent
         {
             get { return false; }
         }
-        public bool UseParameterIR
+        public bool UseParameterRatingThreshold
         {
             get { return true; }
         }
@@ -33,14 +33,14 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return false; }
         }
-        public int ParameterMostPopulatedClassInEverySplits { get; set; }
-        public int ParameterPValue { get; set; }
-        public int ParameterIRValue { get; set; }
-        public int ParameterMaxSofDiff { get; set; }
-        public int ParameterMaxSofFunctA { get; set; }
-        public int ParameterMaxSofFunctB { get; set; }
-        public int ParameterMaxSofFunctX { get; set; }
-        public int ParameterTopSplitException { get; set; }
+        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
+        public int ParameterClassPropMinPercentValue { get; set; }
+        public int ParameterRatingThresholdValue { get; set; }
+        public int ParameterMaxSofDiffValue { get; set; }
+        public int ParameterMaxSofFunctAValue { get; set; }
+        public int ParameterMaxSofFunctBValue { get; set; }
+        public int ParameterMaxSofFunctXValue { get; set; }
+        public int ParameterTopSplitExceptionValue { get; set; }
         // -->
 
         public List<Split> Splits { get; private set; }
@@ -50,13 +50,13 @@ namespace BetterMatchMaking.Library.Calc
 
         internal virtual int GetiRatingLimit()
         {
-            return ParameterIRValue;
+            return ParameterRatingThresholdValue;
         }
 
 
         internal virtual IMatchMaking GetGroupMatchMaker()
         {
-            return new ClassicMatchMaking();
+            return new ClassicEqualitarian();
         }
 
 

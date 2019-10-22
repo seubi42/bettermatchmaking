@@ -74,18 +74,17 @@
                                 <TextBlock VerticalAlignment="Center" Text="Algorithm :" Grid.Row="0" />
                                 <TextBlock VerticalAlignment="Center" Text="Field Size :" Grid.Row="1" />
 
-                                <ComboBox x:Name="cboAlgorithm" Grid.Row="0" Grid.Column="1" Margin="5"  SelectedIndex="10" SelectionChanged="CboAlgorithm_SelectionChanged">
-                                    <ComboBoxItem Tag="RawClassicMatchMaking" Content="Raw Classic (to understand)" />
-                                    <ComboBoxItem Tag="ClassicMatchMaking" Content="Classic (Very close to iRacing)" FontWeight="Bold" />
-                                    <ComboBoxItem Tag="ProportionnalMatchMaking" Content="Car Class distribution : proportionnal" />
-                                    <ComboBoxItem Tag="ProportionnalBalancedMatchMaking" Content="Car Class distribution : balanced" />
-                                    <ComboBoxItem Tag="RuledMatchMaking" Content="Ruled Class distribution (% manually defined)" />
-                                    <ComboBoxItem Tag="DoubleClassicMatchMaking" Content="Double list: rating threshold" />
-                                    <ComboBoxItem Tag="DoubleProportionnalBalancedMatchMaking" Content="Double list &amp; Car Class distribution" FontWeight="Bold" />
-                                    <ComboBoxItem Tag="TripleProportionnalBalancedMatchMaking" Content="Triple list &amp; Car Class distribution" />
-                                    <ComboBoxItem Tag="SmartClassicMoveDown" Content="Smart Classic Move Down"  />
-                                    <ComboBoxItem Tag="SmartProportionnalMoveDown" Content="Smart Proportionnal Move Down" FontWeight="Bold" />
-                                    <ComboBoxItem Tag="SmartRuledMoveDown" Content="Smart Ruled Move Down" FontWeight="Bold" />
+                                <ComboBox x:Name="cboAlgorithm" Grid.Row="0" Grid.Column="1" Margin="5"  SelectedIndex="9" SelectionChanged="CboAlgorithm_SelectionChanged">
+                                    <ComboBoxItem Tag="ClassicRaw" Content="Classic Raw (to understand)" Foreground="DarkBlue" />
+                                    <ComboBoxItem Tag="ClassicEqualitarian" Content="Classic Equalitarian (Very close to iRacing now)" FontWeight="Bold" Foreground="DarkBlue" />
+                                    <ComboBoxItem Tag="ClassicProportionnal" Content="Classic Proportionnal (iRacing before 2015S4)" Foreground="DarkBlue" />
+                                    <ComboBoxItem Tag="ClassicProportionnalBalanced" Content="Car Proportionnal Balanced" Foreground="DarkBlue" />
+                                    <ComboBoxItem Tag="ClassicProportionsRuled" Content="Classic ProportionsRuled Rules" Foreground="DarkBlue"  />
+                                    <ComboBoxItem Tag="RatingThresholdedEqualitarian" Content="Rating Thresholded Equalitarian" Foreground="DarkOrchid" />
+                                    <ComboBoxItem Tag="RatingThresholdedProportionnalBalanced" Content="Rating Thresholded ProportionnalBalanced" Foreground="DarkOrchid" />
+                                    <ComboBoxItem Tag="RatingThresholdedProportionnalBalancedTriple" Content="Rating Thresholded Proportionnal Balanced Triple" Foreground="DarkOrchid" />
+                                    <ComboBoxItem Tag="SmartMoveDownProportionnalBalanced" Content="SmartMoveDown Proportionnal Balanced" Foreground="DarkGreen" />
+                                    <ComboBoxItem Tag="SmartMoveDownProportionsRuled" Content="SmartMoveDown Proportions Ruled" FontWeight="Bold" Foreground="DarkGreen" />
                                 </ComboBox>
                                 <TextBox x:Name="tbxFieldSize" Grid.Row="1" Grid.Column="1" Text="45" Margin="5" />
 

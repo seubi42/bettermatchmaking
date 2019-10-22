@@ -60,7 +60,7 @@ namespace BetterMatchMaking.Sample
 
 
             // run algorithm
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartRuledMoveDown");
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownProportionsRuled");
             for (int maxsofdiff = 5; maxsofdiff < 40; maxsofdiff++)
             {
                 for (int mostpop = 0; mostpop < 1; mostpop++)
@@ -70,12 +70,12 @@ namespace BetterMatchMaking.Sample
 
                     Console.WriteLine(new FileInfo(csv).Name);
                     Console.WriteLine("Max Soff Diff = " + maxsofdiff);
-                    calculator.ParameterMaxSofDiff = maxsofdiff;
-                    calculator.ParameterMaxSofFunctA = 12;
-                    calculator.ParameterMaxSofFunctX = 1000;
-                    calculator.ParameterMaxSofFunctB = -20;
-                    calculator.ParameterTopSplitException = 0;
-                    calculator.ParameterMostPopulatedClassInEverySplits = mostpop;
+                    calculator.ParameterMaxSofDiffValue = maxsofdiff;
+                    calculator.ParameterMaxSofFunctAValue = 12;
+                    calculator.ParameterMaxSofFunctXValue = 1000;
+                    calculator.ParameterMaxSofFunctBValue = -20;
+                    calculator.ParameterTopSplitExceptionValue = 0;
+                    calculator.ParameterMostPopulatedClassInEverySplitsValue = mostpop;
                     calculator.Compute(entrylist, fieldSize);
                     var audit = calculator.GetAudit();
                     Console.WriteLine(audit.ToString());

@@ -7,19 +7,19 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    public class SmartRuledMoveDown : IMatchMaking
+    public class SmartMoveDownProportionsRuled : IMatchMaking
     {
         public List<Split> Splits { get; private set; }
 
         // parameters
-        public virtual bool UseParameterP
+        public virtual bool UseParameterClassPropMinPercent
         {
             get { return false; }
         }
 
 
 
-        public bool UseParameterIR
+        public bool UseParameterRatingThreshold
         {
             get { return false; }
 
@@ -42,14 +42,14 @@ namespace BetterMatchMaking.Library.Calc
             get { return true; }
         }
 
-        public int ParameterPValue { get; set; }
-        public int ParameterIRValue { get; set; }
-        public int ParameterMaxSofDiff { get; set; }
-        public int ParameterMaxSofFunctA { get; set; }
-        public int ParameterMaxSofFunctB { get; set; }
-        public int ParameterMaxSofFunctX { get; set; }
-        public int ParameterTopSplitException { get; set; }
-        public int ParameterMostPopulatedClassInEverySplits { get; set; }
+        public int ParameterClassPropMinPercentValue { get; set; }
+        public int ParameterRatingThresholdValue { get; set; }
+        public int ParameterMaxSofDiffValue { get; set; }
+        public int ParameterMaxSofFunctAValue { get; set; }
+        public int ParameterMaxSofFunctBValue { get; set; }
+        public int ParameterMaxSofFunctXValue { get; set; }
+        public int ParameterTopSplitExceptionValue { get; set; }
+        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
 
         // -->
 
@@ -60,7 +60,7 @@ namespace BetterMatchMaking.Library.Calc
 
 
 
-        RuledMatchMaking firstpart;
+        ClassicProportionsRuled firstpart;
 
         int fieldSize;
 
@@ -85,7 +85,7 @@ namespace BetterMatchMaking.Library.Calc
             carClassesIds = (from r in carclasses select r.CarClassId).ToList();
 
             // first pass with a simple algoritm
-            firstpart = new RuledMatchMaking();
+            firstpart = new ClassicProportionsRuled();
             BetterMatchMaking.Library.BetterMatchMakingCalculator.CopyParameters(this, firstpart as IMatchMaking);
             firstpart.Init(carClassesIds);
             (firstpart as IMatchMaking).Compute(data, fieldSize);
@@ -504,7 +504,7 @@ namespace BetterMatchMaking.Library.Calc
 
         private void AddMostPopulatedClassInTheSplitIfMissing(Split s)
         {
-            if (ParameterMostPopulatedClassInEverySplits == 1)
+            if (ParameterMostPopulatedClassInEverySplitsValue == 1)
             {
                 // add most populated class in the split
                 List<int> classesNotInThisSplit = new List<int>();
@@ -577,7 +577,7 @@ namespace BetterMatchMaking.Library.Calc
                                                                 && r.CountClassCars(classIndex) > 0
                                                                 select r).FirstOrDefault();
 
-                        if (ParameterMostPopulatedClassInEverySplits == 1)
+                        if (ParameterMostPopulatedClassInEverySplitsValue == 1)
                         {
                             if (classIndex == carClassesIds.Count - 1)
                             {
@@ -747,7 +747,7 @@ namespace BetterMatchMaking.Library.Calc
 
         public bool HaveToMoveDown(Split s, int classIndex, List<int> splitSofs)
         {
-            if (ParameterTopSplitException == 1 && s.Number == 1)
+            if (ParameterTopSplitExceptionValue == 1 && s.Number == 1)
             {
                 return false;
             }
@@ -782,17 +782,17 @@ namespace BetterMatchMaking.Library.Calc
                 diff = Math.Abs(diff);
             }
 
-            double limit = ParameterMaxSofDiff;
+            double limit = ParameterMaxSofDiffValue;
 
 
-            double fx = ParameterMaxSofFunctX;
-            double fa = ParameterMaxSofFunctA;
-            double fb = ParameterMaxSofFunctB;
+            double fx = ParameterMaxSofFunctXValue;
+            double fa = ParameterMaxSofFunctAValue;
+            double fb = ParameterMaxSofFunctBValue;
 
             if (!(fx == 0 || fa == 0 || fb == 0))
             {
                 limit = ((Convert.ToDouble(s.GlobalSof) / fx) * fa) + fb;
-                limit = Math.Max(limit, ParameterMaxSofDiff);
+                limit = Math.Max(limit, ParameterMaxSofDiffValue);
                 s.Info = "Diff Target=" + Convert.ToInt32(limit);
             }
 

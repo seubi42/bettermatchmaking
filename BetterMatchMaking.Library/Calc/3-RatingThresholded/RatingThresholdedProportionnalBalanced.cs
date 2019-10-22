@@ -7,16 +7,16 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
-    class DoubleProportionnalBalancedMatchMaking : DoubleClassicMatchMaking
+    public class RatingThresholdedProportionnalBalanced : RatingThresholdedEqualitarian
     {
-        public override bool UseParameterP
+        public override bool UseParameterClassPropMinPercent
         {
             get { return true; }
         }
 
         internal override IMatchMaking GetGroupMatchMaker()
         {
-            return new ProportionnalBalancedMatchMaking();
+            return new ClassicProportionnalBalanced();
         }
 
 

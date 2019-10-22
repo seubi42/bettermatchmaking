@@ -17,13 +17,13 @@ namespace BetterMatchMaking.Sample
 
 
             // 2 : instanciate calculator and parameters
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartProportionnalMoveDown");
-            calculator.ParameterPValue = 37;
-            calculator.ParameterMaxSofDiff = 18;
-            calculator.ParameterMaxSofFunctA = 12;
-            calculator.ParameterMaxSofFunctX = 1000;
-            calculator.ParameterMaxSofFunctB = -20;
-            calculator.ParameterTopSplitException = 1;
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownProportionsRuled");
+            calculator.ParameterClassPropMinPercentValue = 37;
+            calculator.ParameterMaxSofDiffValue = 18;
+            calculator.ParameterMaxSofFunctAValue = 12;
+            calculator.ParameterMaxSofFunctXValue = 1000;
+            calculator.ParameterMaxSofFunctBValue = -20;
+            calculator.ParameterTopSplitExceptionValue = 1;
 
             // 3 : Launch
             int fieldSize = 45;

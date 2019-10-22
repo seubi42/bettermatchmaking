@@ -1,0 +1,71 @@
+VERSION 1 - PRELIMINAY WORK
+***************************
+***************************
+
+01.10.19 - First anaylsis and code
+
+	Sebastien Mallet is used to work with CSV iRacing Race Results and to make
+	some statistics on it because of iPitting.
+
+	Free time was spent to understand the current splitting process, mostly
+	in Special Events. Code writting to retro engineering current algorithm
+	is a great help to understand it.
+
+	Some first simple ideas come after that after analysis of car class distribution
+	and iRating distribution.
+
+
+17.10.19 - Better Splits for iRacing initiative
+
+	Sebastien Mallet launched a forum topic: http://board.ipitting.com/bettersplits
+	A short video trailer is in it to try something funny and viral https://www.youtube.com/watch?v=XTahIag-TCU
+	It was share by some teams on social networks :)
+	
+	And a more interresting presentation is available here :
+		English : https://www.youtube.com/watch?v=uBjtvHCp0LE
+		French : https://www.youtube.com/watch?v=9FQWK9_npBk
+
+	To present two first ideas :
+		- Different car class distribution compared:
+			- Egalitarian: the current one (15/15/16)
+			- Proportionnal : what was in iRating before 2015 Season 4 
+			- Balanced : something in the middle
+
+		- iRacing Threshold: a first (very simple) idea to not mix driver up and down an iRacing limit.
+
+	The forum topic was a great starting point to discuss and exchange ideas around that.
+
+
+
+IMPORTANT FEEDBACKS BETWEEN V1 AND V2
+*************************************
+**************************************
+
+	17.10.19 - Scott McIntyre - https://members.iracing.com/jforum/posts/list/3669811.page#11766624
+	Idea of moving down lesspopulated classes splits by matching the SoF of the most populated one.
+
+	17.10.19 - Yannick Lapchin - https://members.iracing.com/jforum/posts/list/3669811.page#11766644
+	Top split and broadcast: need a way to have all categories on top split if needed.
+
+	18.10.19 - Yannick Lapchin - https://members.iracing.com/jforum/posts/list/25/3669811.page#11766963
+	SoF difference problem is relative to iRating level: Less problem between 4.5k GTE and 3.0k DP than between 3.0 GTE and 2.0 DP.
+	
+	18.10.19 - Sebastien Mallet - https://members.iracing.com/jforum/posts/list/25/3669811.page#11766986
+	React about Scott's ideas and how it can be implemented. (draft PDF attached to understand algorithm)
+
+	21.10.19 - Sebastien Mallet - https://members.iracing.com/jforum/posts/list/50/3669811.page#11769306
+	First preview of a draft of a "move down algorithm, based on Balanced car class distribution.
+
+	21.10.19 - Sebastien Mallet - https://members.iracing.com/jforum/posts/list/50/3669811.page#11769652
+	Speaking about two options : 'no move down' in top split VS relative % allowed SoF difference relative to split SoF. (affine function)
+
+	21.10.19 - Yannick Lapchin - https://members.iracing.com/jforum/posts/list/75/3669811.page#11769692
+	About Balanced car class distribution : clues to improve it. 
+	For example in Petit Le Mans, when 3 car classes, it should looks like 12 / 13 / 20 cars
+	and when 2 classes it should looks like 17 / 28.
+
+	22.10.19 - Sebastien Mallet - https://members.iracing.com/jforum/posts/list/75/3669811.page#11770309
+	Preview of changes to fit Yannick car class distribution ideas.
+ 
+
+

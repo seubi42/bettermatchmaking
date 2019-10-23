@@ -167,21 +167,16 @@ namespace BetterMatchMaking.Library.Calc
         /// </summary>
         private void SmartMoveDownProcess()
         {
-            moveDownPass = 1;
-            while (moveDownPass <= 2) // two passes
+  
+
+            // For every split
+            for (int i = 0; i < Splits.Count; i++)
             {
-
-                // For every split
-                for (int i = 0; i < Splits.Count; i++)
-                {
-                    // mode down process. the most important thing on this algorithm
-                    MoveDownCarsSplits(Splits[i], i);
-                }
-
-                // because after move downs each class sofs will change a bit
-                // we make a second pass to improve the results (with 50% of limit)
-                moveDownPass++;
+                // mode down process. the most important thing on this algorithm
+                MoveDownCarsSplits(Splits[i], i);
             }
+
+ 
 
             CleanEmptySplits(); // just to be sure
 
@@ -240,6 +235,7 @@ namespace BetterMatchMaking.Library.Calc
                         movedCategories.Add(carClassesIds[i]);
                     }
                 }
+                
             }
 
             // -->
@@ -361,7 +357,7 @@ namespace BetterMatchMaking.Library.Calc
             // what is the allowed limit ?
             // read it from ParameterMaxSofDiffValue (constant value)
             double limit = ParameterMaxSofDiffValue;
-            limit /= moveDownPass; // it will be only the half on second pass
+            //limit = moveDownPass; // it will be only the half on second pass
 
             // and it set, read it from the affine function
             // f(rating) = (rating / X) * A) + b

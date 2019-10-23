@@ -12,6 +12,7 @@ namespace BetterMatchMaking.Sample
         int tests = 0;
         int testsFailed = 0;
         int testsSplitsDiff = 0;
+        List<double> diff = new List<double>();
 
         public void Tests()
         {
@@ -27,6 +28,7 @@ namespace BetterMatchMaking.Sample
             Console.WriteLine("Test done: " + tests);
             Console.WriteLine("- Failed: " + testsFailed);
             Console.WriteLine("- Warning Splits Diff: " + testsSplitsDiff);
+            Console.WriteLine("- Average diff: " + diff.Average());
 
             var bench = DateTime.Now.Subtract(dtStart);
             Console.WriteLine("in " + bench.ToString() + " ("+bench.TotalSeconds+" s)");
@@ -59,9 +61,12 @@ namespace BetterMatchMaking.Sample
             // -->
 
 
+
+
             // run algorithm
+            
             BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
-            for (int maxsofdiff = 5; maxsofdiff < 40; maxsofdiff++)
+            for (int maxsofdiff = 18; maxsofdiff < 19; maxsofdiff++)
             {
                 for (int mostpop = 0; mostpop < 1; mostpop++)
                 {
@@ -70,8 +75,9 @@ namespace BetterMatchMaking.Sample
 
                     Console.WriteLine(new FileInfo(csv).Name);
                     Console.WriteLine("Max Soff Diff = " + maxsofdiff);
+                    calculator.ParameterMinCarsValue = 10;
                     calculator.ParameterMaxSofDiffValue = maxsofdiff;
-                    calculator.ParameterMaxSofFunctAValue = 12;
+                    calculator.ParameterMaxSofFunctAValue = 9;
                     calculator.ParameterMaxSofFunctXValue = 1000;
                     calculator.ParameterMaxSofFunctBValue = -20;
                     calculator.ParameterTopSplitExceptionValue = 0;
@@ -93,6 +99,7 @@ namespace BetterMatchMaking.Sample
                     {
 
                     }
+                    diff.Add(audit.AverageSplitClassesSofDifference);
                     tests++;
                 }
             }

@@ -216,6 +216,9 @@ namespace BetterMatchMaking.Library.Calc
             AddMostPopulatedClassInTheSplitIfMissing(s);
 
 
+            
+            
+
             // move cars down
             for (int i = 0; i < classesSof.Count - 1; i++)
             {
@@ -251,6 +254,10 @@ namespace BetterMatchMaking.Library.Calc
             // keep then in a variable because we don't want
             // to update them again after that
             var reducedClasses = MoveDownExcessCarsInTheSplit(s);
+            for (int e = s.Number; e < Splits.Count-1; e++)
+            {
+                MoveDownExcessCarsInTheSplit(Splits[e]);
+            }
             // -->
 
 
@@ -308,6 +315,7 @@ namespace BetterMatchMaking.Library.Calc
         /// <returns></returns>
         public bool HaveToMoveDown(Split s, int classIndex, List<int> splitSofs)
         {
+            
 
             // some exceptions:
 
@@ -326,12 +334,21 @@ namespace BetterMatchMaking.Library.Calc
                 // -> never move down classes on it
                 return false;
             }
+
+
+            if (!s.GetClassesIndex().Contains(classIndex))
+            {
+                // the split doest not contains the class
+
+                return false;
+            }
             // -->
 
 
             // get each class SoFs in this split
             // and keep min and max
-            int classSof = splitSofs[classIndex];
+            s.RefreshSofs();
+            int classSof = s.GetClassSof(classIndex);
             int min = classSof;
             int max = s.GlobalSof;
             max = Math.Max(max, s.Class1Sof);
@@ -345,8 +362,18 @@ namespace BetterMatchMaking.Library.Calc
             // -->
 
 
+            //double referencesof = (s.GlobalSof + max + classSof) / 3;
+            double referencesof = classSof;
+            //double referencesof = s.GlobalSof;
+            //double referencesof = classSof;
+            if(referencesof == 0)
+            {
+                referencesof = min;
+            }
+
+
             // difference in % between min and max
-            int diff = 100 * min / max;
+            int diff = Convert.ToInt32(100 * Convert.ToInt32(referencesof) / max);
             diff = 100 - diff;
             if (diff < 0)
             {
@@ -359,6 +386,8 @@ namespace BetterMatchMaking.Library.Calc
             double limit = ParameterMaxSofDiffValue;
             //limit = moveDownPass; // it will be only the half on second pass
 
+            
+
             // and it set, read it from the affine function
             // f(rating) = (rating / X) * A) + b
             double fx = ParameterMaxSofFunctXValue;
@@ -366,26 +395,22 @@ namespace BetterMatchMaking.Library.Calc
             double fb = ParameterMaxSofFunctBValue;
             if (!(fx == 0 || fa == 0 || fb == 0))
             {
-                limit = ((Convert.ToDouble(max) / fx) * fa) + fb;
+                
+
+                limit = ((Convert.ToDouble(referencesof) / fx) * fa) + fb;
                 limit = Math.Max(limit, ParameterMaxSofDiffValue);
 
                 
             }
 
-            
-            // so, does this split need move downs ?
-            if (diff > limit)
-            {
-                s.Info += "(Δ:" + diff + ",L:" + Convert.ToInt32(limit) + ",1) ";
-                return true; // have to move down the class because more than max allowed sof difference
-            }
-            else
-            {
-                s.Info += "(Δ:" + diff + ",L:" + Convert.ToInt32(limit) + ",0) ";
-            }
+
+            bool movedown = (diff >= limit);
 
 
-            return false;
+            s.Info += "(Δ:" + referencesof + "/" + max + "=" + diff + ",L:" + Convert.ToInt32(limit) + "," + Convert.ToInt32(movedown) + ") ";
+
+
+            return movedown;
         }
 
 

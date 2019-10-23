@@ -44,7 +44,7 @@ namespace BetterMatchMaking.UI
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
             sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 5, 100, 18);
             sspMaxSofFx = new SyncSliderBox(lblParameterMaxSoffFunctX, tbxParameterMaxSoffFunctX, sldParameterMaxSoffFunctX, 0, 9999, 1000);
-            sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 99, 12);
+            sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 99, 9);
             sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
             sspEqualize = new SyncSliderBox(lblParameterEqualize, tbxParameterEqualize, sldParameterEqualize, 0, 1, 1);

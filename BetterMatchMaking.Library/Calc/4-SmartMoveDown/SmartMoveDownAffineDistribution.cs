@@ -368,14 +368,20 @@ namespace BetterMatchMaking.Library.Calc
             {
                 limit = ((Convert.ToDouble(s.GlobalSof) / fx) * fa) + fb;
                 limit = Math.Max(limit, ParameterMaxSofDiffValue);
-                s.Info = "Diff Target=" + Convert.ToInt32(limit);
+
+                
             }
 
-
+            
             // so, does this split need move downs ?
             if (diff > limit)
             {
+                s.Info += "(Δ:" + diff + ",L:" + Convert.ToInt32(limit) + ",1) ";
                 return true; // have to move down the class because more than max allowed sof difference
+            }
+            else
+            {
+                s.Info += "(Δ:" + diff + ",L:" + Convert.ToInt32(limit) + ",0) ";
             }
 
 

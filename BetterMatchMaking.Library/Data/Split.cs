@@ -43,11 +43,12 @@ namespace BetterMatchMaking.Library.Data
         #region Constructors (with number parameter or not)
         public Split()
         {
-
+            Info = "";
         }
 
         public Split(int number)
         {
+            Info = "";
             Number = number;
         }
         #endregion

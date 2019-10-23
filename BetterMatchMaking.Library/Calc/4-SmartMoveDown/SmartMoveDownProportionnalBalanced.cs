@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +10,26 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
+    /// <summary>
+    /// This algorithm is based on the SmartMoveDownProportionsRuled.
+    /// Please see and tun the SmartMoveDownProportionsRuled algorithm first to understand the process.
+    /// 
+    /// The process is the same but the TakeCars implementation is base on a ClassicProportionnalBalanced
+    /// which allows the use of the UseParameterClassPropMinPercent parameter.
+    /// </summary>
     public class SmartMoveDownProportionnalBalanced : SmartMoveDownProportionsRuled
     {
+        #region Enabled Parameters
         public override bool UseParameterClassPropMinPercent
         {
             get { return true;  }
         }
+        #endregion
 
+        /// <summary>
+        /// The car class distribution is made by the ClassicProportionnalBalanced algorithm
+        /// </summary>
+        /// <returns></returns>
         internal override IMatchMaking GetBaseAlgorithm()
         {
             return new ClassicProportionnalBalanced();
@@ -22,11 +38,15 @@ namespace BetterMatchMaking.Library.Calc
         internal override int TakeCars(Split split, int classId, List<int> exceptionClassId, int fieldSizeOrLimit)
         {
             // do thw bride between the 2 algorithm.
-            // not very elegant...
+            // not very elegant because lot of objects convertions ...
+            // but it works...
+
 
             int splitIndex = split.Number - 1;
             int classIndex = carClassesIds.IndexOf(classId);
 
+
+            // objects convertion to fit the original TakeClassCars methods
             Dictionary<int, int> carsInThisSplitAndNexts = new Dictionary<int, int>();
             for (int i = splitIndex; i < Splits.Count; i++)
             {
@@ -74,6 +94,7 @@ namespace BetterMatchMaking.Library.Calc
                 if (carsInThisSplitAndNexts[k] > 0) carsInThisSplitAndNexts2.Add(k, carsInThisSplitAndNexts[k]);
             }
             var carclasses2 = (from r in carclasses where r.Cars.Count > 0 select r).ToList();
+            // end of the objects convertion. sorry for that :) --> 
 
 
             int take = (baseAlgorithm as ITakeCarsProportionCalculator).TakeClassCars(this.fieldSize,

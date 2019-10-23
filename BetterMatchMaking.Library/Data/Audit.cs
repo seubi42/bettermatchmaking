@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

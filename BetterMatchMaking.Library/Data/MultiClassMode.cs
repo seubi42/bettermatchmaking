@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -64,8 +67,8 @@ namespace BetterMatchMaking.Library.Data
         }
         #endregion
 
-        #region TOTAL (TempTotal; CountTotalTargets)
-        public int TempTotal { get; set; }
+        #region TOTAL 
+
 
         public int CountTotalTargets()
         {

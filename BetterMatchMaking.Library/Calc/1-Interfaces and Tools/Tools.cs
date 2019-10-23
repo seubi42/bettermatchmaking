@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 namespace BetterMatchMaking.Library.Calc
 {
     public class Tools
-    {
-        public static int CountClasses(List<Data.Line> data)
-        {
-            return (from r in data select r.car_class_id).Distinct().Count();
-        }
-
-
-
-
+    { 
+        /// <summary>
+        /// Slit entrylist in a list of separatec queue.
+        /// 1 queue per class.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         internal static List<Data.ClassCarsQueue> SplitCarsPerClass(List<Data.Line> data)
         {
             List<Data.ClassCarsQueue> ret = new List<Data.ClassCarsQueue>();
@@ -32,11 +30,12 @@ namespace BetterMatchMaking.Library.Calc
             return ret;
         }
 
-        internal static int CountRemainingCars(List<Data.ClassCarsQueue> data)
-        {
-            return (from r in data select r.Cars.Count).Sum();
-        }
-
+        
+        /// <summary>
+        /// SoF Calculator algorithm
+        /// </summary>
+        /// <param name="ratings"></param>
+        /// <returns></returns>
         public static int Sof(List<int> ratings)
         {
             if (ratings.Count == 0) return 0;

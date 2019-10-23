@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +10,18 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 {
+
+    /// This algorithm override the TakeClassCars cuts the entry list in three parts (1, 2 and 3) :
+    ///  0- Cars with iR more than 'ParameterRatingThresholdValue' are re-splitted to
+    ///         1- First half, more than the median point of 0
+    ///         2- Second half, less than the median point of 0
+    ///  3- Cars with iR less than 'ParameterRatingThresholdValue'
+    ///  
+    /// - Then the ClassicEqualitarian algorithm is used to split each
+    /// list.
+    /// 
+    /// - Then both list are combined together to get a bit list
+    /// in two parts.
     public class RatingThresholdedProportionnalBalancedTriple : IMatchMaking
     {
         #region Active Parameters

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +15,7 @@ namespace BetterMatchMaking.Library.Calc
     /// Please see and tun the ClassicEqualitarian algorithm first to understand the process.
     /// 
     /// The TakeClassCars method implement a fixed rule to get a nice distribution between classes.
+    /// For three classes, the distribution is : 26% / 29% / 45%
     /// </summary>
     public class ClassicProportionsRuled : ClassicEqualitarian, ITakeCarsProportionCalculator
     {

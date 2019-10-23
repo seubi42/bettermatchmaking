@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -267,7 +270,7 @@ namespace BetterMatchMaking.Library.Data
         /// </summary>
         /// <param name="carclass"></param>
         /// <param name="newcars"></param>
-        public void AddClassCars(int carclass, List<Line> newcars)
+        public void AppendClassCars(int carclass, List<Line> newcars)
         {
             List<Line> theClass = Tools.GetProperty<List<Line>>(this, "Class{i}Cars", carclass);
             if (theClass == null) theClass = new List<Line>();

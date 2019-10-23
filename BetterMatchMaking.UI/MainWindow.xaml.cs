@@ -80,7 +80,7 @@ namespace BetterMatchMaking.UI
             if (openFileDialog.ShowDialog() == true)
             {
                 tbxRegistrationFile.Text = openFileDialog.FileName;
-                if(tbxRegistrationFile.Text.StartsWith(openFileDialog.InitialDirectory + "\\"))
+                if(tbxRegistrationFile.Text.ToLower().StartsWith(openFileDialog.InitialDirectory.ToLower() + "\\"))
                 {
                     tbxRegistrationFile.Text = openFileDialog.FileName.Substring(openFileDialog.InitialDirectory.Length + 1);
                 }
@@ -121,20 +121,19 @@ namespace BetterMatchMaking.UI
 
         private void BtnCompute_Click(object sender, RoutedEventArgs e)
         {
+
+            BtnLoadRegistrationFile_Click(sender, e);
+
+
             bool nodata = false;
             if (parser.Data == null) nodata = true;
             if (parser.Data.Count == 0) nodata = true;
 
             if (nodata)
             {
-                if (!String.IsNullOrWhiteSpace(tbxRegistrationFile.Text))
-                {
-                    BtnLoadRegistrationFile_Click(sender, e);
-                }
-                else
-                {
+                
                     return;
-                }
+                
             }
 
             int defaultFieldSizeValue = 45;

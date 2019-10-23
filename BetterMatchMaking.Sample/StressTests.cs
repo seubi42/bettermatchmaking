@@ -66,7 +66,7 @@ namespace BetterMatchMaking.Sample
             // run algorithm
             
             BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
-            for (int maxsofdiff = 18; maxsofdiff < 19; maxsofdiff++)
+            for (int maxsofdiff = 5; maxsofdiff < 50; maxsofdiff++)
             {
                 for (int mostpop = 0; mostpop < 1; mostpop++)
                 {
@@ -77,7 +77,7 @@ namespace BetterMatchMaking.Sample
                     Console.WriteLine("Max Soff Diff = " + maxsofdiff);
                     calculator.ParameterMinCarsValue = 10;
                     calculator.ParameterMaxSofDiffValue = maxsofdiff;
-                    calculator.ParameterMaxSofFunctAValue = 9;
+                    calculator.ParameterMaxSofFunctAValue = 12;
                     calculator.ParameterMaxSofFunctXValue = 1000;
                     calculator.ParameterMaxSofFunctBValue = -20;
                     calculator.ParameterTopSplitExceptionValue = 0;

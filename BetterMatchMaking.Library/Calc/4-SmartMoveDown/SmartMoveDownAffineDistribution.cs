@@ -370,7 +370,7 @@ namespace BetterMatchMaking.Library.Calc
             {
                 referencesof = min;
             }
-
+            // -->
 
             // difference in % between min and max
             int diff = Convert.ToInt32(100 * Convert.ToInt32(referencesof) / max);

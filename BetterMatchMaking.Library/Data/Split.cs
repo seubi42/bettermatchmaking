@@ -485,7 +485,6 @@ namespace BetterMatchMaking.Library.Data
 
         #endregion
 
-
         #region To create of set a Class{i} (to init a class)
 
         /// <summary>

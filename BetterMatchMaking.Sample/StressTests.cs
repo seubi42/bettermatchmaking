@@ -60,7 +60,7 @@ namespace BetterMatchMaking.Sample
 
 
             // run algorithm
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownProportionsRuled");
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
             for (int maxsofdiff = 5; maxsofdiff < 40; maxsofdiff++)
             {
                 for (int mostpop = 0; mostpop < 1; mostpop++)

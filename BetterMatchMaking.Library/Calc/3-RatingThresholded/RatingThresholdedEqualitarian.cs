@@ -59,6 +59,13 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctBValue { get; set; }
         public int ParameterMaxSofFunctXValue { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
+
+        public virtual bool UseParameterMinCars
+        {
+            get { return false; }
+        }
+
+        public int ParameterMinCarsValue { get; set; }
         #endregion
 
 

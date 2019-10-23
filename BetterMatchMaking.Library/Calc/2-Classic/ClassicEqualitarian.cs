@@ -54,6 +54,13 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctXValue { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
+
+        public virtual bool UseParameterMinCars
+        {
+            get { return false; }
+        }
+
+        public int ParameterMinCarsValue { get; set; }
         #endregion
 
 
@@ -61,11 +68,17 @@ namespace BetterMatchMaking.Library.Calc
 
         public List<int> CarClassesId { get; private set; }
 
+        internal int fieldSize;
+
 
         public void Compute(List<Line> data, int fieldSize)
         {
+            this.fieldSize = fieldSize;
+
             // Split cars per class
             var carsListPerClass = Tools.SplitCarsPerClass(data);
+
+            
 
             // Create two dictionnary (KEY for both is the CarClass Id)
             // classRemainingCars : VALUE is the number of remaining cars in the class
@@ -81,6 +94,7 @@ namespace BetterMatchMaking.Library.Calc
             // export classes id
             CarClassesId = new List<int>();
             foreach (var carClass in carsListPerClass) CarClassesId.Add(carClass.CarClassId);
+            InitData(CarClassesId, data);
 
             // MultiClassMode records describes changes on split car classes compositions
             // - FromSplit and ToSplit describes the range of splits
@@ -264,6 +278,8 @@ namespace BetterMatchMaking.Library.Calc
                 }
             }
 
+            
+
             // OPTIMIZATIONS
             // the important points of this algorithm
             Optimize(fieldSize, classRemainingCars);
@@ -297,6 +313,11 @@ namespace BetterMatchMaking.Library.Calc
             // :-)
 
 
+        }
+
+        internal virtual void InitData(List<int> classesIds, List<Line> data)
+        {
+            // just for overriding
         }
 
         private void Optimize(int fieldSize, Dictionary<int, int> classRemainingCars)

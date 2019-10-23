@@ -79,12 +79,12 @@
                                     <ComboBoxItem Tag="ClassicEqualitarian" Content="Classic Equalitarian (Very close to iRacing now)" FontWeight="Bold" Foreground="DarkBlue" />
                                     <ComboBoxItem Tag="ClassicProportionnal" Content="Classic Proportionnal (iRacing before 2015S4)" Foreground="DarkBlue" />
                                     <ComboBoxItem Tag="ClassicProportionnalBalanced" Content="Car Proportionnal Balanced" Foreground="DarkBlue" />
-                                    <ComboBoxItem Tag="ClassicProportionsRuled" Content="Classic ProportionsRuled Rules" Foreground="DarkBlue"  />
+                                    <ComboBoxItem Tag="ClassicAffineDistribution" Content="Classic Affine Distribution" Foreground="DarkBlue"  />
                                     <ComboBoxItem Tag="RatingThresholdedEqualitarian" Content="Rating Thresholded Equalitarian" Foreground="DarkOrchid" />
                                     <ComboBoxItem Tag="RatingThresholdedProportionnalBalanced" Content="Rating Thresholded ProportionnalBalanced" Foreground="DarkOrchid" />
                                     <ComboBoxItem Tag="RatingThresholdedProportionnalBalancedTriple" Content="Rating Thresholded Proportionnal Balanced Triple" Foreground="DarkOrchid" />
                                     <ComboBoxItem Tag="SmartMoveDownProportionnalBalanced" Content="SmartMoveDown Proportionnal Balanced" Foreground="DarkGreen" />
-                                    <ComboBoxItem Tag="SmartMoveDownProportionsRuled" Content="SmartMoveDown Proportions Ruled" FontWeight="Bold" Foreground="DarkGreen" />
+                                    <ComboBoxItem Tag="SmartMoveDownAffineDistribution" Content="SmartMoveDown Affine Distribution" FontWeight="Bold" Foreground="DarkGreen" />
                                 </ComboBox>
                                 <TextBox x:Name="tbxFieldSize" Grid.Row="1" Grid.Column="1" Text="45" Margin="5" />
 
@@ -112,6 +112,10 @@
                             <TextBlock x:Name="lblParameterP" Text="p" Grid.Row="0" Grid.Column="0" TextAlignment="Center" />
                             <TextBox x:Name="tbxParameterP" Grid.Row="1" Grid.Column="0" TextAlignment="Center" Width="80" />
                             <Slider x:Name="sldParameterP" Grid.Row="2" Grid.Column="0" Width="80" />
+
+                            <TextBlock x:Name="lblParameterMinCars" Text="Min Cars" Grid.Row="0" Grid.Column="0" TextAlignment="Center" />
+                            <TextBox x:Name="tbxParameterMinCars" Grid.Row="1" Grid.Column="0" TextAlignment="Center" Width="80" />
+                            <Slider x:Name="sldParameterMinCars" Grid.Row="2" Grid.Column="0" Width="80" />
 
                             <TextBlock x:Name="lblParameterIR" Text="IR" Grid.Row="0" Grid.Column="2" TextAlignment="Center" />
                             <TextBox x:Name="tbxParameterIR" Grid.Row="1" Grid.Column="2" TextAlignment="Center" Width="80"  />

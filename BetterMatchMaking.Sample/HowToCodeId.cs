@@ -17,7 +17,7 @@ namespace BetterMatchMaking.Sample
 
 
             // 2 : instanciate calculator and parameters
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownProportionsRuled");
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
             calculator.ParameterClassPropMinPercentValue = 37;
             calculator.ParameterMaxSofDiffValue = 18;
             calculator.ParameterMaxSofFunctAValue = 12;

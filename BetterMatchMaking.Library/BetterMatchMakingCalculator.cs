@@ -51,6 +51,12 @@ namespace BetterMatchMaking.Library
             get { return instance.UseParameterMostPopulatedClassInEverySplits; }
         }
 
+        public virtual bool UseParameterMinCars
+        {
+            get { return instance.UseParameterMinCars; }
+        }
+
+        
 
 
         public int ParameterClassPropMinPercentValue
@@ -92,6 +98,12 @@ namespace BetterMatchMaking.Library
         {
             get { return instance.ParameterMostPopulatedClassInEverySplitsValue; }
             set { instance.ParameterMostPopulatedClassInEverySplitsValue = value; }
+        }
+
+        public int ParameterMinCarsValue
+        {
+            get { return instance.ParameterMinCarsValue; }
+            set { instance.ParameterMinCarsValue = value; }
         }
         #endregion
 

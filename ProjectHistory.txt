@@ -64,8 +64,11 @@ IMPORTANT FEEDBACKS BETWEEN V1 AND V2
 	For example in Petit Le Mans, when 3 car classes, it should looks like 12 / 13 / 20 cars
 	and when 2 classes it should looks like 17 / 28.
 
-	22.10.19 - Sebastien Mallet - https://members.iracing.com/jforum/posts/list/75/3669811.page#11770309
-	Preview of changes to fit Yannick car class distribution ideas.
+	23.10.19 - Yannick Lapchin - https://members.iracing.com/jforum/posts/list/75/3669811.page#11771352
+	Details and formula of the Affine function to distribute cars.
+	Allows to implement a 'min cars' parameter which will set the minimum cars we can have in a split class.
+
+
  
 
 

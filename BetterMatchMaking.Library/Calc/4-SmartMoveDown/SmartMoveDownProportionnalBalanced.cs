@@ -11,18 +11,26 @@ using BetterMatchMaking.Library.Data;
 namespace BetterMatchMaking.Library.Calc
 {
     /// <summary>
-    /// This algorithm is based on the SmartMoveDownProportionsRuled.
+    /// This algorithm is based on the SmartMoveDownAffineDistribution.
     /// Please see and tun the SmartMoveDownProportionsRuled algorithm first to understand the process.
     /// 
     /// The process is the same but the TakeCars implementation is base on a ClassicProportionnalBalanced
     /// which allows the use of the UseParameterClassPropMinPercent parameter.
+    /// It is less efficient, it is just to compare,
     /// </summary>
-    public class SmartMoveDownProportionnalBalanced : SmartMoveDownProportionsRuled
+    public class SmartMoveDownProportionnalBalanced : SmartMoveDownAffineDistribution
     {
         #region Enabled Parameters
         public override bool UseParameterClassPropMinPercent
         {
             get { return true;  }
+        }
+        #endregion
+
+        #region Disabled Parameters
+        public override bool UseParameterMinCars
+        {
+            get { return false; }
         }
         #endregion
 

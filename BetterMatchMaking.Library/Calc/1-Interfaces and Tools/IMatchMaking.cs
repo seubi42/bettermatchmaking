@@ -101,7 +101,17 @@ namespace BetterMatchMaking.Library.Calc
 
 
 
-
+        /// <summary>
+        /// Says if the algorithm use the ParameterMinCarsValue parameter.
+        /// If true, you need to set a value to it.
+        /// </summary>
+        bool UseParameterMinCars { get; }
+        /// <summary>
+        /// This parameter is used for 'AffineDistribution' algorithms.
+        /// You can set the number of minimum cars you want to insure
+        /// in the less populated car class
+        /// </summary>
+        int ParameterMinCarsValue { get; set; }
 
 
 

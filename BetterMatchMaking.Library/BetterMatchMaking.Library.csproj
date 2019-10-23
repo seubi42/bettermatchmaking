@@ -50,9 +50,9 @@
     <Compile Include="Calc\2-Classic\ClassicProportionnalBalanced.cs" />
     <Compile Include="Calc\2-Classic\ClassicProportionnal.cs" />
     <Compile Include="Calc\2-Classic\ClassicRaw.cs" />
-    <Compile Include="Calc\2-Classic\ClassicProportionsRuled.cs" />
+    <Compile Include="Calc\2-Classic\ClassicAffineDistribution.cs" />
     <Compile Include="Calc\4-SmartMoveDown\SmartMoveDownProportionnalBalanced.cs" />
-    <Compile Include="Calc\4-SmartMoveDown\SmartMoveDownProportionsRuled.cs" />
+    <Compile Include="Calc\4-SmartMoveDown\SmartMoveDownAffineDistribution.cs" />
     <Compile Include="Calc\1-Interfaces and Tools\Tools.cs" />
     <Compile Include="Calc\3-RatingThresholded\RatingThresholdedProportionnalBalancedTriple.cs" />
     <Compile Include="Data\Audit.cs" />

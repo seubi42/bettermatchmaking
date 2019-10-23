@@ -11,8 +11,10 @@ using BetterMatchMaking.Library.Data;
 namespace BetterMatchMaking.Library.Calc
 {
     /// <summary>
-    /// This algorithm first use a ClassicProportionsRuled to make splits
-    /// Then a second pass try to move less populated class to lower splits if
+    /// This algorithm first use a ClassicAffineDistribution to make splits
+    /// which allows the use of the ParameterMinCars.
+    /// 
+    /// Then a second process try to move less populated class to lower splits if
     /// the % difference between the lowest and the highest class SoF is greater
     /// than the UseParameterMaxSofDiff parameter.
     /// 
@@ -30,7 +32,7 @@ namespace BetterMatchMaking.Library.Calc
     /// 
     /// This algorithm is more complex but gives very interresting results.
     /// </summary>
-    public class SmartMoveDownProportionsRuled : IMatchMaking
+    public class SmartMoveDownAffineDistribution : IMatchMaking
     {
         public List<Split> Splits { get; private set; }
 
@@ -56,6 +58,13 @@ namespace BetterMatchMaking.Library.Calc
             get { return true; }
         }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
+
+        public virtual bool UseParameterMinCars
+        {
+            get { return true; }
+        }
+
+        public int ParameterMinCarsValue { get; set; }
         #endregion
 
 
@@ -82,6 +91,7 @@ namespace BetterMatchMaking.Library.Calc
         internal IMatchMaking baseAlgorithm;
         internal int fieldSize;
         private List<Line> data;
+        private int moveDownPass = 1;
         // -->
 
         
@@ -97,13 +107,6 @@ namespace BetterMatchMaking.Library.Calc
             // initialize the base algorithm
             baseAlgorithm = GetBaseAlgorithm();
             BetterMatchMakingCalculator.CopyParameters(this, baseAlgorithm as IMatchMaking);
-
-            // if the ClassicProportionsRuled is used, run its Init method
-            var algoRuled = baseAlgorithm as ClassicProportionsRuled;
-            if (algoRuled != null)
-            {
-                algoRuled.Init(carClassesIds);
-            }
 
             // Compute with be base Algorithm and get results
             (baseAlgorithm as IMatchMaking).Compute(data, fieldSize);
@@ -126,7 +129,7 @@ namespace BetterMatchMaking.Library.Calc
         /// <returns></returns>
         internal virtual IMatchMaking GetBaseAlgorithm()
         {
-            return new ClassicProportionsRuled();
+            return new ClassicAffineDistribution();
         }
 
 
@@ -153,7 +156,7 @@ namespace BetterMatchMaking.Library.Calc
                     classesRemaining.Add(id, 1);
                 }
             }
-            ClassicProportionsRuled algo = baseAlgorithm as ClassicProportionsRuled;
+            ClassicAffineDistribution algo = baseAlgorithm as ClassicAffineDistribution;
             return algo.TakeClassCars(fieldSizeOrLimit, classesToSelect.Count, classesRemaining, classId, null, split.Number);
         }
 
@@ -164,23 +167,33 @@ namespace BetterMatchMaking.Library.Calc
         /// </summary>
         private void SmartMoveDownProcess()
         {
-            // For every split
-            for (int i = 0; i < Splits.Count; i++)
+            moveDownPass = 1;
+            while (moveDownPass <= 2) // two passes
             {
-                // mode down process. the most important thing on this algorithm
-                MoveDownCarsSplits(Splits[i], i);
-            }
 
+                // For every split
+                for (int i = 0; i < Splits.Count; i++)
+                {
+                    // mode down process. the most important thing on this algorithm
+                    MoveDownCarsSplits(Splits[i], i);
+                }
+
+                // because after move downs each class sofs will change a bit
+                // we make a second pass to improve the results (with 50% of limit)
+                moveDownPass++;
+            }
 
             CleanEmptySplits(); // just to be sure
 
-            
+
             MergeTheTwoLastSplits(); // because it can happens when differences are quite large on very last split
             CleanEmptySplits(); // just to be sure
 
 
             OptimizeAndSolveDifferences(); // a third pass
             CleanEmptySplits(); // just to be sure
+
+            carclasses = Tools.SplitCarsPerClass(data);
 
         }
 
@@ -348,6 +361,7 @@ namespace BetterMatchMaking.Library.Calc
             // what is the allowed limit ?
             // read it from ParameterMaxSofDiffValue (constant value)
             double limit = ParameterMaxSofDiffValue;
+            limit /= moveDownPass; // it will be only the half on second pass
 
             // and it set, read it from the affine function
             // f(rating) = (rating / X) * A) + b

@@ -25,6 +25,7 @@ namespace BetterMatchMaking.UI
         Library.Data.CsvParser parser;
 
         SyncSliderBox sspP;
+        SyncSliderBox sspMinCars;
         SyncSliderBox sspIR;
         SyncSliderBox sspMaxSofDiff;
         SyncSliderBox sspMaxSofFx;
@@ -39,15 +40,17 @@ namespace BetterMatchMaking.UI
             parser = new Library.Data.CsvParser();
 
             sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 5, 66, 37);
+            sspMinCars = new SyncSliderBox(lblParameterMinCars, tbxParameterMinCars, sldParameterMinCars, 1, 30, 10);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
             sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 5, 100, 18);
             sspMaxSofFx = new SyncSliderBox(lblParameterMaxSoffFunctX, tbxParameterMaxSoffFunctX, sldParameterMaxSoffFunctX, 0, 9999, 1000);
-            sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 150, 12);
+            sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 99, 13);
             sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
             sspEqualize = new SyncSliderBox(lblParameterEqualize, tbxParameterEqualize, sldParameterEqualize, 0, 1, 1);
 
             sspP.Visible = false;
+            sspMinCars.Visible = false;
             sspIR.Visible = false;
             sspMaxSofDiff.Visible = false;
             sspMaxSofFx.Visible = false;
@@ -150,6 +153,7 @@ namespace BetterMatchMaking.UI
             // instanciate the good algorithm
             var mm = new BetterMatchMaking.Library.BetterMatchMakingCalculator(strAlgo);
             mm.ParameterClassPropMinPercentValue = sspP.Value;
+            mm.ParameterMinCarsValue = sspMinCars.Value;
             mm.ParameterRatingThresholdValue = sspIR.Value;
             mm.ParameterMaxSofDiffValue = sspMaxSofDiff.Value;
             mm.ParameterMaxSofFunctAValue = sspMaxSofFa.Value;
@@ -293,6 +297,7 @@ namespace BetterMatchMaking.UI
                 
 
                 sspP.Visible = calc.UseParameterClassPropMinPercent;
+                sspMinCars.Visible = calc.UseParameterMinCars;
                 sspIR.Visible = calc.UseParameterRatingThreshold;
                 sspMaxSofDiff.Visible = calc.UseParameterMaxSofDiff;
                 sspMaxSofFa.Visible = calc.UseParameterMaxSofDiff;
@@ -304,6 +309,7 @@ namespace BetterMatchMaking.UI
             else
             {
                 sspP.Visible = false;
+                sspMinCars.Visible = false;
                 sspIR.Visible = false;
                 sspMaxSofDiff.Visible = false;
                 sspMaxSofFa.Visible = false;

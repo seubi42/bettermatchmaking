@@ -60,6 +60,14 @@ namespace BetterMatchMaking.Library.Calc
             get { return false; }
         }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
+
+
+        public virtual bool UseParameterMinCars
+        {
+            get { return false; }
+        }
+
+        public int ParameterMinCarsValue { get; set; }
         #endregion
 
 

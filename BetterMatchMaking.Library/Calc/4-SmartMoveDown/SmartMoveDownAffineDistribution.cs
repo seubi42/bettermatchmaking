@@ -366,7 +366,7 @@ namespace BetterMatchMaking.Library.Calc
             double fb = ParameterMaxSofFunctBValue;
             if (!(fx == 0 || fa == 0 || fb == 0))
             {
-                limit = ((Convert.ToDouble(s.GlobalSof) / fx) * fa) + fb;
+                limit = ((Convert.ToDouble(max) / fx) * fa) + fb;
                 limit = Math.Max(limit, ParameterMaxSofDiffValue);
 
                 

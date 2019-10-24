@@ -49,9 +49,14 @@ namespace BetterMatchMaking.Library.Calc
             get { return false; }
         }
         public int ParameterMaxSofDiffValue { get; set; }
-        public int ParameterMaxSofFunctAValue { get; set; }
-        public int ParameterMaxSofFunctBValue { get; set; }
-        public int ParameterMaxSofFunctXValue { get; set; }
+        public virtual bool UseParameterMaxSofFunct
+        {
+            get { return false; }
+
+        }
+        public int ParameterMaxSofFunctStartingIRValue { get; set; }
+        public int ParameterMaxSofFunctStartingThreshold { get; set; }
+        public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
 
 
 

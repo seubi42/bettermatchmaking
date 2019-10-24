@@ -77,9 +77,9 @@ namespace BetterMatchMaking.Sample
                     Console.WriteLine("Max Soff Diff = " + maxsofdiff);
                     calculator.ParameterMinCarsValue = 10;
                     calculator.ParameterMaxSofDiffValue = maxsofdiff;
-                    calculator.ParameterMaxSofFunctAValue = 12;
-                    calculator.ParameterMaxSofFunctXValue = 1000;
-                    calculator.ParameterMaxSofFunctBValue = -20;
+                    calculator.ParameterMaxSofFunctStartingIRValue = 12;
+                    calculator.ParameterMaxSofFunctExtraThresoldPerK = 1000;
+                    calculator.ParameterMaxSofFunctStartingThreshold = -20;
                     calculator.ParameterTopSplitExceptionValue = 0;
                     calculator.ParameterMostPopulatedClassInEverySplitsValue = mostpop;
                     calculator.Compute(entrylist, fieldSize);

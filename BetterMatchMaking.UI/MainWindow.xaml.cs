@@ -28,9 +28,9 @@ namespace BetterMatchMaking.UI
         SyncSliderBox sspMinCars;
         SyncSliderBox sspIR;
         SyncSliderBox sspMaxSofDiff;
-        SyncSliderBox sspMaxSofFx;
-        SyncSliderBox sspMaxSofFa;
-        SyncSliderBox sspMaxSofFb;
+        SyncSliderBox sspMaxSofFunctExtraThresoldPerK;
+        SyncSliderBox sspMaxSofFunctStartingIRValue;
+        SyncSliderBox sspMaxSofFunctStartingThreshold;
         SyncSliderBox sspTopSplitExc;
         SyncSliderBox sspEqualize;
 
@@ -43,9 +43,9 @@ namespace BetterMatchMaking.UI
             sspMinCars = new SyncSliderBox(lblParameterMinCars, tbxParameterMinCars, sldParameterMinCars, 1, 30, 10);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
             sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 5, 100, 18);
-            sspMaxSofFx = new SyncSliderBox(lblParameterMaxSoffFunctX, tbxParameterMaxSoffFunctX, sldParameterMaxSoffFunctX, 0, 9999, 1000);
-            sspMaxSofFa = new SyncSliderBox(lblParameterMaxSoffFunctA, tbxParameterMaxSoffFunctA, sldParameterMaxSoffFunctA, 0, 99, 12);
-            sspMaxSofFb = new SyncSliderBox(lblParameterMaxSoffFunctB, tbxParameterMaxSoffFunctB, sldParameterMaxSoffFunctB, -50, 50, -20);
+            sspMaxSofFunctExtraThresoldPerK = new SyncSliderBox(lblParameterMaxSoffFunctExtrPctPerK, tbxParameterMaxSoffFunctExtrPctPerK, sldParameterMaxSoffFunctExtrPctPerK, 0, 50, 11);
+            sspMaxSofFunctStartingIRValue = new SyncSliderBox(lblParameterMaxSoffFunctStartIR, tbxParameterMaxSoffFunctStartIR, sldParameterMaxSoffFunctStartIR, 1000, 9000, 3000);
+            sspMaxSofFunctStartingThreshold = new SyncSliderBox(lblParameterMaxSoffFunctStartPct, tbxParameterMaxSoffFunctStartPct, sldParameterMaxSoffFunctStartPct, 0, 50, 18);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
             sspEqualize = new SyncSliderBox(lblParameterEqualize, tbxParameterEqualize, sldParameterEqualize, 0, 1, 1);
 
@@ -53,9 +53,9 @@ namespace BetterMatchMaking.UI
             sspMinCars.Visible = false;
             sspIR.Visible = false;
             sspMaxSofDiff.Visible = false;
-            sspMaxSofFx.Visible = false;
-            sspMaxSofFa.Visible = false;
-            sspMaxSofFb.Visible = false;
+            sspMaxSofFunctExtraThresoldPerK.Visible = false;
+            sspMaxSofFunctStartingIRValue.Visible = false;
+            sspMaxSofFunctStartingThreshold.Visible = false;
             sspTopSplitExc.Visible = false;
             sspEqualize.Visible = false;
 
@@ -155,9 +155,9 @@ namespace BetterMatchMaking.UI
             mm.ParameterMinCarsValue = sspMinCars.Value;
             mm.ParameterRatingThresholdValue = sspIR.Value;
             mm.ParameterMaxSofDiffValue = sspMaxSofDiff.Value;
-            mm.ParameterMaxSofFunctAValue = sspMaxSofFa.Value;
-            mm.ParameterMaxSofFunctXValue = sspMaxSofFx.Value;
-            mm.ParameterMaxSofFunctBValue = sspMaxSofFb.Value;
+            mm.ParameterMaxSofFunctStartingIRValue = sspMaxSofFunctStartingIRValue.Value;
+            mm.ParameterMaxSofFunctExtraThresoldPerK = sspMaxSofFunctExtraThresoldPerK.Value;
+            mm.ParameterMaxSofFunctStartingThreshold = sspMaxSofFunctStartingThreshold.Value;
             mm.ParameterTopSplitExceptionValue = sspTopSplitExc.Value;
             mm.ParameterMostPopulatedClassInEverySplitsValue = sspEqualize.Value;
 
@@ -299,9 +299,9 @@ namespace BetterMatchMaking.UI
                 sspMinCars.Visible = calc.UseParameterMinCars;
                 sspIR.Visible = calc.UseParameterRatingThreshold;
                 sspMaxSofDiff.Visible = calc.UseParameterMaxSofDiff;
-                sspMaxSofFa.Visible = calc.UseParameterMaxSofDiff;
-                sspMaxSofFb.Visible = calc.UseParameterMaxSofDiff;
-                sspMaxSofFx.Visible = calc.UseParameterMaxSofDiff;
+                sspMaxSofFunctStartingIRValue.Visible = calc.UseParameterMaxSofFunct;
+                sspMaxSofFunctStartingThreshold.Visible = calc.UseParameterMaxSofFunct;
+                sspMaxSofFunctExtraThresoldPerK.Visible = calc.UseParameterMaxSofFunct;
                 sspTopSplitExc.Visible = calc.UseParameterTopSplitException;
                 sspEqualize.Visible = calc.UseParameterMostPopulatedClassInEverySplits;
             }
@@ -311,9 +311,9 @@ namespace BetterMatchMaking.UI
                 sspMinCars.Visible = false;
                 sspIR.Visible = false;
                 sspMaxSofDiff.Visible = false;
-                sspMaxSofFa.Visible = false;
-                sspMaxSofFb.Visible = false;
-                sspMaxSofFx.Visible = false;
+                sspMaxSofFunctStartingIRValue.Visible = false;
+                sspMaxSofFunctStartingThreshold.Visible = false;
+                sspMaxSofFunctExtraThresoldPerK.Visible = false;
                 sspTopSplitExc.Visible = false;
                 sspEqualize.Visible = false;
 
@@ -335,10 +335,11 @@ namespace BetterMatchMaking.UI
         private void LblParameterMaxSoffDiff_MouseUp(object sender, MouseButtonEventArgs e)
         {
             PopupPreviewFunctionTable p = new PopupPreviewFunctionTable();
-            p.X = sspMaxSofFx.Value;
-            p.A = sspMaxSofFa.Value;
-            p.B = sspMaxSofFb.Value;
-            p.Min = sspMaxSofDiff.Value;
+            p.Owner = this;
+            p.StartingIR = sspMaxSofFunctStartingIRValue.Value;
+            p.StartingThreshold = sspMaxSofFunctStartingThreshold.Value;
+            p.ExtraThresoldPerK = sspMaxSofFunctExtraThresoldPerK.Value;
+            
             p.Render();
             p.Show();
         }

@@ -46,10 +46,9 @@ namespace BetterMatchMaking.Library.Calc
 
 
         /// <summary>
-        /// Says if the algorithm use ParameterRatingThresholdValue, ParameterMaxSofFunctAValue, ParameterMaxSofFunctBValue and ParameterMaxSofFunctXValue parameters.
+        /// Says if the algorithm use ParameterRatingThresholdValue parameters.
         /// If true, you need to set a value to them.
-        /// ParameterRatingThresholdValue is a constant or minimum value.
-        /// ParameterMaxSofFunct{A|B|X}Values are optional, if not set to 0, it will define a affine function for relative values.
+        /// ParameterRatingThresholdValue is a constant value.
         /// </summary>
         bool UseParameterMaxSofDiff { get;  }
         /// <summary>
@@ -57,22 +56,33 @@ namespace BetterMatchMaking.Library.Calc
         /// It will set the targetted % SoF difference allowed or not to do a move down.
         /// This value is a constant or minimum value to set.
         /// </summary>
+        /// 
         int ParameterMaxSofDiffValue { get; set; }
         /// <summary>
-        /// This option of UseParameterMaxSofDiff is part of A, B and X set of parameters.
-        /// You can use them to define an affine fuction: f(rating) = (rating / x) * A) + b
+        /// Says if the algorithm use ParameterMaxSofFunctStartingIRValue, ParameterMaxSofFunctStartingThreshold andParameterMaxSofFunctExtraThresoldPerK  parameters.
+        /// If true, you need to set a value to them.
+        /// ParameterRatingThresholdValue defines an affine function to get the Threshold depending to the irating.
         /// </summary>
-        int ParameterMaxSofFunctAValue { get; set; }
+        bool UseParameterMaxSofFunct { get; }
         /// <summary>
-        /// This option of UseParameterMaxSofDiff is part of A, B and X set of parameters.
-        /// You can use them to define an affine fuction: f(rating) = (rating / x) * a) + B
+        /// This parameter is used for 'MoveDown' algorithms.
+        /// This option of is a parameter of the affine function to get the maximum diffrence allowed % depending of irating or sof.
+        /// You can check BetterMatchMaking.Library.Calc.SofDifferenceEvaluator.EvalFormula to get the formula.
         /// </summary>
-        int ParameterMaxSofFunctBValue { get; set; }
+        /// 
+        int ParameterMaxSofFunctStartingIRValue { get; set; }
         /// <summary>
-        /// This option of UseParameterMaxSofDiff is part of A, B and X set of parameters.
-        /// You can use them to define an affine fuction: f(rating) = (rating / X) * A) + b
+        /// This parameter is used for 'MoveDown' algorithms.
+        /// This option of is a parameter of the affine function to get the maximum diffrence allowed % depending of irating or sof.
+        /// You can check BetterMatchMaking.Library.Calc.SofDifferenceEvaluator.EvalFormula to get the formula.
         /// </summary>
-        int ParameterMaxSofFunctXValue { get; set; }
+        int ParameterMaxSofFunctStartingThreshold { get; set; }
+        /// <summary>
+        /// This parameter is used for 'MoveDown' algorithms.
+        /// This option of is a parameter of the affine function to get the maximum diffrence allowed % depending of irating or sof.
+        /// You can check BetterMatchMaking.Library.Calc.SofDifferenceEvaluator.EvalFormula to get the formula.
+        /// </summary>
+        int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
 
         /// <summary>
         /// Says if the algorithm use the ParameterTopSplitExceptionValue parameter.

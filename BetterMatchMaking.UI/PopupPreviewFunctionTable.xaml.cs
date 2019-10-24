@@ -24,11 +24,9 @@ namespace BetterMatchMaking.UI
             InitializeComponent();
         }
 
-        public int X { get; set; }
-        public int A { get; set; }
-        public int B { get; set; }
-
-        public int Min { get; set; }
+        public int StartingIR { get; set; }
+        public int StartingThreshold { get; set; }
+        public int ExtraThresoldPerK { get; set; }
 
         public void Render()
         {
@@ -38,23 +36,13 @@ namespace BetterMatchMaking.UI
                 items.Add(new Preview
                 {
                     Sof = i,
-                    TargetDiff = Calc(i)
+                    TargetDiff = Library.Calc.SofDifferenceEvaluator.EvalFormula(StartingIR, StartingThreshold, ExtraThresoldPerK, i)
                 });
             }
             grid.ItemsSource = items;
         }
 
-        private double Calc(int ir)
-        {
-            if (!(X == 0 || A == 0 || B == 0))
-            {
-                double r = (Convert.ToDouble(ir) / Convert.ToDouble(X)) * Convert.ToDouble(A);
-                r += B;
-                r = Math.Max(r, Min);
-                return r;
-            }
-            return Min;
-        }
+        
     }
 
     public class Preview

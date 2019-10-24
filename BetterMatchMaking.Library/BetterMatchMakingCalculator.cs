@@ -41,6 +41,12 @@ namespace BetterMatchMaking.Library
             get { return instance.UseParameterMaxSofDiff; }
         }
 
+        public virtual bool UseParameterMaxSofFunct
+        {
+            get { return instance.UseParameterMaxSofFunct; }
+
+        }
+
         public bool UseParameterTopSplitException
         {
             get { return instance.UseParameterTopSplitException; }
@@ -74,20 +80,21 @@ namespace BetterMatchMaking.Library
             get { return instance.ParameterMaxSofDiffValue; }
             set { instance.ParameterMaxSofDiffValue = value; }
         }
-        public int ParameterMaxSofFunctAValue
+        
+        public int ParameterMaxSofFunctStartingIRValue
         {
-            get { return instance.ParameterMaxSofFunctAValue; }
-            set { instance.ParameterMaxSofFunctAValue = value; }
+            get { return instance.ParameterMaxSofFunctStartingIRValue; }
+            set { instance.ParameterMaxSofFunctStartingIRValue = value; }
         }
-        public int ParameterMaxSofFunctBValue
+        public int ParameterMaxSofFunctStartingThreshold
         {
-            get { return instance.ParameterMaxSofFunctBValue; }
-            set { instance.ParameterMaxSofFunctBValue = value; }
+            get { return instance.ParameterMaxSofFunctStartingThreshold; }
+            set { instance.ParameterMaxSofFunctStartingThreshold = value; }
         }
-        public int ParameterMaxSofFunctXValue
+        public int ParameterMaxSofFunctExtraThresoldPerK
         {
-            get { return instance.ParameterMaxSofFunctXValue; }
-            set { instance.ParameterMaxSofFunctXValue = value; }
+            get { return instance.ParameterMaxSofFunctExtraThresoldPerK; }
+            set { instance.ParameterMaxSofFunctExtraThresoldPerK = value; }
         }
         public int ParameterTopSplitExceptionValue
         {

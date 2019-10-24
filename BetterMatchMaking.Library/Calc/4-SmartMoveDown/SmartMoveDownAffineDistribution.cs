@@ -37,15 +37,20 @@ namespace BetterMatchMaking.Library.Calc
         public List<Split> Splits { get; private set; }
 
         #region Active Parameters
-        public bool UseParameterMaxSofDiff
+        public virtual bool UseParameterMaxSofDiff
         {
             get { return true; }
 
         }
         public int ParameterMaxSofDiffValue { get; set; }
-        public int ParameterMaxSofFunctAValue { get; set; }
-        public int ParameterMaxSofFunctBValue { get; set; }
-        public int ParameterMaxSofFunctXValue { get; set; }
+        public virtual bool UseParameterMaxSofFunct
+        {
+            get { return true; }
+
+        }
+        public int ParameterMaxSofFunctStartingIRValue { get; set; }
+        public int ParameterMaxSofFunctStartingThreshold { get; set; }
+        public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
 
         public bool UseParameterTopSplitException
         {
@@ -174,13 +179,13 @@ namespace BetterMatchMaking.Library.Calc
             {
                 if (i > 0)
                 {
-                    ResetCars(Splits, Splits[i]);
+                    ResetSplitWithAllClassesFilled(Splits, Splits[i]);
                 }
                 // mode down process. the most important thing on this algorithm
                 MoveDownCarsSplits(Splits, Splits[i], i);
             }
 
-            
+            return;
  
 
             CleanEmptySplits(); // just to be sure
@@ -198,8 +203,13 @@ namespace BetterMatchMaking.Library.Calc
         }
 
 
-
-        private void ResetCars(List<Split> splits, Split s)
+        /// <summary>
+        /// Move down all the cars of a split, in the next one to empty it.
+        /// Than, right cars number for each class is picked back.
+        /// </summary>
+        /// <param name="splits"></param>
+        /// <param name="s"></param>
+        internal void ResetSplitWithAllClassesFilled(List<Split> splits, Split s)
         {
             if (s.Number < splits.Count)
             {
@@ -350,18 +360,15 @@ namespace BetterMatchMaking.Library.Calc
 
 
         /// <summary>
-        /// Test if the class have to be moved down to the next split
+        /// Check if the class have to pass the moved down test 
         /// </summary>
         /// <param name="s">The split to check</param>
         /// <param name="classIndex">The class index to check in the 's' split</param>
         /// <param name="splitSofs">The SoFs corresponding to classes</param>
         /// <returns></returns>
-        public bool HaveToMoveDown(Split s, int classIndex, List<int> splitSofs)
+        public virtual bool HaveToMoveDown(Split s, int classIndex, List<int> splitSofs)
         {
-            
-
             // some exceptions:
-
             if (ParameterTopSplitExceptionValue == 1 && s.Number == 1)
             {
                 // if the ParameterTopSplitExceptionValue is set to 1
@@ -387,145 +394,37 @@ namespace BetterMatchMaking.Library.Calc
             }
             // -->
 
+            return TestIfMoveDownNeeded(s, classIndex, splitSofs);
+        }
 
-
-
+        /// <summary>
+        /// Test if the class have to be moved down to the next split
+        /// </summary>
+        /// <param name="s">The split to check</param>
+        /// <param name="classIndex">The class index to check in the 's' split</param>
+        /// <param name="splitSofs">The SoFs corresponding to classes</param>
+        /// <returns></returns>
+        internal virtual bool TestIfMoveDownNeeded(Split s, int classIndex, List<int> splitSofs)
+        {
             bool movedown = false;
 
-            
-
-            
-            bool algoDiff = true;
-
-            if (algoDiff)
-            {
-                Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
-                movedown = evaluator.MoreThanLimit(ParameterMaxSofDiffValue, ParameterMaxSofFunctXValue, ParameterMaxSofFunctAValue, ParameterMaxSofFunctBValue);
-                // debug informations
-                string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
-                debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
-                debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
-                debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
-                debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
-                debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
-                s.Info += debug;
-                // -->
-            }
-            else
-            {
-
-                Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
-
-                if (!evaluator.MoreThanLimit(ParameterMaxSofDiffValue, ParameterMaxSofFunctXValue, ParameterMaxSofFunctAValue, ParameterMaxSofFunctBValue)
-                    && evaluator.PercentDifferenceUsesAffineFunction)
-                {
-                    // debug informations
-                    string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
-                    debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
-                    debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
-                    debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
-                    debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
-                    debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
-                    s.Info += debug;
-                    // -->
-                    movedown = false;
-                }
-                else
-                {
-
-                    List<Data.Split> splitsSnapshots = Data.Tools.Clone<List<Data.Split>>(Splits);
-                    var splitSnaptshot = splitsSnapshots[s.Number - 1];
-
-                    int classId = carClassesIds[classIndex];
-                    MoveDownCarsSplits(splitsSnapshots, splitSnaptshot, splitSnaptshot.Number - 1, classIndex);
-                    var movedClass = new List<int>() { classId };
-                    var nextSplitIfMoved = splitsSnapshots[s.Number];
-                    int mostpopclass = carClassesIds[carClassesIds.Count - 1];
-                    if (AddMostPopulatedClassInTheSplitIfMissing(splitsSnapshots, nextSplitIfMoved))
-                    {
-                        if (!movedClass.Contains(mostpopclass)) movedClass.Add(mostpopclass);
-                    }
-                    UpCarsToSplit(splitsSnapshots, nextSplitIfMoved, movedClass);
-
-                    Calc.SofDifferenceEvaluator evaluatorIfMoved = new SofDifferenceEvaluator(nextSplitIfMoved, classIndex);
-
-                    if (evaluatorIfMoved.PercentDifference < evaluator.PercentDifference)
-                    {
-                        movedown = true;
-                    }
-
-
-                    // debug informations
-                    string debug = "($BEFORE vs $AFTER;$MOVEDOWN) ";
-                    debug = debug.Replace("$BEFORE", Convert.ToInt32(evaluator.PercentDifference).ToString());
-                    debug = debug.Replace("$AFTER", Convert.ToInt32(evaluatorIfMoved.PercentDifference).ToString());
-                    debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
-                    s.Info += debug;
-                    // -->
-                }
-            }
-
+            Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
+            movedown = evaluator.MoreThanLimit(ParameterMaxSofDiffValue,
+                ParameterMaxSofFunctStartingIRValue,
+                ParameterMaxSofFunctStartingThreshold,
+                ParameterMaxSofFunctStartingThreshold);
+            // debug informations
+            string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
+            debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
+            debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
+            debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
+            debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
+            debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
+            s.Info += debug;
+            // -->
 
             return movedown;
         }
-
-        /*
-        private void PreviewAMoveDown(Data.Split currentSplit, Data.Split nextsplit, int classIndex)
-        {
-            DropExcessCarsInPreview(nextsplit);
-            var carsToMove = currentSplit.PickClassCars(classIndex);
-            currentSplit.CleanEmptyClasses();
-
-            nextsplit.AppendClassCars(classIndex, carsToMove);
-            DropExcessCarsInPreview(nextsplit);
-
-
-
-        }
-
-        private void DropExcessCarsInPreview(Split nextsplit)
-        {
-            
-            // list classes in this split and class not in this splits
-            List<int> classesInTheSplit = new List<int>();
-            List<int> classesNotInTheSplit = new List<int>();
-            for (int i = 0; i < carClassesIds.Count; i++)
-            {
-                if (nextsplit.CountClassCars(i) > 0)
-                {
-                    classesInTheSplit.Add(carClassesIds[i]);
-                }
-                else
-                {
-                    classesNotInTheSplit.Add(carClassesIds[i]);
-                }
-            }
-
-
-            // get limits list by querying nominal cars count for a 
-            // complete field size with same car classes
-            // KEY = classid
-            // VALUE = targetted cars number
-            Dictionary<int, int> classLimits = new Dictionary<int, int>();
-            foreach (var c in classesInTheSplit)
-            {
-
-                int limit = TakeCars(nextsplit, c, classesNotInTheSplit, fieldSize);
-                classLimits.Add(c, limit);
-            }
-            // -->
-
-            // for each limit
-            foreach (var limit in classLimits)
-            {
-                // get class and max cars count wanted
-                int limitClassId = limit.Key;
-                int limitClassIndex = carClassesIds.IndexOf(limitClassId);
-                int limitClassMax = limit.Value;
-                int limitClassToDrop = Math.Max(nextsplit.CountClassCars(limitClassIndex) - limitClassMax, 0);
-                if (limitClassToDrop > 0) nextsplit.PickClassCars(limitClassIndex, limitClassToDrop, true); // cars a dropped away in hell :D
-            } // end of the foreach loop class limit
-        }*/
 
 
         
@@ -879,7 +778,7 @@ namespace BetterMatchMaking.Library.Calc
         /// else it will be skipped
         /// </summary>
         /// <param name="s"></param>
-        private bool AddMostPopulatedClassInTheSplitIfMissing(List<Split> splits, Split s)
+        internal bool AddMostPopulatedClassInTheSplitIfMissing(List<Split> splits, Split s)
         {
             bool ret = false;
             // if we want  the most populated class on each split

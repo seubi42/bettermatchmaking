@@ -45,9 +45,14 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterClassPropMinPercentValue { get; set; }
         public int ParameterRatingThresholdValue { get; set; }
         public int ParameterMaxSofDiffValue { get; set; }
-        public int ParameterMaxSofFunctAValue { get; set; }
-        public int ParameterMaxSofFunctBValue { get; set; }
-        public int ParameterMaxSofFunctXValue { get; set; }
+        public virtual bool UseParameterMaxSofFunct
+        {
+            get { return false; }
+
+        }
+        public int ParameterMaxSofFunctStartingIRValue { get; set; }
+        public int ParameterMaxSofFunctStartingThreshold { get; set; }
+        public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
 
         public virtual bool UseParameterMinCars

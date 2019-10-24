@@ -87,6 +87,7 @@
                                     <ComboBoxItem Tag="RatingThresholdedProportionnalBalancedTriple" Content="Rating Thresholded Proportionnal Balanced Triple" Foreground="DarkOrchid" />
                                     <ComboBoxItem Tag="SmartMoveDownProportionnalBalanced" Content="SmartMoveDown Proportionnal Balanced" Foreground="DarkGreen" />
                                     <ComboBoxItem Tag="SmartMoveDownAffineDistribution" Content="SmartMoveDown Affine Distribution" FontWeight="Bold" Foreground="DarkGreen" />
+                                    <ComboBoxItem Tag="SmartPredictedMoveDownAffineDistribution" Content="SmartMoveDown Predicted Affine Distribution" FontWeight="Bold" Foreground="DarkGreen" />
                                 </ComboBox>
                                 <TextBox x:Name="tbxFieldSize" Grid.Row="1" Grid.Column="1" Text="45" Margin="5" />
 
@@ -124,7 +125,7 @@
                             <Slider x:Name="sldParameterIR" Grid.Row="2" Grid.Column="2" Width="80" />
 
                             <TextBlock x:Name="lblParameterMaxSoffDiff" Text="Max SoF diff. floor" Grid.Row="0" Grid.Column="1" TextAlignment="Center" 
-                                       TextDecorations="Underline" Foreground="Blue" Cursor="Help" MouseUp="LblParameterMaxSoffDiff_MouseUp" />
+                                        />
                             <TextBox x:Name="tbxParameterMaxSoffDiff" Grid.Row="1" Grid.Column="1" TextAlignment="Center" Width="80"  />
                             <Slider x:Name="sldParameterMaxSoffDiff" Grid.Row="2" Grid.Column="1" Width="80" />
 
@@ -133,17 +134,20 @@
                             <TextBox x:Name="tbxParameterTopSplitExc" Grid.Row="1" Grid.Column="3" TextAlignment="Center" Width="80" />
                             <Slider x:Name="sldParameterTopSplitExc" Grid.Row="2" Grid.Column="3" Width="80" />
 
-                            <TextBlock x:Name="lblParameterMaxSoffFunctA" Text="Max SoF f() x" Grid.Row="4" Grid.Column="1" TextAlignment="Center" />
-                            <TextBox x:Name="tbxParameterMaxSoffFunctA" Grid.Row="5" Grid.Column="1" TextAlignment="Center" Width="80"  />
-                            <Slider x:Name="sldParameterMaxSoffFunctA" Grid.Row="6" Grid.Column="1" Width="80" />
+                            <TextBlock x:Name="lblParameterMaxSoffFunctStartIR" Text="SoF f() Start IR" Grid.Row="4" Grid.Column="1" TextAlignment="Center" />
+                            <TextBox x:Name="tbxParameterMaxSoffFunctStartIR" Grid.Row="5" Grid.Column="1" TextAlignment="Center" Width="80"  />
+                            <Slider x:Name="sldParameterMaxSoffFunctStartIR" Grid.Row="6" Grid.Column="1" Width="80" />
 
-                            <TextBlock x:Name="lblParameterMaxSoffFunctX" Text="Max SoF f() a" Grid.Row="4" Grid.Column="2" TextAlignment="Center" />
-                            <TextBox x:Name="tbxParameterMaxSoffFunctX" Grid.Row="5" Grid.Column="2" TextAlignment="Center" Width="80"  />
-                            <Slider x:Name="sldParameterMaxSoffFunctX" Grid.Row="6" Grid.Column="2" Width="80" />
+                            <TextBlock x:Name="lblParameterMaxSoffFunctStartPct" Text="SoF f() Start %" Grid.Row="4" Grid.Column="2" TextAlignment="Center" />
+                            <TextBox x:Name="tbxParameterMaxSoffFunctStartPct" Grid.Row="5" Grid.Column="2" TextAlignment="Center" Width="80"  />
+                            <Slider x:Name="sldParameterMaxSoffFunctStartPct" Grid.Row="6" Grid.Column="2" Width="80" />
 
-                            <TextBlock x:Name="lblParameterMaxSoffFunctB" Text="Max SoF f() b" Grid.Row="4" Grid.Column="3" TextAlignment="Center" />
-                            <TextBox x:Name="tbxParameterMaxSoffFunctB" Grid.Row="5" Grid.Column="3" TextAlignment="Center" Width="80"  />
-                            <Slider x:Name="sldParameterMaxSoffFunctB" Grid.Row="6" Grid.Column="3" Width="80" />
+                            <TextBlock x:Name="lblParameterMaxSoffFunctExtrPctPerK" Text="SoF f() +%/k" Grid.Row="4" Grid.Column="3" TextAlignment="Center"
+                                       TextDecorations="Underline" Foreground="Blue" Cursor="Help" MouseUp="LblParameterMaxSoffDiff_MouseUp" />
+                            <TextBox x:Name="tbxParameterMaxSoffFunctExtrPctPerK" Grid.Row="5" Grid.Column="3" TextAlignment="Center" Width="80"  />
+                            <Slider x:Name="sldParameterMaxSoffFunctExtrPctPerK" Grid.Row="6" Grid.Column="3" Width="80" />
+
+                            
 
 
                             <TextBlock x:Name="lblParameterEqualize" Text="Most Pop. Cl. Everyw." Grid.Row="4" Grid.Column="0" TextAlignment="Center" />

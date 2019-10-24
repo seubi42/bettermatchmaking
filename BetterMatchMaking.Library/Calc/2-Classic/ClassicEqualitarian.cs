@@ -37,6 +37,11 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return false; }
         }
+        public virtual bool UseParameterMaxSofFunct
+        {
+            get { return false; }
+
+        }
         public bool UseParameterTopSplitException
         {
             get { return false; }
@@ -49,9 +54,9 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterClassPropMinPercentValue { get; set; }
         public int ParameterRatingThresholdValue { get; set; }
         public int ParameterMaxSofDiffValue { get; set; }
-        public int ParameterMaxSofFunctAValue { get; set; }
-        public int ParameterMaxSofFunctBValue { get; set; }
-        public int ParameterMaxSofFunctXValue { get; set; }
+        public int ParameterMaxSofFunctStartingIRValue { get; set; }
+        public int ParameterMaxSofFunctStartingThreshold { get; set; }
+        public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
         public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
 

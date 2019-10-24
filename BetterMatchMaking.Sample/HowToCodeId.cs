@@ -20,9 +20,9 @@ namespace BetterMatchMaking.Sample
             BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
             calculator.ParameterClassPropMinPercentValue = 37;
             calculator.ParameterMaxSofDiffValue = 18;
-            calculator.ParameterMaxSofFunctAValue = 12;
-            calculator.ParameterMaxSofFunctXValue = 1000;
-            calculator.ParameterMaxSofFunctBValue = -20;
+            calculator.ParameterMaxSofFunctStartingIRValue = 12;
+            calculator.ParameterMaxSofFunctExtraThresoldPerK = 1000;
+            calculator.ParameterMaxSofFunctStartingThreshold = -20;
             calculator.ParameterTopSplitExceptionValue = 1;
 
             // 3 : Launch

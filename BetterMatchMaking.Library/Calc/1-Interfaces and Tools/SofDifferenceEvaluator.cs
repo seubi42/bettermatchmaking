@@ -35,7 +35,15 @@ namespace BetterMatchMaking.Library.Calc
 
             // get each class SoFs in this split
             // and keep min and max
-            int classSof = Split.GetClassSof(ClassIndex);
+            int classSof = 0;
+            if (ClassIndex == -1)
+            {
+                classSof = Split.GlobalSof;
+            }
+            else
+            {
+                classSof = Split.GetClassSof(ClassIndex);
+            }
             int min = classSof;
             MaxSofInSplit = Split.GetMaxClassSof(ClassIndex); // max of other classes
             if (MaxSofInSplit == 0) MaxSofInSplit = classSof;
@@ -59,14 +67,17 @@ namespace BetterMatchMaking.Library.Calc
             // difference in % between min and max
             int diff = Convert.ToInt32(100 * Convert.ToInt32(referencesof) / MaxSofInSplit);
             diff = 100 - diff;
-            diff = Math.Abs(diff);
+            if (diff < 0)
+            {
+                diff = Math.Abs(diff);
+            }
             PercentDifference = diff;
             // -->
 
         }
 
         public bool MoreThanLimit(int maxSofDiffValue,
-            int maxSoffDiffValueFx, int maxSoffDiffValueFa, int maxSoffDiffValueFb)
+            int functStartingIr, int functStartingThreshold, int functExtraThresholdPenK)
         {
             if (!Evaluated) return false;
 
@@ -79,18 +90,35 @@ namespace BetterMatchMaking.Library.Calc
 
 
             // and it set, read it from the affine function
-            // f(rating) = (rating / X) * A) + b
-            if (!(maxSoffDiffValueFx == 0 || maxSoffDiffValueFa == 0 || maxSoffDiffValueFb == 0))
+            if (functExtraThresholdPenK > 0 && ClassSof > functStartingIr)
             {
-                double newDiff = ((Convert.ToDouble(ClassSof) / maxSoffDiffValueFx) * maxSoffDiffValueFa) + maxSoffDiffValueFb;
+                if(MoreThanFunction(functStartingIr, functStartingThreshold, functExtraThresholdPenK))
+                {
+                    return true;
+                }
+            }
+
+            return (PercentDifference >= MaxPercentDifferenceAllowed);
+        }
+
+        public bool MoreThanFunction(int functStartingIr, int functStartingThreshold, int functExtraThresholdPenK)
+        {
+            if (!Evaluated) return false;
+            if (functExtraThresholdPenK > 0)
+            {
+                double newDiff = EvalFormula(functStartingIr, functStartingThreshold, functExtraThresholdPenK, ClassSof);
                 if (newDiff > MaxPercentDifferenceAllowed)
                 {
                     PercentDifferenceUsesAffineFunction = true;
                     MaxPercentDifferenceAllowed = Math.Max(newDiff, MaxPercentDifferenceAllowed);
                 }
             }
-
             return (PercentDifference >= MaxPercentDifferenceAllowed);
+        }
+
+        public static double EvalFormula(double startingIr, double startingThreshold, double extraThresholdPerKilo, int currentIR)
+        {
+            return Math.Round(Math.Max(0, (Convert.ToDouble(currentIR) - startingIr) / 1000 * extraThresholdPerKilo) + startingThreshold);
         }
     }
 }

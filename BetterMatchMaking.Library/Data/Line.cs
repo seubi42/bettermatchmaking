@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace BetterMatchMaking.Library.Data
 {
+    [Serializable]
     /// <summary>
     /// A line in the entry list
     /// </summary>

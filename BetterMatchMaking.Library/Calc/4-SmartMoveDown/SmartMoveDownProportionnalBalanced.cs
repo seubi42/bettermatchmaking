@@ -43,7 +43,7 @@ namespace BetterMatchMaking.Library.Calc
             return new ClassicProportionnalBalanced();
         }
 
-        internal override int TakeCars(Split split, int classId, List<int> exceptionClassId, int fieldSizeOrLimit)
+        internal override int TakeCars(List<Split> splits, Split split, int classId, List<int> exceptionClassId, int fieldSizeOrLimit)
         {
             // do thw bride between the 2 algorithm.
             // not very elegant because lot of objects convertions ...
@@ -56,7 +56,7 @@ namespace BetterMatchMaking.Library.Calc
 
             // objects convertion to fit the original TakeClassCars methods
             Dictionary<int, int> carsInThisSplitAndNexts = new Dictionary<int, int>();
-            for (int i = splitIndex; i < Splits.Count; i++)
+            for (int i = splitIndex; i < splits.Count; i++)
             {
                 for (int c = 0; c < carClassesIds.Count; c++)
                 {
@@ -71,7 +71,7 @@ namespace BetterMatchMaking.Library.Calc
                     }
                     else
                     {
-                        int classcount = Splits[i].CountClassCars(c);
+                        int classcount = splits[i].CountClassCars(c);
 
                         if (carsInThisSplitAndNexts.ContainsKey(classid))
                         {

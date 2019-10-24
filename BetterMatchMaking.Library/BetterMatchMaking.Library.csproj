@@ -60,6 +60,7 @@
     <Compile Include="Data\CsvParser.cs" />
     <Compile Include="Data\Line.cs" />
     <Compile Include="Data\MultiClassMode.cs" />
+    <Compile Include="Calc\1-Interfaces and Tools\SofDifferenceEvaluator.cs" />
     <Compile Include="Data\Split.cs" />
     <Compile Include="Data\Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

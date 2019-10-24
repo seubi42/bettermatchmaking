@@ -142,7 +142,7 @@ namespace BetterMatchMaking.Library.Calc
         /// <param name="exceptionClassId">the class ids which are not (or not allowed) in this split</param>
         /// <param name="fieldSizeOrLimit">the available slots count to fill (with every splits)</param>
         /// <returns>the number of cars to get, which is the part of 'fieldSizeOrLimit' corresponding the the classId</returns>
-        internal virtual int TakeCars(Split split, int classId, List<int> exceptionClassId, int fieldSizeOrLimit)
+        internal virtual int TakeCars(List<Split> splits, Split split, int classId, List<int> exceptionClassId, int fieldSizeOrLimit)
         {
             if (exceptionClassId == null) exceptionClassId = new List<int>();
 
@@ -172,10 +172,15 @@ namespace BetterMatchMaking.Library.Calc
             // For every split
             for (int i = 0; i < Splits.Count; i++)
             {
+                if (i > 0)
+                {
+                    ResetCars(Splits, Splits[i]);
+                }
                 // mode down process. the most important thing on this algorithm
-                MoveDownCarsSplits(Splits[i], i);
+                MoveDownCarsSplits(Splits, Splits[i], i);
             }
 
+            
  
 
             CleanEmptySplits(); // just to be sure
@@ -192,18 +197,31 @@ namespace BetterMatchMaking.Library.Calc
 
         }
 
-        
+
+
+        private void ResetCars(List<Split> splits, Split s)
+        {
+            if (s.Number < splits.Count)
+            {
+                var nextSplits = splits[s.Number];
+                for (int i = 0; i < carClassesIds.Count; i++)
+                {
+                    int classIndex = i;
+                    var cars = s.PickClassCars(classIndex);
+                    nextSplits.AppendClassCars(classIndex, cars);
+                }
+                UpCarsToSplit(splits, s, new List<int>());
+            }
+        }
 
 
 
-
-       
         /// <summary>
         /// Move down cars from a split to the lower one
         /// </summary>
         /// <param name="s"></param>
         /// <param name="splitIndex"></param>
-        public void MoveDownCarsSplits(Split s, int splitIndex)
+        public void MoveDownCarsSplits(List<Split> splits, Split s, int splitIndex, int? forceMoveDownOfClassIndex = null)
         {
             List<int> classesSof = CalcSplitSofs(s);
 
@@ -212,25 +230,33 @@ namespace BetterMatchMaking.Library.Calc
             List<int> movedCategories = new List<int>();
             // -->
 
-
-            AddMostPopulatedClassInTheSplitIfMissing(s);
-
-
-            
-            
+            // ensure most populated category is filled it option set
+            bool mostPopCatAsBeenFilled = AddMostPopulatedClassInTheSplitIfMissing(splits, s);
+            // -->
 
             // move cars down
             for (int i = 0; i < classesSof.Count - 1; i++)
             {
+                // test: do we need to move down ?
+                bool doTheMoveDown = false;
+                if (forceMoveDownOfClassIndex != null)
+                {
+                    doTheMoveDown = (i == forceMoveDownOfClassIndex.Value);
+                }
+                else
+                {
+                    doTheMoveDown = HaveToMoveDown(s, i, classesSof);
+                }
+
                 // if we have to move the class to the next split
-                if (HaveToMoveDown(s, i, classesSof)) 
+                if (doTheMoveDown) 
                 {
                     // pick all the class cars
                     var cars = s.PickClassCars(i);
                     s.SetClassTarget(i, 0);
 
                     // add them to the next split
-                    Split nextSplit = GetSplit(splitIndex + 1);
+                    Split nextSplit = GetSplit(splits, splitIndex + 1);
                     AppendCarsToSplit(nextSplit, i, cars);
 
                     if (cars.Count > 0)
@@ -246,17 +272,32 @@ namespace BetterMatchMaking.Library.Calc
 
 
             // up cars to fill leaved slots
-            UpCarsToSplit(s, movedCategories);
+            List<int> doNotUpCategories = new List<int>();
+            doNotUpCategories.AddRange(movedCategories);
+            if (mostPopCatAsBeenFilled)
+            {
+                int mostPopupClassId = carClassesIds[carClassesIds.Count - 1];
+                if (!doNotUpCategories.Contains(mostPopupClassId)) doNotUpCategories.Add(mostPopupClassId);
+            }
+            /*if(forceMoveDownOfClassIndex != null)
+            {
+                for (int i = 0; i < forceMoveDownOfClassIndex; i++)
+                {
+                    int exceptionClassId = carClassesIds[carClassesIds.Count - 1];
+                    if (!doNotUpCategories.Contains(exceptionClassId)) doNotUpCategories.Add(exceptionClassId);
+                }
+            }*/
+            UpCarsToSplit(splits, s, doNotUpCategories);
             // -->
 
             // to much cars in the split, move them down
             // reducedClasses is the ids of the classes recudes
             // keep then in a variable because we don't want
             // to update them again after that
-            var reducedClasses = MoveDownExcessCarsInTheSplit(s);
-            for (int e = s.Number; e < Splits.Count-1; e++)
+            var reducedClasses = MoveDownExcessCarsInTheSplit(splits, s);
+            for (int e = s.Number; e < splits.Count-1; e++)
             {
-                MoveDownExcessCarsInTheSplit(Splits[e]);
+                MoveDownExcessCarsInTheSplit(splits, splits[e]);
             }
             // -->
 
@@ -279,7 +320,9 @@ namespace BetterMatchMaking.Library.Calc
 
             // up cars to fill leaved slot again
             // for classe not in the exception list 'movedCategories'
-            UpCarsToSplit(s, movedCategories);
+            UpCarsToSplit(splits, s, movedCategories);
+            
+            
             // -->
         }
 
@@ -345,74 +388,147 @@ namespace BetterMatchMaking.Library.Calc
             // -->
 
 
-            // get each class SoFs in this split
-            // and keep min and max
-            s.RefreshSofs();
-            int classSof = s.GetClassSof(classIndex);
-            int min = classSof;
-            int max = s.GlobalSof;
-            max = Math.Max(max, s.Class1Sof);
-            max = Math.Max(max, s.Class2Sof);
-            max = Math.Max(max, s.Class3Sof);
-            max = Math.Max(max, s.Class4Sof);
-            // -->
-
-            // exit if 0
-            if (min == 0 && max == 0) return false;
-            // -->
 
 
-            //double referencesof = (s.GlobalSof + max + classSof) / 3;
-            double referencesof = classSof;
-            //double referencesof = s.GlobalSof;
-            //double referencesof = classSof;
-            if(referencesof == 0)
-            {
-                referencesof = min;
-            }
-            // -->
-
-            // difference in % between min and max
-            int diff = Convert.ToInt32(100 * Convert.ToInt32(referencesof) / max);
-            diff = 100 - diff;
-            if (diff < 0)
-            {
-                diff = Math.Abs(diff);
-            }
-            // -->
-
-            // what is the allowed limit ?
-            // read it from ParameterMaxSofDiffValue (constant value)
-            double limit = ParameterMaxSofDiffValue;
-            //limit = moveDownPass; // it will be only the half on second pass
+            bool movedown = false;
 
             
 
-            // and it set, read it from the affine function
-            // f(rating) = (rating / X) * A) + b
-            double fx = ParameterMaxSofFunctXValue;
-            double fa = ParameterMaxSofFunctAValue;
-            double fb = ParameterMaxSofFunctBValue;
-            if (!(fx == 0 || fa == 0 || fb == 0))
+            
+            bool algoDiff = true;
+
+            if (algoDiff)
             {
-                
-
-                limit = ((Convert.ToDouble(referencesof) / fx) * fa) + fb;
-                limit = Math.Max(limit, ParameterMaxSofDiffValue);
-
-                
+                Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
+                movedown = evaluator.MoreThanLimit(ParameterMaxSofDiffValue, ParameterMaxSofFunctXValue, ParameterMaxSofFunctAValue, ParameterMaxSofFunctBValue);
+                // debug informations
+                string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
+                debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
+                debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
+                debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
+                debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
+                debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
+                s.Info += debug;
+                // -->
             }
+            else
+            {
+
+                Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
+
+                if (!evaluator.MoreThanLimit(ParameterMaxSofDiffValue, ParameterMaxSofFunctXValue, ParameterMaxSofFunctAValue, ParameterMaxSofFunctBValue)
+                    && evaluator.PercentDifferenceUsesAffineFunction)
+                {
+                    // debug informations
+                    string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
+                    debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
+                    debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
+                    debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
+                    debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
+                    debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
+                    s.Info += debug;
+                    // -->
+                    movedown = false;
+                }
+                else
+                {
+
+                    List<Data.Split> splitsSnapshots = Data.Tools.Clone<List<Data.Split>>(Splits);
+                    var splitSnaptshot = splitsSnapshots[s.Number - 1];
+
+                    int classId = carClassesIds[classIndex];
+                    MoveDownCarsSplits(splitsSnapshots, splitSnaptshot, splitSnaptshot.Number - 1, classIndex);
+                    var movedClass = new List<int>() { classId };
+                    var nextSplitIfMoved = splitsSnapshots[s.Number];
+                    int mostpopclass = carClassesIds[carClassesIds.Count - 1];
+                    if (AddMostPopulatedClassInTheSplitIfMissing(splitsSnapshots, nextSplitIfMoved))
+                    {
+                        if (!movedClass.Contains(mostpopclass)) movedClass.Add(mostpopclass);
+                    }
+                    UpCarsToSplit(splitsSnapshots, nextSplitIfMoved, movedClass);
+
+                    Calc.SofDifferenceEvaluator evaluatorIfMoved = new SofDifferenceEvaluator(nextSplitIfMoved, classIndex);
+
+                    if (evaluatorIfMoved.PercentDifference < evaluator.PercentDifference)
+                    {
+                        movedown = true;
+                    }
 
 
-            bool movedown = (diff >= limit);
-
-
-            s.Info += "(Δ:" + referencesof + "/" + max + "=" + diff + ",L:" + Convert.ToInt32(limit) + "," + Convert.ToInt32(movedown) + ") ";
+                    // debug informations
+                    string debug = "($BEFORE vs $AFTER;$MOVEDOWN) ";
+                    debug = debug.Replace("$BEFORE", Convert.ToInt32(evaluator.PercentDifference).ToString());
+                    debug = debug.Replace("$AFTER", Convert.ToInt32(evaluatorIfMoved.PercentDifference).ToString());
+                    debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
+                    s.Info += debug;
+                    // -->
+                }
+            }
 
 
             return movedown;
         }
 
+        /*
+        private void PreviewAMoveDown(Data.Split currentSplit, Data.Split nextsplit, int classIndex)
+        {
+            DropExcessCarsInPreview(nextsplit);
+            var carsToMove = currentSplit.PickClassCars(classIndex);
+            currentSplit.CleanEmptyClasses();
+
+            nextsplit.AppendClassCars(classIndex, carsToMove);
+            DropExcessCarsInPreview(nextsplit);
+
+
+
+        }
+
+        private void DropExcessCarsInPreview(Split nextsplit)
+        {
+            
+            // list classes in this split and class not in this splits
+            List<int> classesInTheSplit = new List<int>();
+            List<int> classesNotInTheSplit = new List<int>();
+            for (int i = 0; i < carClassesIds.Count; i++)
+            {
+                if (nextsplit.CountClassCars(i) > 0)
+                {
+                    classesInTheSplit.Add(carClassesIds[i]);
+                }
+                else
+                {
+                    classesNotInTheSplit.Add(carClassesIds[i]);
+                }
+            }
+
+
+            // get limits list by querying nominal cars count for a 
+            // complete field size with same car classes
+            // KEY = classid
+            // VALUE = targetted cars number
+            Dictionary<int, int> classLimits = new Dictionary<int, int>();
+            foreach (var c in classesInTheSplit)
+            {
+
+                int limit = TakeCars(nextsplit, c, classesNotInTheSplit, fieldSize);
+                classLimits.Add(c, limit);
+            }
+            // -->
+
+            // for each limit
+            foreach (var limit in classLimits)
+            {
+                // get class and max cars count wanted
+                int limitClassId = limit.Key;
+                int limitClassIndex = carClassesIds.IndexOf(limitClassId);
+                int limitClassMax = limit.Value;
+                int limitClassToDrop = Math.Max(nextsplit.CountClassCars(limitClassIndex) - limitClassMax, 0);
+                if (limitClassToDrop > 0) nextsplit.PickClassCars(limitClassIndex, limitClassToDrop, true); // cars a dropped away in hell :D
+            } // end of the foreach loop class limit
+        }*/
+
+
+        
 
 
         /// <summary>
@@ -421,7 +537,7 @@ namespace BetterMatchMaking.Library.Calc
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private List<int> MoveDownExcessCarsInTheSplit(Split s)
+        private List<int> MoveDownExcessCarsInTheSplit(List<Split> splits, Split s)
         {
             List<int> classesToReducted = new List<int>();
 
@@ -452,7 +568,7 @@ namespace BetterMatchMaking.Library.Calc
             foreach (var c in classesInTheSplit)
             {
 
-                int limit = TakeCars(s, c, classesNotInTheSplit, fieldSize);
+                int limit = TakeCars(splits, s, c, classesNotInTheSplit, fieldSize);
                 classLimits.Add(c, limit);
             }
             // -->
@@ -474,7 +590,7 @@ namespace BetterMatchMaking.Library.Calc
                 {
 
                     // get the next split containng the same class
-                    var nextSplitContainingSameClassCars = (from r in Splits
+                    var nextSplitContainingSameClassCars = (from r in splits
                                                             where r.Number > s.Number
                                                             && r.CountClassCars(classIndex) > 0
                                                             select r).FirstOrDefault();
@@ -487,7 +603,7 @@ namespace BetterMatchMaking.Library.Calc
                         if (classIndex == carClassesIds.Count - 1)
                         {
                             // so get the next split
-                            nextSplitContainingSameClassCars = (from r in Splits
+                            nextSplitContainingSameClassCars = (from r in splits
                                                                 where r.Number > s.Number
                                                                 select r).FirstOrDefault();
 
@@ -508,7 +624,7 @@ namespace BetterMatchMaking.Library.Calc
                     if (nextSplitContainingSameClassCars == null)
                     {
                         // just get the next one neverless contains the class yet
-                        nextSplitContainingSameClassCars = (from r in Splits
+                        nextSplitContainingSameClassCars = (from r in splits
                                                             where r.Number > s.Number
                                                             select r).FirstOrDefault();
                         if (nextSplitContainingSameClassCars != null)
@@ -558,10 +674,12 @@ namespace BetterMatchMaking.Library.Calc
         /// </summary>
         /// <param name="s"></param>
         /// <param name="movedCategories"></param>
-        private void UpCarsToSplit(Split s, List<int> movedCategories)
+        private void UpCarsToSplit(List<Split> splits, Split s, List<int> movedCategories)
         {
             // calc the available slots
             int availableSlots = fieldSize - s.TotalCarsCount;
+
+
 
             
             // build a dictionnary containing cars moves we want
@@ -573,7 +691,7 @@ namespace BetterMatchMaking.Library.Calc
                 int classId = carClassesIds[i];
                 if (!movedCategories.Contains(classId)) // not moved class
                 {
-                    int take = TakeCars(s, classId, movedCategories, availableSlots);
+                    int take = TakeCars(splits, s, classId, movedCategories, availableSlots);
                     carsToUp.Add(classId, take);
                 }
             }
@@ -589,7 +707,7 @@ namespace BetterMatchMaking.Library.Calc
             // -->
 
             // call the method to do the moves
-            UpCarsToSplit(s, carsToUp);
+            UpCarsToSplit(splits, s, carsToUp);
         }
 
 
@@ -602,7 +720,7 @@ namespace BetterMatchMaking.Library.Calc
         /// KEY is classId
         /// VALUE is number of cars
         /// </param>
-        private void UpCarsToSplit(Split s, Dictionary<int, int> carsToUp)
+        private void UpCarsToSplit(List<Split> splits, Split s, Dictionary<int, int> carsToUp)
         {
             // for each class
             foreach (int classId in carsToUp.Keys)
@@ -617,7 +735,7 @@ namespace BetterMatchMaking.Library.Calc
                 {
 
                     // find a lower split containig the same class
-                    var nextSplitContainingSameClassCars = (from r in Splits
+                    var nextSplitContainingSameClassCars = (from r in splits
                                                             where r.Number > s.Number
                                                             && r.CountClassCars(classIndex) > 0
                                                             select r).FirstOrDefault();
@@ -674,18 +792,18 @@ namespace BetterMatchMaking.Library.Calc
         /// </summary>
         /// <param name="splitIndex">split index</param>
         /// <returns></returns>
-        private Split GetSplit(int splitIndex)
+        private Split GetSplit(List<Split> splits, int splitIndex)
         {
             Split nextSplit = null;
-            if (splitIndex < Splits.Count)
+            if (splitIndex < splits.Count)
             {
-                nextSplit = Splits[splitIndex];
+                nextSplit = splits[splitIndex];
             }
             else
             {
                 nextSplit = new Split();
                 nextSplit.Number = splitIndex + 1;
-                Splits.Add(nextSplit);
+                splits.Add(nextSplit);
             }
             return nextSplit;
         }
@@ -761,8 +879,9 @@ namespace BetterMatchMaking.Library.Calc
         /// else it will be skipped
         /// </summary>
         /// <param name="s"></param>
-        private void AddMostPopulatedClassInTheSplitIfMissing(Split s)
+        private bool AddMostPopulatedClassInTheSplitIfMissing(List<Split> splits, Split s)
         {
+            bool ret = false;
             // if we want  the most populated class on each split
             if (ParameterMostPopulatedClassInEverySplitsValue == 1)
             {
@@ -782,7 +901,7 @@ namespace BetterMatchMaking.Library.Calc
                 // KEY : populated class id
                 // VALUES : missing cars to fit the good number of cars in this populated class 
                 Dictionary<int, int> mostPopAdd = new Dictionary<int, int>();
-                int mostPopTarget = TakeCars(s, mostPopClassId, null, fieldSize);
+                int mostPopTarget = TakeCars(splits, s, mostPopClassId, null, fieldSize);
                 mostPopTarget -= s.CountClassCars(carClassesIds.Count - 1);
                 // -->
 
@@ -791,10 +910,12 @@ namespace BetterMatchMaking.Library.Calc
                 {
                     // so do it
                     mostPopAdd.Add(mostPopClassId, mostPopTarget);
-                    UpCarsToSplit(s, mostPopAdd);
+                    UpCarsToSplit(splits, s, mostPopAdd);
+                    ret = true;
                     // -->
                 }
             }
+            return ret;
         }
 
         // Third pass of the algorithm,

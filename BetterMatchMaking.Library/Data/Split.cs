@@ -27,6 +27,7 @@ namespace BetterMatchMaking.Library.Data
      *  
      */
 
+    [Serializable]
     /// <summary>
     /// Race split description.
     /// It includes the split entry list, SoF and other value.
@@ -430,6 +431,35 @@ namespace BetterMatchMaking.Library.Data
         {
             int ret = Tools.GetProperty<int>(this, "Class{i}Sof", i);
             return ret;
+        }
+
+        /// <summary>
+        /// Get the biggest class SoF in this split
+        /// </summary>
+        /// <param name="exceptionClassId">(optionnal) do not include this classIndex</param>
+        /// <returns></returns>
+        public int GetMaxClassSof(int? exceptionClassIndex = null)
+        {
+            List<int> sofs = new List<int>();
+            if (exceptionClassIndex == null || exceptionClassIndex.Value != 0) sofs.Add(Class1Sof);
+            if (exceptionClassIndex == null || exceptionClassIndex.Value != 1) sofs.Add(Class2Sof);
+            if (exceptionClassIndex == null || exceptionClassIndex.Value != 2) sofs.Add(Class3Sof);
+            if (exceptionClassIndex == null || exceptionClassIndex.Value != 3) sofs.Add(Class4Sof);
+            return sofs.Max();
+        }
+
+        /// <summary>
+        /// Get the lowest class SoF in this split
+        /// </summary>
+        /// <returns></returns>
+        public int GetMinClassSof()
+        {
+            List<int> sofs = new List<int>();
+            if (Class1Sof > 0) sofs.Add(Class1Sof);
+            if (Class2Sof > 0) sofs.Add(Class2Sof);
+            if (Class3Sof > 0) sofs.Add(Class3Sof);
+            if (Class4Sof > 0) sofs.Add(Class4Sof);
+            return sofs.Max();
         }
 
 

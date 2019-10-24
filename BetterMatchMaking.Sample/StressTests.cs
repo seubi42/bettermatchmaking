@@ -65,10 +65,10 @@ namespace BetterMatchMaking.Sample
 
             // run algorithm
             
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartPredictedMoveDownAffineDistribution");
             for (int maxsofdiff = 5; maxsofdiff < 50; maxsofdiff++)
             {
-                for (int mostpop = 0; mostpop < 1; mostpop++)
+                for (int mostpop = 0; mostpop < 2; mostpop++)
                 {
                     Console.WriteLine("");
                     Console.WriteLine("------------------------------------");
@@ -76,11 +76,9 @@ namespace BetterMatchMaking.Sample
                     Console.WriteLine(new FileInfo(csv).Name);
                     Console.WriteLine("Max Soff Diff = " + maxsofdiff);
                     calculator.ParameterMinCarsValue = 10;
-                    calculator.ParameterMaxSofDiffValue = maxsofdiff;
-                    calculator.ParameterMaxSofFunctStartingIRValue = 12;
-                    calculator.ParameterMaxSofFunctExtraThresoldPerK = 1000;
-                    calculator.ParameterMaxSofFunctStartingThreshold = -20;
-                    calculator.ParameterTopSplitExceptionValue = 0;
+                    calculator.ParameterMaxSofFunctStartingIRValue = 3000;
+                    calculator.ParameterMaxSofFunctExtraThresoldPerK = 30;
+                    calculator.ParameterMaxSofFunctStartingThreshold = 10;
                     calculator.ParameterMostPopulatedClassInEverySplitsValue = mostpop;
                     calculator.Compute(entrylist, fieldSize);
                     var audit = calculator.GetAudit();

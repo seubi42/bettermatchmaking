@@ -185,7 +185,7 @@ namespace BetterMatchMaking.Library.Calc
                 MoveDownCarsSplits(Splits, Splits[i], i);
             }
 
-            return;
+            
  
 
             CleanEmptySplits(); // just to be sure

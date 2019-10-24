@@ -22,6 +22,8 @@ namespace BetterMatchMaking.Library.Calc
 
         internal override bool TestIfMoveDownNeeded(Split s, int classIndex, List<int> splitSofs)
         {
+            s.Info += "{";
+
             bool movedown = false;
             string debug; // to build debug information
 
@@ -56,7 +58,11 @@ namespace BetterMatchMaking.Library.Calc
                 // -->
 
                 // stop the process
-                if (disableMoveDowns) return false;
+                if (disableMoveDowns)
+                {
+                    s.Info += "}";
+                    return false;
+                }
                 
             }
             
@@ -100,9 +106,9 @@ namespace BetterMatchMaking.Library.Calc
             s.Info += debug;
             // -->
 
-            
 
 
+            s.Info = s.Info.Trim() + "} ";
             return movedown;
         }
     }

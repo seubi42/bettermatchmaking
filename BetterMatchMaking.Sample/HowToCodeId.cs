@@ -17,12 +17,11 @@ namespace BetterMatchMaking.Sample
 
 
             // 2 : instanciate calculator and parameters
-            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartMoveDownAffineDistribution");
-            calculator.ParameterClassPropMinPercentValue = 37;
-            calculator.ParameterMaxSofDiffValue = 18;
-            calculator.ParameterMaxSofFunctStartingIRValue = 12;
-            calculator.ParameterMaxSofFunctExtraThresoldPerK = 1000;
-            calculator.ParameterMaxSofFunctStartingThreshold = -20;
+            BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartPredictedMoveDownAffineDistribution");
+            calculator.ParameterMinCarsValue = 10;
+            calculator.ParameterMaxSofFunctStartingIRValue = 3000;
+            calculator.ParameterMaxSofFunctStartingThreshold = 30;
+            calculator.ParameterMaxSofFunctExtraThresoldPerK = 10;
             calculator.ParameterTopSplitExceptionValue = 1;
 
             // 3 : Launch

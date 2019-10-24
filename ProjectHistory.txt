@@ -1,4 +1,4 @@
-VERSION 1 - PRELIMINAY WORK
+﻿VERSION 1 - PRELIMINAY WORK
 ***************************
 ***************************
 
@@ -68,6 +68,11 @@ IMPORTANT FEEDBACKS BETWEEN V1 AND V2
 	Details and formula of the Affine function to distribute cars.
 	Allows to implement a 'min cars' parameter which will set the minimum cars we can have in a split class.
 
+	24.10.19 - Sebastien Mallet - https://members.iracing.com/jforum/posts/list/75/3669811.page#11772161
+	New "SmartMoveDown Predicted Affine Distribution". Implements a prediction of all the SoF changes 
+	infered by the MoveDown, before doing it for real. The MoveDown is tested if the new situation
+	gives less diffrences between SoF. This method is better than before, where we act a MoveDown
+	only when difference BEFORE THE MORE where higher than a Δ parameter.
 
  
 

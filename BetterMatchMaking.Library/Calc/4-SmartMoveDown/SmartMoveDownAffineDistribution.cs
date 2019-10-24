@@ -245,7 +245,15 @@ namespace BetterMatchMaking.Library.Calc
             // -->
 
             // move cars down
-            for (int i = 0; i < classesSof.Count - 1; i++)
+            int classesToMoveDown = classesSof.Count - 1;
+            if (ParameterMostPopulatedClassInEverySplitsValue == 0)
+            {
+                // if the parameter MostPopulatedClassInEverySplits is disabled
+                // then we will also check the last class
+                classesToMoveDown++;
+            }
+
+            for (int i = 0; i < classesToMoveDown; i++)
             {
                 // test: do we need to move down ?
                 bool doTheMoveDown = false;
@@ -289,14 +297,6 @@ namespace BetterMatchMaking.Library.Calc
                 int mostPopupClassId = carClassesIds[carClassesIds.Count - 1];
                 if (!doNotUpCategories.Contains(mostPopupClassId)) doNotUpCategories.Add(mostPopupClassId);
             }
-            /*if(forceMoveDownOfClassIndex != null)
-            {
-                for (int i = 0; i < forceMoveDownOfClassIndex; i++)
-                {
-                    int exceptionClassId = carClassesIds[carClassesIds.Count - 1];
-                    if (!doNotUpCategories.Contains(exceptionClassId)) doNotUpCategories.Add(exceptionClassId);
-                }
-            }*/
             UpCarsToSplit(splits, s, doNotUpCategories);
             // -->
 
@@ -331,8 +331,6 @@ namespace BetterMatchMaking.Library.Calc
             // up cars to fill leaved slot again
             // for classe not in the exception list 'movedCategories'
             UpCarsToSplit(splits, s, movedCategories);
-            
-            
             // -->
         }
 

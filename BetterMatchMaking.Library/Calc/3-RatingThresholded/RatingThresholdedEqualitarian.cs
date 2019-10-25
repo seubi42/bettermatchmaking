@@ -47,11 +47,7 @@ namespace BetterMatchMaking.Library.Calc
             get { return false; }
 
         }
-        public bool UseParameterMostPopulatedClassInEverySplits
-        {
-            get { return false; }
-        }
-        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
+
         public int ParameterClassPropMinPercentValue { get; set; }
 
         public int ParameterMaxSofDiffValue { get; set; }

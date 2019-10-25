@@ -96,18 +96,6 @@ namespace BetterMatchMaking.Library.Calc
         int ParameterTopSplitExceptionValue { get; set; }
 
 
-        /// <summary>
-        /// Says if the algorithm use the ParameterMostPopulatedClassInEverySplitsValue parameter.
-        /// If true, you need to set a value to it.
-        /// </summary>
-        bool UseParameterMostPopulatedClassInEverySplits { get;  }
-        /// <summary>
-        /// This parameter is used for 'MoveDown' algorithms.
-        /// It set to 1, the most populated class will not have any move down.
-        /// It means, if 1, every splits will containt the most populated class.
-        /// </summary>
-        int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
-
 
 
 

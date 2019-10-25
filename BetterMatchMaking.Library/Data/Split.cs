@@ -400,6 +400,30 @@ namespace BetterMatchMaking.Library.Data
             return Tools.GetProperty<int>(this, "Class{i}Id", i);
         }
 
+        /// <summary>
+        /// Get the index of the most populated class available
+        /// </summary>
+        /// <param name="exceptionClassId">(optionnal) do not include this classIndex</param>
+        /// <returns></returns>
+        public int GetLastClassIndex(int? exceptionClassIndex = null)
+        {
+            if (Class4Cars != null && Class4Cars.Count > 0 && (exceptionClassIndex == null || exceptionClassIndex != 3)) return 3;
+            if (Class3Cars != null && Class3Cars.Count > 0 && (exceptionClassIndex == null || exceptionClassIndex != 2)) return 2;
+            if (Class2Cars != null && Class2Cars.Count > 0 && (exceptionClassIndex == null || exceptionClassIndex != 1)) return 1;
+            if (Class1Cars != null && Class1Cars.Count > 0 && (exceptionClassIndex == null || exceptionClassIndex != 0)) return 0;
+            return 0;
+        }
+
+        public List<int> GetEmptyClassesId()
+        {
+            List<int> ret = new List<int>();
+            if ((Class4Cars == null || Class4Cars.Count == 0) && Class4Id > 0) ret.Add(Class4Id);
+            if ((Class3Cars == null || Class3Cars.Count == 0) && Class3Id > 0) ret.Add(Class3Id);
+            if ((Class2Cars == null || Class2Cars.Count == 0) && Class2Id > 0) ret.Add(Class2Id);
+            if ((Class1Cars == null || Class1Cars.Count == 0) && Class1Id > 0) ret.Add(Class1Id);
+            return ret;
+        }
+
         #endregion
 
 
@@ -433,6 +457,8 @@ namespace BetterMatchMaking.Library.Data
             return ret;
         }
 
+
+
         /// <summary>
         /// Get the biggest class SoF in this split
         /// </summary>
@@ -447,6 +473,10 @@ namespace BetterMatchMaking.Library.Data
             if (exceptionClassIndex == null || exceptionClassIndex.Value != 3) sofs.Add(Class4Sof);
             return sofs.Max();
         }
+
+        
+
+
 
         /// <summary>
         /// Get the lowest class SoF in this split

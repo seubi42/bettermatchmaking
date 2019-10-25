@@ -32,7 +32,6 @@ namespace BetterMatchMaking.UI
         SyncSliderBox sspMaxSofFunctStartingIRValue;
         SyncSliderBox sspMaxSofFunctStartingThreshold;
         SyncSliderBox sspTopSplitExc;
-        SyncSliderBox sspEqualize;
 
         public MainWindow()
         {
@@ -42,12 +41,11 @@ namespace BetterMatchMaking.UI
             sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 5, 66, 37);
             sspMinCars = new SyncSliderBox(lblParameterMinCars, tbxParameterMinCars, sldParameterMinCars, 1, 30, 10);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
-            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 5, 100, 18);
+            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 13, 100, 18);
             sspMaxSofFunctExtraThresoldPerK = new SyncSliderBox(lblParameterMaxSoffFunctExtrPctPerK, tbxParameterMaxSoffFunctExtrPctPerK, sldParameterMaxSoffFunctExtrPctPerK, 0, 50, 11);
             sspMaxSofFunctStartingIRValue = new SyncSliderBox(lblParameterMaxSoffFunctStartIR, tbxParameterMaxSoffFunctStartIR, sldParameterMaxSoffFunctStartIR, 1000, 9000, 3000);
             sspMaxSofFunctStartingThreshold = new SyncSliderBox(lblParameterMaxSoffFunctStartPct, tbxParameterMaxSoffFunctStartPct, sldParameterMaxSoffFunctStartPct, 0, 50, 18);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
-            sspEqualize = new SyncSliderBox(lblParameterEqualize, tbxParameterEqualize, sldParameterEqualize, 0, 1, 1);
 
             sspP.Visible = false;
             sspMinCars.Visible = false;
@@ -57,7 +55,6 @@ namespace BetterMatchMaking.UI
             sspMaxSofFunctStartingIRValue.Visible = false;
             sspMaxSofFunctStartingThreshold.Visible = false;
             sspTopSplitExc.Visible = false;
-            sspEqualize.Visible = false;
 
 
             this.Loaded += MainWindow_Loaded;
@@ -159,7 +156,7 @@ namespace BetterMatchMaking.UI
             mm.ParameterMaxSofFunctExtraThresoldPerK = sspMaxSofFunctExtraThresoldPerK.Value;
             mm.ParameterMaxSofFunctStartingThreshold = sspMaxSofFunctStartingThreshold.Value;
             mm.ParameterTopSplitExceptionValue = sspTopSplitExc.Value;
-            mm.ParameterMostPopulatedClassInEverySplitsValue = sspEqualize.Value;
+
 
             mm.Compute(parser.DistinctCars, fieldSize);
             gridResult.ItemsSource = mm.Splits;
@@ -303,7 +300,6 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFunctStartingThreshold.Visible = calc.UseParameterMaxSofFunct;
                 sspMaxSofFunctExtraThresoldPerK.Visible = calc.UseParameterMaxSofFunct;
                 sspTopSplitExc.Visible = calc.UseParameterTopSplitException;
-                sspEqualize.Visible = calc.UseParameterMostPopulatedClassInEverySplits;
             }
             else
             {
@@ -315,7 +311,6 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFunctStartingThreshold.Visible = false;
                 sspMaxSofFunctExtraThresoldPerK.Visible = false;
                 sspTopSplitExc.Visible = false;
-                sspEqualize.Visible = false;
 
             }
         }

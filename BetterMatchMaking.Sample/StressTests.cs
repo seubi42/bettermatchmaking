@@ -79,7 +79,6 @@ namespace BetterMatchMaking.Sample
                     calculator.ParameterMaxSofFunctStartingIRValue = 3000;
                     calculator.ParameterMaxSofFunctExtraThresoldPerK = 30;
                     calculator.ParameterMaxSofFunctStartingThreshold = 10;
-                    calculator.ParameterMostPopulatedClassInEverySplitsValue = mostpop;
                     calculator.Compute(entrylist, fieldSize);
                     var audit = calculator.GetAudit();
                     Console.WriteLine(audit.ToString());

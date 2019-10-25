@@ -65,12 +65,17 @@ namespace BetterMatchMaking.Library.Calc
             // -->
 
             // difference in % between min and max
-            int diff = Convert.ToInt32(100 * Convert.ToInt32(referencesof) / MaxSofInSplit);
-            diff = 100 - diff;
-            if (diff < 0)
+            
+            double a = Math.Min(referencesof, MaxSofInSplit);
+            double b = Math.Max(referencesof, MaxSofInSplit);
+            if (a == 0 || b == 0)
             {
-                diff = Math.Abs(diff);
+                PercentDifference = 0;
+                return;
             }
+
+
+            int diff = 100 - Convert.ToInt32(Math.Round(100 * a / b));
             PercentDifference = diff;
             // -->
 

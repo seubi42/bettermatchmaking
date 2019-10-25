@@ -31,7 +31,7 @@ namespace BetterMatchMaking.UI
         public void Render()
         {
             List<Preview> items = new List<Preview>();
-            for (int i = 6000; i >= 500; i-=125)
+            for (int i = 6000; i >= StartingIR; i-=125)
             {
                 items.Add(new Preview
                 {

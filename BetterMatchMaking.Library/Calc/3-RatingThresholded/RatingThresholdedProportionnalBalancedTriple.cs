@@ -59,14 +59,6 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
 
 
-
-        public bool UseParameterMostPopulatedClassInEverySplits
-        {
-            get { return false; }
-        }
-        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
-
-
         public virtual bool UseParameterMinCars
         {
             get { return false; }

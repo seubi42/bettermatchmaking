@@ -6,13 +6,38 @@
         WindowStartupLocation="CenterOwner"
         xmlns:local="clr-namespace:BetterMatchMaking"
         mc:Ignorable="d"
-        Title="Function Preview" Height="450" Width="800">
+        Title="Function Preview" Height="450" Width="550">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock TextWrapping="Wrap" Text="This table is a prefiew of the function : TargetDiff = (Sof / X) * A + B. If less than floor, than it use floor value instead. Any 0 parameter disable the function and use floor as constant. " />
+        <TextBlock TextWrapping="Wrap">
+            <Run Text="This window is a preview of exception function, to allow together Δ SoF difference for high iRatings." />
+            <LineBreak />
+            <LineBreak />
+            
+            <Run Text="Parameters are : " />
+            <LineBreak />
+            <Run Text="SOF" FontWeight="Bold" />
+            <Run Text=" = the current sof for which we need to know the maximum difference allowed " />
+            <LineBreak />
+            <Run Text="STARTIR" FontWeight="Bold" />
+            <Run Text=" = (Start IR) the starting rating point where the formula start to works (ex: 3000) means, we will start allow % difference for classes with more than 3000 IR. " />
+            <LineBreak />
+            <Run Text="STARTPCT" FontWeight="Bold" />
+            <Run Text=" = (Start %) The iRating difference allowed in % for the starting point (when SOF = STARTIR) to stay together event it is not the most efficient statistic.  " />
+            <LineBreak />
+            <Run Text="EXTRAK" FontWeight="Bold" />
+            <Run Text=" = (Extra %/k) The iRating extra % added every 1000IR. " />
+            
+            
+            <LineBreak />
+            <LineBreak />
+            <Run Text="Formula is : " />
+            <Run Text="f(SOF) = ((SOF - STARTIR) / 1000 * EXTRAK) + STARTPCT" FontWeight="Bold" />
+
+        </TextBlock>
         <DataGrid x:Name="grid" IsReadOnly="True" Grid.Row="1" />
     </Grid> 
 </Window>

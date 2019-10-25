@@ -46,10 +46,7 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return false; }
         }
-        public bool UseParameterMostPopulatedClassInEverySplits
-        {
-            get { return false; }
-        }
+        
         public int ParameterEqualizeSplits { get; set; }
         public int ParameterClassPropMinPercentValue { get; set; }
         public int ParameterRatingThresholdValue { get; set; }
@@ -58,7 +55,6 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctStartingThreshold { get; set; }
         public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
-        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
 
         public virtual bool UseParameterMinCars
         {

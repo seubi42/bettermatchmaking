@@ -64,9 +64,6 @@ namespace BetterMatchMaking.Library.Calc
             }
             // -->
 
-
-
-
             classDistributionForFullSplit = new Dictionary<int, int>();
             int numberOfClasses = classProportion.Count;
             for (int i = 0; i < numberOfClasses - 1; i++)

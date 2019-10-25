@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace BetterMatchMaking.Library.Calc
 {
     public class Tools
-    { 
+    {
+        public static bool EnableDebugTraces = true;
+
         /// <summary>
         /// Slit entrylist in a list of separatec queue.
         /// 1 queue per class.

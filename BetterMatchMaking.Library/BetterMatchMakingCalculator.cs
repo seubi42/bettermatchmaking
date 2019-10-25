@@ -52,10 +52,7 @@ namespace BetterMatchMaking.Library
             get { return instance.UseParameterTopSplitException; }
         }
 
-        public bool UseParameterMostPopulatedClassInEverySplits
-        {
-            get { return instance.UseParameterMostPopulatedClassInEverySplits; }
-        }
+
 
         public virtual bool UseParameterMinCars
         {
@@ -101,11 +98,7 @@ namespace BetterMatchMaking.Library
             get { return instance.ParameterTopSplitExceptionValue; }
             set { instance.ParameterTopSplitExceptionValue = value; }
         }
-        public int ParameterMostPopulatedClassInEverySplitsValue
-        {
-            get { return instance.ParameterMostPopulatedClassInEverySplitsValue; }
-            set { instance.ParameterMostPopulatedClassInEverySplitsValue = value; }
-        }
+
 
         public int ParameterMinCarsValue
         {

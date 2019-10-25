@@ -58,12 +58,7 @@ namespace BetterMatchMaking.Library.Calc
 
         }
         public int ParameterTopSplitExceptionValue { get; set; }
-        public bool UseParameterMostPopulatedClassInEverySplits
-        {
-            get { return true; }
-        }
-        public int ParameterMostPopulatedClassInEverySplitsValue { get; set; }
-
+        
         public virtual bool UseParameterMinCars
         {
             get { return true; }
@@ -86,6 +81,12 @@ namespace BetterMatchMaking.Library.Calc
             get { return false; }
         }
         public int ParameterClassPropMinPercentValue { get; set; }
+        #endregion
+
+
+        #region For Debugging
+        internal int INTERRUPT_BEFORE_MOVEDOWN_SPLITNUMBER = -6;
+        internal int INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX = -0;
         #endregion
 
 
@@ -183,8 +184,12 @@ namespace BetterMatchMaking.Library.Calc
                 }
                 // mode down process. the most important thing on this algorithm
                 MoveDownCarsSplits(Splits, Splits[i], i);
+
+                if (Splits[i].Number == INTERRUPT_BEFORE_MOVEDOWN_SPLITNUMBER) return;
             }
 
+
+            
             
  
 
@@ -193,7 +198,7 @@ namespace BetterMatchMaking.Library.Calc
 
             MergeTheTwoLastSplits(); // because it can happens when differences are quite large on very last split
             CleanEmptySplits(); // just to be sure
-
+            
 
             OptimizeAndSolveDifferences(); // a third pass
             CleanEmptySplits(); // just to be sure
@@ -246,15 +251,19 @@ namespace BetterMatchMaking.Library.Calc
 
             // move cars down
             int classesToMoveDown = classesSof.Count - 1;
-            if (ParameterMostPopulatedClassInEverySplitsValue == 0)
+            if (false /*ParameterMostPopulatedClassInEverySplits*/)
             {
                 // if the parameter MostPopulatedClassInEverySplits is disabled
                 // then we will also check the last class
                 classesToMoveDown++;
             }
 
+            //for (int i = classesToMoveDown - 1; i >= 0; i--)
             for (int i = 0; i < classesToMoveDown; i++)
             {
+
+                
+
                 // test: do we need to move down ?
                 bool doTheMoveDown = false;
                 if (forceMoveDownOfClassIndex != null)
@@ -264,6 +273,14 @@ namespace BetterMatchMaking.Library.Calc
                 else
                 {
                     doTheMoveDown = HaveToMoveDown(s, i, classesSof);
+                }
+
+                if (forceMoveDownOfClassIndex == null
+                    && INTERRUPT_BEFORE_MOVEDOWN_SPLITNUMBER == s.Number 
+                    && INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX == i)
+                {
+                    // to help debugging
+                    return;
                 }
 
                 // if we have to move the class to the next split
@@ -332,6 +349,9 @@ namespace BetterMatchMaking.Library.Calc
             // for classe not in the exception list 'movedCategories'
             UpCarsToSplit(splits, s, movedCategories);
             // -->
+
+
+            
         }
 
         /// <summary>
@@ -404,6 +424,12 @@ namespace BetterMatchMaking.Library.Calc
         /// <returns></returns>
         internal virtual bool TestIfMoveDownNeeded(Split s, int classIndex, List<int> splitSofs)
         {
+            if(s.Number == INTERRUPT_BEFORE_MOVEDOWN_SPLITNUMBER
+                && classIndex == INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX)
+            {
+                // to help debugging, you can set breakpoint here
+            }
+
             bool movedown = false;
 
             Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
@@ -412,13 +438,16 @@ namespace BetterMatchMaking.Library.Calc
                 ParameterMaxSofFunctStartingThreshold,
                 ParameterMaxSofFunctStartingThreshold);
             // debug informations
-            string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
-            debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
-            debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
-            debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
-            debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
-            debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
-            s.Info += debug;
+            if (Tools.EnableDebugTraces)
+            {
+                string debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
+                debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
+                debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
+                debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
+                debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
+                debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
+                s.Info += debug;
+            }
             // -->
 
             return movedown;
@@ -495,7 +524,7 @@ namespace BetterMatchMaking.Library.Calc
                     // it the parameter to force most populated class in every
                     // split is set to yes, than simply get the next split
                     // nevermind if it contains the same class or not we will add it
-                    if (ParameterMostPopulatedClassInEverySplitsValue == 1)
+                    if (true /*ParameterMostPopulatedClassInEverySplits*/)
                     {
                         if (classIndex == carClassesIds.Count - 1)
                         {
@@ -513,7 +542,7 @@ namespace BetterMatchMaking.Library.Calc
                             }
                         }
                     }
-                    // end of the ParameterMostPopulatedClassInEverySplitsValue management
+                    
                     // -->
 
 
@@ -571,7 +600,7 @@ namespace BetterMatchMaking.Library.Calc
         /// </summary>
         /// <param name="s"></param>
         /// <param name="movedCategories"></param>
-        private void UpCarsToSplit(List<Split> splits, Split s, List<int> movedCategories)
+        internal void UpCarsToSplit(List<Split> splits, Split s, List<int> movedCategories)
         {
             // calc the available slots
             int availableSlots = fieldSize - s.TotalCarsCount;
@@ -780,7 +809,7 @@ namespace BetterMatchMaking.Library.Calc
         {
             bool ret = false;
             // if we want  the most populated class on each split
-            if (ParameterMostPopulatedClassInEverySplitsValue == 1)
+            if (true /*ParameterMostPopulatedClassInEverySplits*/)
             {
                 // add most populated class in the split :
 

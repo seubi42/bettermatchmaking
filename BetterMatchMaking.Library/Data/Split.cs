@@ -688,49 +688,72 @@ namespace BetterMatchMaking.Library.Data
         /// <returns>a debug string usefull for debugging</returns>
         public override string ToString()
         {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("|Split " + Number);
 
-            string ret = "Split " + Number;
+            string carsline = "";
+            string sofline = "";
 
-            ret += "[";
+            int len = 6;
+            
             if (Class1Cars != null)
             {
-                ret += Class1Cars.Count;
+                carsline += CenterString(Class1Cars.Count.ToString(), len);
+                sofline += CenterString(Class1Sof.ToString(), len);
             }
             else
             {
-                ret += "0";
+                carsline += CenterString(".", len);
+                sofline += CenterString(".", len);
             }
-            ret += ";";
+            
             if (Class2Cars != null)
             {
-                ret += Class2Cars.Count;
+                carsline += ","+ CenterString(Class2Cars.Count.ToString(), len);
+                sofline += "," + CenterString(Class2Sof.ToString(), len);
             }
             else
             {
-                ret += "0";
+                carsline += "," + CenterString(".", len);
+                sofline += "," + CenterString(".", len);
             }
-            ret += ";";
+
+
             if (Class3Cars != null)
             {
-                ret += Class3Cars.Count;
+                carsline += "," + CenterString(Class3Cars.Count.ToString(), len);
+                sofline += "," + CenterString(Class3Sof.ToString(), len);
             }
             else
             {
-                ret += "0";
+                carsline += "," + CenterString(".", len);
+                sofline += "," + CenterString(".", len);
             }
-            ret += ";";
+
             if (Class4Cars != null)
             {
-                ret += Class4Cars.Count;
+                carsline += "," + CenterString(Class4Cars.Count.ToString(), len);
+                sofline += "," + CenterString(Class4Sof.ToString(), len);
             }
             else
             {
-                ret += "0";
+                carsline += "," + CenterString(".", len);
+                sofline += "," + CenterString(".", len);
             }
-            ret += "]";
 
+            sb.AppendLine("|" + carsline);
+            sb.AppendLine("|" + sofline);
+
+            string ret = sb.ToString();
             return ret;
 
+        }
+
+        static string CenterString(string stringToCenter, int totalLength)
+        {
+            return stringToCenter.PadLeft(((totalLength - stringToCenter.Length) / 2)
+                                + stringToCenter.Length)
+                       .PadRight(totalLength);
         }
         #endregion
 

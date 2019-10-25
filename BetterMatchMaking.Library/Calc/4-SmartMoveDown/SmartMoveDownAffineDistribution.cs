@@ -86,7 +86,7 @@ namespace BetterMatchMaking.Library.Calc
 
         #region For Debugging
         internal int INTERRUPT_BEFORE_MOVEDOWN_SPLITNUMBER = -6;
-        internal int INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX = -0;
+        internal int INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX = 0;
         #endregion
 
 
@@ -258,8 +258,8 @@ namespace BetterMatchMaking.Library.Calc
                 classesToMoveDown++;
             }
 
-            //for (int i = classesToMoveDown - 1; i >= 0; i--)
-            for (int i = 0; i < classesToMoveDown; i++)
+            for (int i = classesToMoveDown - 1; i >= 0; i--)
+            //for (int i = 0; i < classesToMoveDown; i++)
             {
 
                 
@@ -304,7 +304,13 @@ namespace BetterMatchMaking.Library.Calc
 
             // -->
 
-
+            // reset next split ?
+            //if (s.Number + 1 < splits.Count)
+            //{
+            //    var nextSplit2 = splits[s.Number + 1];
+            //    ResetSplitWithAllClassesFilled(splits, nextSplit2);
+            //}
+            // -->
 
             // up cars to fill leaved slots
             List<int> doNotUpCategories = new List<int>();

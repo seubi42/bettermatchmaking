@@ -26,6 +26,8 @@ namespace BetterMatchMaking.Library.Calc
                 && classIndex == INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX)
             {
                 // to help debugging, you can set breakpoint here
+                string test = s.ToString();
+
             }
 
             if (Tools.EnableDebugTraces) s.Info += "{";
@@ -85,27 +87,16 @@ namespace BetterMatchMaking.Library.Calc
             // we will clone the splits list to make a fake move in it without commiting anything to the real "Splits" plist
             List<Data.Split> snapshotedSplits = Data.Tools.SplitsCloner(Splits, s.Number + 4);
             var snapshotedCurrentSplit = snapshotedSplits[s.Number - 1]; // our current split is here
+            var snapshotedNextSplit = snapshotedSplits[s.Number]; // the next split is here
+            ResetSplitWithAllClassesFilled(snapshotedSplits, snapshotedNextSplit); // we will the next split with all possible cars
 
             var exclusions = snapshotedCurrentSplit.GetEmptyClassesId();
-            //ResetSplitWithAllClassesFilled(snapshotedSplits, snapshotedCurrentSplit);
             UpCarsToSplit(snapshotedSplits, snapshotedCurrentSplit, exclusions);
+            ResetSplitWithAllClassesFilled(snapshotedSplits, snapshotedNextSplit);
             evaluator = new SofDifferenceEvaluator(snapshotedCurrentSplit, classIndex);
 
             int classId = carClassesIds[classIndex]; // we need the classId
-            // we call the MoveDownCarsSplits method to do the MoveDown
             MoveDownCarsSplits(snapshotedSplits, snapshotedCurrentSplit, snapshotedCurrentSplit.Number - 1, classIndex);
-
-            // we now need to fill avaible slots on the snapshotedCurrentSplit 
-            // but just one move instead of the whole recursive process
-            var movedClass = new List<int>() { classId }; // the class we moved (we don't allow to fill it)
-
-            // we get the next split (our car was moved into it)
-            var snapshotedNextSplit = snapshotedSplits[s.Number];
-            exclusions = snapshotedNextSplit.GetEmptyClassesId();
-            // we will make a simple fill of available slots into it
-            UpCarsToSplit(snapshotedSplits, snapshotedNextSplit, exclusions);
-            //ResetSplitWithAllClassesFilled(snapshotedSplits, snapshotedNextSplit);
-            
 
             // eval the new situation of the next split (after the fake move)
             Calc.SofDifferenceEvaluator evaluatorIfMovedDown = new SofDifferenceEvaluator(snapshotedNextSplit, classIndex);
@@ -136,6 +127,29 @@ namespace BetterMatchMaking.Library.Calc
 
             if (Tools.EnableDebugTraces) s.Info = s.Info.Trim() + "} ";
             return movedown;
+        }
+
+
+        private List<SofDifferenceEvaluator> DoTheMove(List<Data.Split> splits, Data.Split s, int classIndex, bool getEvaluators)
+        {
+            List<SofDifferenceEvaluator> evaluators = null;
+            if (getEvaluators) evaluators = new List<SofDifferenceEvaluator>();
+
+             var snapshotedNextSplit = splits[s.Number]; // the next split is here
+            ResetSplitWithAllClassesFilled(splits, snapshotedNextSplit); // we will the next split with all possible cars
+
+            var exclusions = s.GetEmptyClassesId();
+            UpCarsToSplit(splits, s, exclusions);
+            ResetSplitWithAllClassesFilled(splits, snapshotedNextSplit);
+            if (getEvaluators) evaluators.Add(new SofDifferenceEvaluator(s, classIndex));
+
+            int classId = carClassesIds[classIndex]; // we need the classId
+            MoveDownCarsSplits(splits, s, s.Number - 1, classIndex);
+            ResetSplitWithAllClassesFilled(splits, snapshotedNextSplit);
+            if (getEvaluators) evaluators.Add(new SofDifferenceEvaluator(snapshotedNextSplit, classIndex));
+
+
+            return evaluators;
         }
     }
 }

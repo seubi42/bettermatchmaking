@@ -46,6 +46,7 @@
     <Compile Include="HowToCodeId.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sandbox.cs" />
     <Compile Include="StressTests.cs" />
   </ItemGroup>
   <ItemGroup>

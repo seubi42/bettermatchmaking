@@ -66,8 +66,8 @@ namespace BetterMatchMaking.Library.Calc
 
             // difference in % between min and max
             
-            double a = Math.Min(referencesof, MaxSofInSplit);
-            double b = Math.Max(referencesof, MaxSofInSplit);
+            double a = referencesof;
+            double b = MaxSofInSplit;
             if (a == 0 || b == 0)
             {
                 PercentDifference = 0;
@@ -76,9 +76,24 @@ namespace BetterMatchMaking.Library.Calc
 
 
             int diff = 100 - Convert.ToInt32(Math.Round(100 * a / b));
+            diff = Math.Max(diff, 0);
             PercentDifference = diff;
             // -->
 
+        }
+
+        public static double CalcDiff(double d1, double d2, bool abs=true)
+        {
+            double a = d1;
+            double b = d2;
+            if (abs)
+            {
+                a = Math.Min(d1, d2);
+                b = Math.Max(d1, d2);
+            }
+            double diff = 100 - (100 * a / b);
+
+            return diff;
         }
 
         public bool MoreThanLimit(int maxSofDiffValue,

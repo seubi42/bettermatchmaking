@@ -113,9 +113,30 @@ namespace BetterMatchMaking.Library.Calc
 
 
 
+        /// <summary>
+        /// Says if the algorithm use the ParameterNoMiddleClassesEmptyValue parameter.
+        /// If true, you need to set a value to it.
+        /// </summary>
+        bool UseParameterNoMiddleClassesEmpty { get;  }
+        /// <summary>
+        /// This parameter is used for 'Predicted' algorithms.
+        /// You can set the 1 if you dont want to allow middle classes to be empty
+        /// (ex: LMP1 + GTE without LMP2)
+        /// </summary>
+        int ParameterNoMiddleClassesEmptyValue { get; set; }
 
+      
 
-
+        /// <summary>
+        /// Says if the algorithm use the DebugFileValue parameter.
+        /// If true, you need to set a value to it.
+        /// </summary>
+        bool UseParameterDebugFile { get;  }
+        /// <summary>
+        /// This parameter is used for 'Predicted' algorithms.
+        /// Output text files in predictlogs
+        /// </summary>
+        int ParameterDebugFileValue { get; set; }
 
 
         /// <summary>

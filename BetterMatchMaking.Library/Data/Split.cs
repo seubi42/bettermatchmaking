@@ -489,7 +489,8 @@ namespace BetterMatchMaking.Library.Data
             if (Class2Sof > 0) sofs.Add(Class2Sof);
             if (Class3Sof > 0) sofs.Add(Class3Sof);
             if (Class4Sof > 0) sofs.Add(Class4Sof);
-            return sofs.Max();
+            if (sofs.Count == 0) return 0;
+            return sofs.Min();
         }
 
 
@@ -626,6 +627,21 @@ namespace BetterMatchMaking.Library.Data
             if (Class4Cars != null && Class4Cars.Count > 0) ret.Add(3);
             return ret;
         }
+
+
+        /// <summary>
+        /// Return get index of the matching class id, -1 if not found
+        /// </summary>
+        /// <param name="id">class Id</param>
+        /// <returns></returns>
+        public int GetClassIndexOfId(int id)
+        {
+            if (Class1Id == id) return 0;
+            if (Class2Id == id) return 1;
+            if (Class3Id == id) return 2;
+            if (Class4Id == id) return 3;
+            return -1;
+        }
         #endregion
 
 
@@ -698,47 +714,47 @@ namespace BetterMatchMaking.Library.Data
             
             if (Class1Cars != null)
             {
-                carsline += CenterString(Class1Cars.Count.ToString(), len);
-                sofline += CenterString(Class1Sof.ToString(), len);
+                carsline += Tools.CenterString(Class1Cars.Count.ToString(), len);
+                sofline += Tools.CenterString(Class1Sof.ToString(), len);
             }
             else
             {
-                carsline += CenterString(".", len);
-                sofline += CenterString(".", len);
+                carsline += Tools.CenterString(".", len);
+                sofline += Tools.CenterString(".", len);
             }
             
             if (Class2Cars != null)
             {
-                carsline += ","+ CenterString(Class2Cars.Count.ToString(), len);
-                sofline += "," + CenterString(Class2Sof.ToString(), len);
+                carsline += ","+ Tools.CenterString(Class2Cars.Count.ToString(), len);
+                sofline += "," + Tools.CenterString(Class2Sof.ToString(), len);
             }
             else
             {
-                carsline += "," + CenterString(".", len);
-                sofline += "," + CenterString(".", len);
+                carsline += "," + Tools.CenterString(".", len);
+                sofline += "," + Tools.CenterString(".", len);
             }
 
 
             if (Class3Cars != null)
             {
-                carsline += "," + CenterString(Class3Cars.Count.ToString(), len);
-                sofline += "," + CenterString(Class3Sof.ToString(), len);
+                carsline += "," + Tools.CenterString(Class3Cars.Count.ToString(), len);
+                sofline += "," + Tools.CenterString(Class3Sof.ToString(), len);
             }
             else
             {
-                carsline += "," + CenterString(".", len);
-                sofline += "," + CenterString(".", len);
+                carsline += "," + Tools.CenterString(".", len);
+                sofline += "," + Tools.CenterString(".", len);
             }
 
             if (Class4Cars != null)
             {
-                carsline += "," + CenterString(Class4Cars.Count.ToString(), len);
-                sofline += "," + CenterString(Class4Sof.ToString(), len);
+                carsline += "," + Tools.CenterString(Class4Cars.Count.ToString(), len);
+                sofline += "," + Tools.CenterString(Class4Sof.ToString(), len);
             }
             else
             {
-                carsline += "," + CenterString(".", len);
-                sofline += "," + CenterString(".", len);
+                carsline += "," + Tools.CenterString(".", len);
+                sofline += "," + Tools.CenterString(".", len);
             }
 
             sb.AppendLine("|" + carsline);
@@ -749,12 +765,7 @@ namespace BetterMatchMaking.Library.Data
 
         }
 
-        static string CenterString(string stringToCenter, int totalLength)
-        {
-            return stringToCenter.PadLeft(((totalLength - stringToCenter.Length) / 2)
-                                + stringToCenter.Length)
-                       .PadRight(totalLength);
-        }
+        
         #endregion
 
 

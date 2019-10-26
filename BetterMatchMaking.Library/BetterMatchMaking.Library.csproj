@@ -42,6 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterMatchMakingCalculator.cs" />
+    <Compile Include="Calc\1-Interfaces and Tools\ConsoleTable.cs" />
+    <Compile Include="Calc\1-Interfaces and Tools\EveryCombinations.cs" />
+    <Compile Include="Calc\1-Interfaces and Tools\PredictionsEvaluator.cs" />
+    <Compile Include="Calc\1-Interfaces and Tools\SplitsRepartitionOptimizer.cs" />
     <Compile Include="Calc\2-Classic\ClassicEqualitarian.cs" />
     <Compile Include="Calc\3-RatingThresholded\RatingThresholdedEqualitarian.cs" />
     <Compile Include="Calc\3-RatingThresholded\RatingThresholdedProportionnalBalanced.cs" />
@@ -56,12 +60,14 @@
     <Compile Include="Calc\1-Interfaces and Tools\Tools.cs" />
     <Compile Include="Calc\3-RatingThresholded\RatingThresholdedProportionnalBalancedTriple.cs" />
     <Compile Include="Calc\4-SmartMoveDown\SmartPredictedMoveDownAffineDistribution.cs" />
+    <Compile Include="Calc\1-Interfaces and Tools\PredictionsEvaluator-Debug.cs" />
     <Compile Include="Data\Audit.cs" />
     <Compile Include="Data\ClassCarsQueue.cs" />
     <Compile Include="Data\CsvParser.cs" />
     <Compile Include="Data\Line.cs" />
     <Compile Include="Data\MultiClassMode.cs" />
     <Compile Include="Calc\1-Interfaces and Tools\SofDifferenceEvaluator.cs" />
+    <Compile Include="Data\PredictionOfSplits.cs" />
     <Compile Include="Data\Split.cs" />
     <Compile Include="Data\Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

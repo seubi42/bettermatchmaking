@@ -138,5 +138,19 @@ namespace BetterMatchMaking.Library.Data
             }
             return ret;
         }
+
+
+        /// <summary>
+        /// Create a centered string if fix length
+        /// </summary>
+        /// <param name="stringToCenter">the ctring to center</param>
+        /// <param name="totalLength">the lenght</param>
+        /// <returns></returns>
+        public static string CenterString(string stringToCenter, int totalLength)
+        {
+            return stringToCenter.PadLeft(((totalLength - stringToCenter.Length) / 2)
+                                + stringToCenter.Length)
+                       .PadRight(totalLength);
+        }
     }
 }

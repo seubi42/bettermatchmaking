@@ -11,6 +11,9 @@ namespace BetterMatchMaking.Sample
         static void Main(string[] args)
         {
 
+            //new Sandbox().Run();
+            //return;
+
             if (args.Length == 1 && args[0] == "stresstest")
             {
                 new StressTests().Tests();

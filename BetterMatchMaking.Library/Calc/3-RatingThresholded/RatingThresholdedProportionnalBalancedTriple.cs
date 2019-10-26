@@ -65,6 +65,20 @@ namespace BetterMatchMaking.Library.Calc
         }
 
         public int ParameterMinCarsValue { get; set; }
+
+        public bool UseParameterNoMiddleClassesEmpty
+        {
+            get { return false; }
+        }
+
+        public bool UseParameterDebugFile
+        {
+            get { return false; }
+        }
+        public int ParameterNoMiddleClassesEmptyValue { get; set; }
+        public int ParameterDebugFileValue { get; set; }
+
+       
         #endregion
 
 

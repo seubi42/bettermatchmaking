@@ -46,7 +46,9 @@ namespace BetterMatchMaking.Library.Calc
         {
             get { return false; }
         }
-        
+
+
+
         public int ParameterEqualizeSplits { get; set; }
         public int ParameterClassPropMinPercentValue { get; set; }
         public int ParameterRatingThresholdValue { get; set; }
@@ -56,12 +58,28 @@ namespace BetterMatchMaking.Library.Calc
         public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
         public int ParameterTopSplitExceptionValue { get; set; }
 
+
+
+
         public virtual bool UseParameterMinCars
         {
             get { return false; }
         }
 
         public int ParameterMinCarsValue { get; set; }
+
+
+        public bool UseParameterNoMiddleClassesEmpty
+        {
+            get { return false; }
+        }
+
+        public bool UseParameterDebugFile
+        {
+            get { return false; }
+        }
+        public int ParameterNoMiddleClassesEmptyValue { get; set; }
+        public int ParameterDebugFileValue { get; set; }
         #endregion
 
 

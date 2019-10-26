@@ -7,149 +7,272 @@ using BetterMatchMaking.Library.Data;
 
 namespace BetterMatchMaking.Library.Calc
 { 
-    public class SmartPredictedMoveDownAffineDistribution : SmartMoveDownAffineDistribution
+    public class SmartPredictedMoveDownAffineDistribution : IMatchMaking
     {
+
+        public List<Split> Splits { get; private set; }
+
+        #region Active Parameters
+        public bool UseParameterNoMiddleClassesEmpty
+        {
+            get { return true; }
+        }
+
+        public bool UseParameterDebugFile
+        {
+            get { return true; }
+        }
+        public int ParameterNoMiddleClassesEmptyValue { get; set; }
+        public int ParameterDebugFileValue { get; set; }
+
+        public virtual bool UseParameterMaxSofDiff
+        {
+            get { return true; }
+
+        }
+        public int ParameterMaxSofDiffValue { get; set; }
+
+        public virtual bool UseParameterMaxSofFunct
+        {
+            get { return true; }
+
+        }
+        public int ParameterMaxSofFunctStartingIRValue { get; set; }
+        public int ParameterMaxSofFunctStartingThreshold { get; set; }
+        public int ParameterMaxSofFunctExtraThresoldPerK { get; set; }
+
+        public bool UseParameterTopSplitException
+        {
+            get { return true; }
+
+        }
+        public int ParameterTopSplitExceptionValue { get; set; }
+
+        public virtual bool UseParameterMinCars
+        {
+            get { return true; }
+        }
+
+        public int ParameterMinCarsValue { get; set; }
+        #endregion
+
+
         #region Disabled Parameters
-        public override bool UseParameterMaxSofDiff
+        public bool UseParameterRatingThreshold
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
-        #endregion 
+        
 
-
-        internal override bool TestIfMoveDownNeeded(Split s, int classIndex, List<int> splitSofs)
+        public virtual bool UseParameterClassPropMinPercent
         {
-            if (s.Number == INTERRUPT_BEFORE_MOVEDOWN_SPLITNUMBER
-                && classIndex == INTERRUPT_BEFORE_MOVEDOWN_CLASSINDEX)
-            {
-                // to help debugging, you can set breakpoint here
-                string test = s.ToString();
-
-            }
-
-            if (Tools.EnableDebugTraces) s.Info += "{";
-
-            bool movedown = false;
-            string debug; // to build debug information
-
-            // eval the current situation (before any move)
-            Calc.SofDifferenceEvaluator evaluator = new SofDifferenceEvaluator(s, classIndex);
-            
-
-            bool disableMoveDowns = false;
-
-            // if the class SoF allows to start using the affine function to make an exception
-            if(evaluator.ClassSof > ParameterMaxSofFunctStartingIRValue)
-            {
-                // eval the function
-                bool moreThanLimit = evaluator.MoreThanFunction(ParameterMaxSofFunctStartingIRValue,
-                    ParameterMaxSofFunctStartingThreshold,
-                    ParameterMaxSofFunctExtraThresoldPerK);
-
-                if (!moreThanLimit)
-                {
-                    // if the result its is lowest than the limit we are sure we
-                    // don't want any move down
-                    disableMoveDowns = true;
-                }
-
-                // debug informations
-                if (Tools.EnableDebugTraces)
-                {
-                    debug = "(Δ:$REFSOF/$MAX=$DIFF,L:$LIMIT,$MOVEDOWN) ";
-                    debug = debug.Replace("$REFSOF", evaluator.ClassSof.ToString());
-                    debug = debug.Replace("$MAX", evaluator.MaxSofInSplit.ToString());
-                    debug = debug.Replace("$DIFF", Convert.ToInt32(evaluator.PercentDifference).ToString());
-                    debug = debug.Replace("$LIMIT", Convert.ToInt32(evaluator.MaxPercentDifferenceAllowed).ToString());
-                    debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
-                    s.Info += debug;
-                }
-                // -->
-
-                
-                
-            }
-
-            
-
-            // stop the process
-            if (disableMoveDowns)
-            {
-                if (Tools.EnableDebugTraces) s.Info += "}";
-                return false;
-            }
-
-
-
-            // we will clone the splits list to make a fake move in it without commiting anything to the real "Splits" plist
-            List<Data.Split> snapshotedSplits = Data.Tools.SplitsCloner(Splits, s.Number + 4);
-            var snapshotedCurrentSplit = snapshotedSplits[s.Number - 1]; // our current split is here
-            var snapshotedNextSplit = snapshotedSplits[s.Number]; // the next split is here
-            ResetSplitWithAllClassesFilled(snapshotedSplits, snapshotedNextSplit); // we will the next split with all possible cars
-
-            var exclusions = snapshotedCurrentSplit.GetEmptyClassesId();
-            UpCarsToSplit(snapshotedSplits, snapshotedCurrentSplit, exclusions);
-            ResetSplitWithAllClassesFilled(snapshotedSplits, snapshotedNextSplit);
-            evaluator = new SofDifferenceEvaluator(snapshotedCurrentSplit, classIndex);
-
-            int classId = carClassesIds[classIndex]; // we need the classId
-            MoveDownCarsSplits(snapshotedSplits, snapshotedCurrentSplit, snapshotedCurrentSplit.Number - 1, classIndex);
-
-            // eval the new situation of the next split (after the fake move)
-            Calc.SofDifferenceEvaluator evaluatorIfMovedDown = new SofDifferenceEvaluator(snapshotedNextSplit, classIndex);
-            double predictedDiff = evaluatorIfMovedDown.PercentDifference;
-            
-
-            // compare both situation
-            if (Math.Abs(predictedDiff) < Math.Abs(evaluator.PercentDifference))
-            {
-                // with the move, it is better so
-                // we decide we have to do it
-                movedown = true;
-            }
-
-
-            // debug informations
-            if (Tools.EnableDebugTraces)
-            {
-                debug = "($BEFORE vs $AFTER;$MOVEDOWN) ";
-                debug = debug.Replace("$BEFORE", Convert.ToInt32(evaluator.PercentDifference).ToString());
-                debug = debug.Replace("$AFTER", Convert.ToInt32(predictedDiff).ToString());
-                debug = debug.Replace("$MOVEDOWN", Convert.ToInt32(movedown).ToString());
-                s.Info += debug;
-            }
-            // -->
-
-
-
-            if (Tools.EnableDebugTraces) s.Info = s.Info.Trim() + "} ";
-            return movedown;
+            get { return false; }
         }
 
+        public int ParameterRatingThresholdValue { get; set; }
+        public int ParameterClassPropMinPercentValue { get; set; }
+        
 
-        private List<SofDifferenceEvaluator> DoTheMove(List<Data.Split> splits, Data.Split s, int classIndex, bool getEvaluators)
+
+        #endregion
+
+        ClassicAffineDistribution affineDistributor;
+        List<Data.ClassCarsQueue> classesQueues;
+        List<int> classesIds;
+        int numberOfSplits = 0;
+        int fieldSize = 0;
+
+        public void Compute(List<Line> data, int fieldSize)
         {
-            List<SofDifferenceEvaluator> evaluators = null;
-            if (getEvaluators) evaluators = new List<SofDifferenceEvaluator>();
+            if (ParameterDebugFileValue == 1)
+            {
+                PredictionsEvaluator.CleanOldDebugFiles();
+            }
 
-             var snapshotedNextSplit = splits[s.Number]; // the next split is here
-            ResetSplitWithAllClassesFilled(splits, snapshotedNextSplit); // we will the next split with all possible cars
+            // reduce the fieldSize if possible
+            numberOfSplits = Tools.DivideAndCeil(data.Count, fieldSize);
+            int betterFieldSize = Tools.DivideAndCeil(data.Count, numberOfSplits);
+            this.fieldSize = Math.Min(fieldSize, betterFieldSize);
 
-            var exclusions = s.GetEmptyClassesId();
-            UpCarsToSplit(splits, s, exclusions);
-            ResetSplitWithAllClassesFilled(splits, snapshotedNextSplit);
-            if (getEvaluators) evaluators.Add(new SofDifferenceEvaluator(s, classIndex));
+            // class queues
+            classesQueues = Tools.SplitCarsPerClass(data);
+            classesIds = (from r in classesQueues select r.CarClassId).ToList();
 
-            int classId = carClassesIds[classIndex]; // we need the classId
-            MoveDownCarsSplits(splits, s, s.Number - 1, classIndex);
-            ResetSplitWithAllClassesFilled(splits, snapshotedNextSplit);
-            if (getEvaluators) evaluators.Add(new SofDifferenceEvaluator(snapshotedNextSplit, classIndex));
+            // we need a affine distribution of car algorithm
+            affineDistributor = new ClassicAffineDistribution();
+            affineDistributor.ParameterMinCarsValue = this.ParameterMinCarsValue;
+            affineDistributor.SetFieldSize(fieldSize);
+            affineDistributor.InitData(classesIds, data);
+
+            if(classesQueues.Count == 1)
+            {
+                // if only one class, the affinedistributor will do the job
+                affineDistributor.Compute(data, fieldSize);
+                Splits = affineDistributor.Splits;
+                return;
+            }
+
+            // test
+            Splits = new List<Split>();
+
+            int prevMaxPopSof = -1;
+
+            for (int i = 0; i < numberOfSplits; i++)
+            {
+                int remClasses = (from r in classesQueues where r.CarsCount > 0 select r).Count();
+                var prediction = PredictSplit(i, prevMaxPopSof, remClasses);
+                if (prediction != null)
+                {
+                    Implement(prediction);
+                    prevMaxPopSof = prediction.CurrentSplit.GetMaxClassSof();
+                }
+
+            }
 
 
-            return evaluators;
+            // last split (bad)
+            var lastsplit = Splits.Last();
+            for (int i = 0; i < classesQueues.Count; i++)
+            {
+                var cars = classesQueues[i].PickCars(classesQueues[i].CarsCount);
+                if (cars.Count > 0)
+                {
+                    if (lastsplit.GetClassId(i) == 0)
+                    {
+                        lastsplit.SetClass(i, classesIds[i]);
+                    }
+                    lastsplit.AppendClassCars(i, cars);
+                }
+            }
+
+            // optimize 
+            classesQueues = Tools.SplitCarsPerClass(data);
+            SplitsRepartitionOptimizer optimizer = new SplitsRepartitionOptimizer(Splits,
+                fieldSize,
+                classesIds,
+                classesQueues,
+                affineDistributor);
+            Splits = optimizer.OptimizeAndSolveDifferences(); // a third pass
+
+        }
+
+        
+
+        private void Implement(Data.PredictionOfSplits prediction)
+        {
+            Data.Split split = new Split();
+            split.Number = prediction.CurrentSplit.Number;
+            Splits.Add(split);
+
+            for (int i = 0; i < 4; i++)
+            {
+                var take = prediction.CurrentSplit.CountClassCars(i);
+                if(take > 0)
+                {
+                    int classId = classesIds[i];
+                    var cars = classesQueues[i].PickCars(take);
+                    split.SetClass(i, cars, classId);
+                }
+            }
+            
+        }
+
+        private Data.PredictionOfSplits PredictSplit(int splitIndex, int prevMaxPopSof, int remainingQueues)
+        {
+            var availableQueues = (from r in classesQueues where r.CarsCount > 0 select r).ToList();
+            var availableClassesId = (from r in availableQueues select r.CarClassId).ToList();
+
+            // combinations for split
+            Calc.EveryCombinations combS = new EveryCombinations(availableClassesId);
+            // combinations for next split
+            Calc.EveryCombinations combNS = new EveryCombinations(availableClassesId);
+
+
+            // generate all possible predictions
+            List<PredictionOfSplits> predictions = new List<PredictionOfSplits>();
+            foreach (var cS in combS.Combinations)
+            {
+                foreach (var cNS in combNS.Combinations)
+                {
+                    if (cNS.NumberOfTrue >= remainingQueues)
+                    {
+                        PredictionOfSplits prediction = new PredictionOfSplits();
+                        prediction.CurrentSplit = GenerateSplitFromCombination(splitIndex + 1, cS);
+                        prediction.NextSplit = GenerateSplitFromCombination(splitIndex + 2, cNS, prediction.CurrentSplit);
+                        if (prediction.CurrentSplit.TotalCarsCount > 0 && prediction.NextSplit.TotalCarsCount > 0)
+                        {
+                            predictions.Add(prediction);
+                        }
+                    }
+                }
+                
+            }
+
+            // foreach class, except the most populated one.
+            // starting from biggest to lowers
+            for (int classIndex = classesIds.Count - 2; classIndex >= 0; classIndex--)
+            {
+                int classId = classesIds[classIndex];
+                foreach (var prediction in predictions)
+                {
+                    // calc the differences between the class and the most populated one
+                    prediction.CalcDiff(classIndex, classId);
+                }
+                
+            }
+
+
+            foreach (var prediction in predictions)
+            {
+                prediction.CalcStats(prevMaxPopSof);
+            }
+
+
+            // Choose the best now
+            PredictionsEvaluator eval = new PredictionsEvaluator(predictions, classesQueues,
+                ParameterMaxSofDiffValue, 
+                ParameterMaxSofFunctStartingIRValue,
+                ParameterMaxSofFunctStartingThreshold,
+                ParameterMaxSofFunctExtraThresoldPerK,
+                ParameterTopSplitExceptionValue,
+                ParameterDebugFileValue,
+                ParameterNoMiddleClassesEmptyValue);
+            PredictionOfSplits bestScenario = eval.GetBest();
+
+            
+
+            return bestScenario;
+
+        }
+
+        private Split GenerateSplitFromCombination(int splitNumber, Calc.Combination c, Split previewsplit = null)
+        {
+            
+            Split s = new Split(splitNumber);
+            int splitClasses = c.ClassesId.Length;
+
+            var enabledClassesId = c.EnabledClassesId;
+            for (int i = 0; i < splitClasses; i++)
+            {
+
+                if (c.Enabled[i])
+                {
+                    int classId = c.ClassesId[i];
+                    int classIndex = classesIds.IndexOf(classId);
+
+                    
+                    
+
+                    int totake = affineDistributor.TakeCars(classId, enabledClassesId, fieldSize);
+
+                    int toskip = 0;
+                    if (previewsplit != null) toskip = previewsplit.CountClassCars(classIndex);
+                    
+                    var cars = classesQueues[classIndex].GetFirstCars(toskip, totake);
+                    s.SetClass(classIndex, cars, classId);
+                }
+            }
+            return s;
         }
     }
 }

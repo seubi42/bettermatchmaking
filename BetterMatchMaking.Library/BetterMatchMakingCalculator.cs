@@ -59,7 +59,21 @@ namespace BetterMatchMaking.Library
             get { return instance.UseParameterMinCars; }
         }
 
-        
+
+        public bool UseParameterNoMiddleClassesEmpty
+        {
+            get { return instance.UseParameterNoMiddleClassesEmpty; }
+        }
+
+
+
+        public bool UseParameterDebugFile
+        {
+            get { return instance.UseParameterDebugFile; }
+        }
+
+
+
 
 
         public int ParameterClassPropMinPercentValue
@@ -104,6 +118,21 @@ namespace BetterMatchMaking.Library
         {
             get { return instance.ParameterMinCarsValue; }
             set { instance.ParameterMinCarsValue = value; }
+        }
+
+
+
+        public int ParameterNoMiddleClassesEmptyValue
+        {
+            get { return instance.ParameterNoMiddleClassesEmptyValue; }
+            set { instance.ParameterNoMiddleClassesEmptyValue = value; }
+        }
+
+
+        public int ParameterDebugFileValue
+        {
+            get { return instance.ParameterDebugFileValue; }
+            set { instance.ParameterDebugFileValue = value; }
         }
         #endregion
 
@@ -219,9 +248,16 @@ namespace BetterMatchMaking.Library
                 ret.AverageSplitClassesSofDifference = Convert.ToInt32(Math.Round((from r in Splits where r.ClassesSofDiff > 0 select r.ClassesSofDiff).Average()));
             }
 
-            double splitAvgSize = (from r in Splits select r.TotalCarsCount).Average();
-            double splitMinSize = (from r in Splits select r.TotalCarsCount).Min();
-            ret.MinSplitSizePercent = splitMinSize / splitAvgSize;
+            ret.MinSplitSizePercent = 0;
+            if (Splits != null && Splits.Count > 0)
+            {
+                double splitAvgSize = 0;
+                double splitMinSize = 0;
+                splitAvgSize = (from r in Splits select r.TotalCarsCount).Average();
+
+                splitMinSize = (from r in Splits select r.TotalCarsCount).Min();
+                ret.MinSplitSizePercent = splitMinSize / splitAvgSize;
+            }
             
 
             return ret;

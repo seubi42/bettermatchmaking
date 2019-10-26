@@ -32,6 +32,8 @@ namespace BetterMatchMaking.UI
         SyncSliderBox sspMaxSofFunctStartingIRValue;
         SyncSliderBox sspMaxSofFunctStartingThreshold;
         SyncSliderBox sspTopSplitExc;
+        SyncSliderBox sspDebug;
+        SyncSliderBox sspForceMidClass;
 
         public MainWindow()
         {
@@ -41,11 +43,13 @@ namespace BetterMatchMaking.UI
             sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 5, 66, 37);
             sspMinCars = new SyncSliderBox(lblParameterMinCars, tbxParameterMinCars, sldParameterMinCars, 1, 30, 10);
             sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
-            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 13, 100, 18);
+            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 3, 100, 20);
             sspMaxSofFunctExtraThresoldPerK = new SyncSliderBox(lblParameterMaxSoffFunctExtrPctPerK, tbxParameterMaxSoffFunctExtrPctPerK, sldParameterMaxSoffFunctExtrPctPerK, 0, 50, 11);
-            sspMaxSofFunctStartingIRValue = new SyncSliderBox(lblParameterMaxSoffFunctStartIR, tbxParameterMaxSoffFunctStartIR, sldParameterMaxSoffFunctStartIR, 1000, 9000, 3000);
-            sspMaxSofFunctStartingThreshold = new SyncSliderBox(lblParameterMaxSoffFunctStartPct, tbxParameterMaxSoffFunctStartPct, sldParameterMaxSoffFunctStartPct, 0, 50, 18);
+            sspMaxSofFunctStartingIRValue = new SyncSliderBox(lblParameterMaxSoffFunctStartIR, tbxParameterMaxSoffFunctStartIR, sldParameterMaxSoffFunctStartIR, 500, 9000, 2800);
+            sspMaxSofFunctStartingThreshold = new SyncSliderBox(lblParameterMaxSoffFunctStartPct, tbxParameterMaxSoffFunctStartPct, sldParameterMaxSoffFunctStartPct, 0, 50, 20);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
+            sspDebug = new SyncSliderBox(lblParameterDebug, tbxParameterDebug, sldParameterDebug, 0, 1, 1);
+            sspForceMidClass = new SyncSliderBox(lblParameterForceMidClass, tbxParameterForceMidClass, sldParameterForceMidClass, 0, 1, 0);
 
             sspP.Visible = false;
             sspMinCars.Visible = false;
@@ -55,6 +59,8 @@ namespace BetterMatchMaking.UI
             sspMaxSofFunctStartingIRValue.Visible = false;
             sspMaxSofFunctStartingThreshold.Visible = false;
             sspTopSplitExc.Visible = false;
+            sspDebug.Visible = false;
+            sspForceMidClass.Visible = false;
 
 
             this.Loaded += MainWindow_Loaded;
@@ -86,6 +92,12 @@ namespace BetterMatchMaking.UI
 
         private void BtnLoadRegistrationFile_Click(object sender, RoutedEventArgs e)
         {
+            Load(true);
+        }
+
+
+        private void Load(bool overrideFieldSizeFromFileName)
+        {
             try
             {
                 // parse file
@@ -93,14 +105,17 @@ namespace BetterMatchMaking.UI
 
 
                 // if -fieldsizeXX is in file name, get it
-                string cst_fieldsize = "-fieldsize";
-                if (tbxRegistrationFile.Text.Contains(cst_fieldsize))
+                if (overrideFieldSizeFromFileName)
                 {
-                    string fieldsize = tbxRegistrationFile.Text.Substring(
-                        tbxRegistrationFile.Text.IndexOf(cst_fieldsize) + cst_fieldsize.Length,
-                        2
-                        );
-                    tbxFieldSize.Text = fieldsize;
+                    string cst_fieldsize = "-fieldsize";
+                    if (tbxRegistrationFile.Text.Contains(cst_fieldsize))
+                    {
+                        string fieldsize = tbxRegistrationFile.Text.Substring(
+                            tbxRegistrationFile.Text.IndexOf(cst_fieldsize) + cst_fieldsize.Length,
+                            2
+                            );
+                        tbxFieldSize.Text = fieldsize;
+                    }
                 }
                 //-->
 
@@ -112,14 +127,16 @@ namespace BetterMatchMaking.UI
                 MessageBox.Show(ex.Message);
             }
         }
-
         List<Library.Data.Split> result;
         int fieldsize;
 
         private void BtnCompute_Click(object sender, RoutedEventArgs e)
         {
 
-            BtnLoadRegistrationFile_Click(sender, e);
+            if (!String.IsNullOrWhiteSpace(tbxRegistrationFile.Text))
+            {
+                Load(true);
+            }
 
 
             bool nodata = false;
@@ -128,9 +145,7 @@ namespace BetterMatchMaking.UI
 
             if (nodata)
             {
-                
-                    return;
-                
+                return;
             }
 
             int defaultFieldSizeValue = 45;
@@ -156,6 +171,8 @@ namespace BetterMatchMaking.UI
             mm.ParameterMaxSofFunctExtraThresoldPerK = sspMaxSofFunctExtraThresoldPerK.Value;
             mm.ParameterMaxSofFunctStartingThreshold = sspMaxSofFunctStartingThreshold.Value;
             mm.ParameterTopSplitExceptionValue = sspTopSplitExc.Value;
+            mm.ParameterDebugFileValue = sspDebug.Value;
+            mm.ParameterNoMiddleClassesEmptyValue = sspForceMidClass.Value;
 
 
             mm.Compute(parser.DistinctCars, fieldSize);
@@ -300,6 +317,8 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFunctStartingThreshold.Visible = calc.UseParameterMaxSofFunct;
                 sspMaxSofFunctExtraThresoldPerK.Visible = calc.UseParameterMaxSofFunct;
                 sspTopSplitExc.Visible = calc.UseParameterTopSplitException;
+                sspDebug.Visible = calc.UseParameterDebugFile;
+                sspForceMidClass.Visible = calc.UseParameterNoMiddleClassesEmpty;
             }
             else
             {
@@ -311,6 +330,8 @@ namespace BetterMatchMaking.UI
                 sspMaxSofFunctStartingThreshold.Visible = false;
                 sspMaxSofFunctExtraThresoldPerK.Visible = false;
                 sspTopSplitExc.Visible = false;
+                sspDebug.Visible = false;
+                sspForceMidClass.Visible = false;
 
             }
         }

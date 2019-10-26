@@ -41,9 +41,16 @@ namespace BetterMatchMaking.Library.Calc
 
         Dictionary<int, int> classDistributionForFullSplit;
 
+        public void SetFieldSize(int f)
+        {
+            fieldSize = f;
+        }
+
 
         internal override void InitData(List<int> classesIds, List<Line> data)
         {
+            
+
             this.carClassesIds = classesIds;
             if (this.carClassesIds.Count == 1)
             {
@@ -107,7 +114,7 @@ namespace BetterMatchMaking.Library.Calc
         /// <param name="classes">list of classes you have in your split (the Ids)</param>
         /// <param name="fieldSizeOrLimit">how many maximum avaible slot to fill (for all classes)</param>
         /// <returns></returns>
-        private int TakeCars(int classId, List<int> classes, int fieldSizeOrLimit)
+        public int TakeCars(int classId, List<int> classes, int fieldSizeOrLimit)
         {
             if (carClassesIds.Count == 1)
             {

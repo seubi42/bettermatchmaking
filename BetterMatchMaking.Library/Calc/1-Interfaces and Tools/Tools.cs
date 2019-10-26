@@ -56,5 +56,11 @@ namespace BetterMatchMaking.Library.Calc
 
             return Convert.ToInt32(sof);
         }
+
+
+        public static int DivideAndCeil(int a, int divisor)
+        {
+            return Convert.ToInt32(Math.Ceiling(Convert.ToDouble(a) / Convert.ToDouble(divisor)));
+        }
     }
 }

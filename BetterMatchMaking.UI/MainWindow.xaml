@@ -101,6 +101,7 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                                 <ColumnDefinition />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -112,7 +113,11 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock x:Name="lblParameterP" Text="p" Grid.Row="0" Grid.Column="0" TextAlignment="Center" />
+                            <TextBlock x:Name="lblParameterDebug" Text="Debug" Grid.Row="4" Grid.Column="0" TextAlignment="Center" />
+                            <TextBox x:Name="tbxParameterDebug" Grid.Row="5" Grid.Column="0" TextAlignment="Center" Width="80" />
+                            <Slider x:Name="sldParameterDebug" Grid.Row="6" Grid.Column="0" Width="80" />
+
+                            <TextBlock x:Name="lblParameterP" Text="P %" Grid.Row="0" Grid.Column="0" TextAlignment="Center" />
                             <TextBox x:Name="tbxParameterP" Grid.Row="1" Grid.Column="0" TextAlignment="Center" Width="80" />
                             <Slider x:Name="sldParameterP" Grid.Row="2" Grid.Column="0" Width="80" />
 
@@ -147,8 +152,12 @@
                             <TextBox x:Name="tbxParameterMaxSoffFunctExtrPctPerK" Grid.Row="5" Grid.Column="3" TextAlignment="Center" Width="80"  />
                             <Slider x:Name="sldParameterMaxSoffFunctExtrPctPerK" Grid.Row="6" Grid.Column="3" Width="80" />
 
-                            
 
+                            <TextBlock x:Name="lblParameterForceMidClass" Text="Force Midl. class" Grid.Row="0" Grid.Column="4" TextAlignment="Center" />
+                            <TextBox x:Name="tbxParameterForceMidClass" Grid.Row="1" Grid.Column="4" TextAlignment="Center" Width="80" />
+                            <Slider x:Name="sldParameterForceMidClass" Grid.Row="2" Grid.Column="4" Width="80" />
+
+                           
 
                         </Grid>
                     </Grid>

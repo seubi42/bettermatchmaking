@@ -40,6 +40,25 @@ namespace BetterMatchMaking.Library.Data
             return selection;
         }
 
+        /// <summary>
+        /// Get cars without removing from queue
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        internal List<Data.Line> GetFirstCars(int skip, int i)
+        {
+            return Cars.Skip(skip).Take(i).ToList();
+        }
+
+
+        public int CarsCount
+        {
+            get
+            {
+                if (Cars == null) return 0;
+                return Cars.Count;
+            }
+        }
 
 
     }

@@ -38,7 +38,7 @@ namespace BetterMatchMaking.Sample
 
         public void Test(string csv)
         {
-            
+
 
             // get fieldsize from file name
             int fieldSize = 0;
@@ -64,41 +64,43 @@ namespace BetterMatchMaking.Sample
 
 
             // run algorithm
-            
+
             BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartPredictedMoveDownAffineDistribution");
-            for (int maxsofdiff = 5; maxsofdiff < 50; maxsofdiff++)
+            for (int p = 5; p < 50; p++)
             {
-                for (int mostpop = 0; mostpop < 2; mostpop++)
+
+                Console.WriteLine("");
+                Console.WriteLine("------------------------------------");
+
+                Console.WriteLine(new FileInfo(csv).Name);
+                Console.WriteLine("Max Soff Diff = " + p);
+                calculator.ParameterMinCarsValue = p;
+                calculator.ParameterMaxSofDiffValue = 20;
+                calculator.ParameterMaxSofFunctStartingIRValue = 2800;
+                calculator.ParameterMaxSofFunctStartingThreshold = 20;
+                calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;
+                calculator.ParameterTopSplitExceptionValue = 0;
+                calculator.ParameterNoMiddleClassesEmptyValue = 0;
+                calculator.Compute(entrylist, fieldSize);
+                var audit = calculator.GetAudit();
+                Console.WriteLine(audit.ToString());
+                Console.WriteLine("AverageSplitClassesSofDifference = " + audit.AverageSplitClassesSofDifference);
+                Console.WriteLine("MinSplitSizePercent = " + audit.MinSplitSizePercent);
+                if (!audit.Success)
                 {
-                    Console.WriteLine("");
-                    Console.WriteLine("------------------------------------");
-
-                    Console.WriteLine(new FileInfo(csv).Name);
-                    Console.WriteLine("Max Soff Diff = " + maxsofdiff);
-                    calculator.ParameterMinCarsValue = 10;
-                    calculator.ParameterMaxSofFunctStartingIRValue = 3000;
-                    calculator.ParameterMaxSofFunctExtraThresoldPerK = 30;
-                    calculator.ParameterMaxSofFunctStartingThreshold = 10;
-                    calculator.Compute(entrylist, fieldSize);
-                    var audit = calculator.GetAudit();
-                    Console.WriteLine(audit.ToString());
-                    Console.WriteLine("AverageSplitClassesSofDifference = " + audit.AverageSplitClassesSofDifference);
-                    Console.WriteLine("MinSplitSizePercent = " + audit.MinSplitSizePercent);
-                    if (!audit.Success)
-                    {
-                        testsFailed++;
-                    }
-                    if (audit.MinSplitSizePercent < 0.5)
-                    {
-                        testsSplitsDiff++;
-                    }
-                    if (audit.IROrderInconsistencySplits.Count > 0)
-                    {
-
-                    }
-                    diff.Add(audit.AverageSplitClassesSofDifference);
-                    tests++;
+                    testsFailed++;
                 }
+                if (audit.MinSplitSizePercent < 0.5)
+                {
+                    testsSplitsDiff++;
+                }
+                if (audit.IROrderInconsistencySplits.Count > 0)
+                {
+
+                }
+                diff.Add(audit.AverageSplitClassesSofDifference);
+                tests++;
+
             }
 
             // -->

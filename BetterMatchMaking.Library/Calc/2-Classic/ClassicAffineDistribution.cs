@@ -61,6 +61,7 @@ namespace BetterMatchMaking.Library.Calc
 
             if (ParameterMinCarsValue < 1) ParameterMinCarsValue = 10;
             if (ParameterMinCarsValue == 0) ParameterMinCarsValue = Math.Min(ParameterMinCarsValue, fieldSize / classesIds.Count);
+            if (ParameterMinCarsValue > fieldSize / classesIds.Count) ParameterMinCarsValue = fieldSize / classesIds.Count;
 
             // calculate class proportion in %
             classProportion = new Dictionary<int, double>();
@@ -93,6 +94,12 @@ namespace BetterMatchMaking.Library.Calc
                 foreach (var x in classDistributionForFullSplit.Values)
                 {
                     remaining -= x;
+                }
+
+                if (remaining == 0)
+                {
+                    remaining = 1;
+                    classDistributionForFullSplit[classDistributionForFullSplit.Keys.Last()]--;
                 }
 
                 classDistributionForFullSplit.Add(lastclassId, remaining);
@@ -133,6 +140,7 @@ namespace BetterMatchMaking.Library.Calc
 
             double percent = carsToTake / forAFieldOf;
             carsToTake = percent * fieldSizeOrLimit;
+            
             return Convert.ToInt32(carsToTake);
         }
 

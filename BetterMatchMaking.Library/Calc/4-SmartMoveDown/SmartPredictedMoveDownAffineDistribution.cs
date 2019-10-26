@@ -54,22 +54,24 @@ namespace BetterMatchMaking.Library.Calc
         }
 
         public int ParameterMinCarsValue { get; set; }
+
+        public bool UseParameterRatingThreshold
+        {
+            get { return true; }
+        }
+        public int ParameterRatingThresholdValue { get; set; }
         #endregion
 
 
         #region Disabled Parameters
-        public bool UseParameterRatingThreshold
-        {
-            get { return false; }
-        }
-        
+
 
         public virtual bool UseParameterClassPropMinPercent
         {
             get { return false; }
         }
 
-        public int ParameterRatingThresholdValue { get; set; }
+        
         public int ParameterClassPropMinPercentValue { get; set; }
         
 
@@ -146,6 +148,7 @@ namespace BetterMatchMaking.Library.Calc
             }
 
             // optimize 
+            
             classesQueues = Tools.SplitCarsPerClass(data);
             SplitsRepartitionOptimizer optimizer = new SplitsRepartitionOptimizer(Splits,
                 fieldSize,
@@ -221,15 +224,23 @@ namespace BetterMatchMaking.Library.Calc
                 
             }
 
+            List<PredictionOfSplits> predictions2 = new List<PredictionOfSplits>();
 
             foreach (var prediction in predictions)
             {
                 prediction.CalcStats(prevMaxPopSof);
+                predictions2.Add(prediction);
+
+                if (ParameterRatingThresholdValue > 0)
+                {
+                    var variation = prediction.CuttedVariation(ParameterRatingThresholdValue, prevMaxPopSof);
+                    if (variation != null) predictions2.Add(variation);
+                }
             }
 
 
             // Choose the best now
-            PredictionsEvaluator eval = new PredictionsEvaluator(predictions, classesQueues,
+            PredictionsEvaluator eval = new PredictionsEvaluator(predictions2, classesQueues,
                 ParameterMaxSofDiffValue, 
                 ParameterMaxSofFunctStartingIRValue,
                 ParameterMaxSofFunctStartingThreshold,

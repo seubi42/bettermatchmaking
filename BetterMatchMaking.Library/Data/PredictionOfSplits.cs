@@ -65,6 +65,8 @@ namespace BetterMatchMaking.Library.Data
         public double DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof { get; set; }
         public bool MostPopulatedClassIsTheMaxSox { get; set; }
 
+        public List<int> ClassesCuttedAroundRatingThreshold { get; set; }
+
 
         #endregion
 
@@ -72,6 +74,7 @@ namespace BetterMatchMaking.Library.Data
         {
             RatingDiffPerClassPoints = new Dictionary<int, int>();
             RatingDiffPerClassPercent = new Dictionary<int, double>();
+            ClassesCuttedAroundRatingThreshold = new List<int>();
 
             NumberOfClasses = CurrentSplit.GetClassesCount();
 
@@ -94,7 +97,7 @@ namespace BetterMatchMaking.Library.Data
                 int classId = CurrentSplit.GetClassId(classIndex);
                 var cars = CurrentSplit.GetClassCars(classIndex);
                 double min = (from r in cars select r.rating).Min();
-                double max = (from r in cars select r.rating).Min();
+                double max = (from r in cars select r.rating).Max();
 
                 RatingDiffPerClassPoints.Add(classId, Convert.ToInt32(max - min));
                 RatingDiffPerClassPercent.Add(classId, Calc.SofDifferenceEvaluator.CalcDiff(min, max));
@@ -108,9 +111,56 @@ namespace BetterMatchMaking.Library.Data
 
         }
 
+        public PredictionOfSplits CuttedVariation(int ratingthreshold, int prevSplitMaxSof)
+        {
+            foreach (var classDif in RatingDiffPerClassPercent)
+            {
+                if(classDif.Value > 50)
+                {
+                    int classIndex = CurrentSplit.GetClassIndexOfId(classDif.Key);
+                    int mostPopClassIndex = NextSplit.GetLastClassIndex();
+                    if (classIndex != mostPopClassIndex)
+                    {
 
-        
-        
+                        var classcars = CurrentSplit.GetClassCars(classIndex);
+                        var firstcarRating = classcars.First().rating;
+                        var lastcarRating = classcars.Last().rating;
+
+
+
+                        if (lastcarRating < ratingthreshold && firstcarRating > ratingthreshold * 0.6d)
+                        {
+                            PredictionOfSplits alternative = new PredictionOfSplits();
+                            
+                            alternative.CurrentSplit = Data.Tools.SplitCloner(CurrentSplit);
+                            alternative.NextSplit = Data.Tools.SplitCloner(NextSplit);
+                            int cars = alternative.CurrentSplit.CountClassCars(classIndex);
+                            int carsToMove = cars / 2;
+                            if (carsToMove > 6)
+                            {
+
+                                // cut this class and  move down half
+                                var pick = alternative.CurrentSplit.PickClassCars(classIndex, carsToMove, true);
+                                if (alternative.NextSplit.GetClassId(classIndex) == 0)
+                                {
+                                    alternative.NextSplit.SetClass(classIndex, classDif.Key);
+                                }
+                                alternative.NextSplit.AppendClassCars(classIndex, pick);
+
+                                // fill available slots with most pop
+                                pick = alternative.NextSplit.PickClassCars(mostPopClassIndex, carsToMove, false);
+                                alternative.CurrentSplit.AppendClassCars(mostPopClassIndex, pick);
+
+                                alternative.CalcStats(prevSplitMaxSof);
+                                ClassesCuttedAroundRatingThreshold.Add(classDif.Key);
+                                return alternative;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
     }
 
     class ClassDiffInPrediction

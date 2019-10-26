@@ -163,8 +163,12 @@ namespace BetterMatchMaking.Library.Calc
                 
                 foreach (var rd in item.RatingDiffPerClassPercent)
                 {
-                    table.AddRow("iRating diff in class Percent " + rd.Key, rd.Value);
-                    table.AddRow("iRating diff in class Points" + rd.Key, item.RatingDiffPerClassPoints[rd.Key]);
+                    table.AddRow("iRating diff in class Percent (class " + rd.Key +")", rd.Value);
+                    table.AddRow("iRating diff in class Points (class " + rd.Key + ")", item.RatingDiffPerClassPoints[rd.Key]);
+                }
+                foreach (var cut in item.ClassesCuttedAroundRatingThreshold)
+                {
+                    table.AddRow("Variation with class cutted around rating threshold", "(class " + cut + ")");
                 }
 
                 sb.AppendLine(table.ToString());

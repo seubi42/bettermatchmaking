@@ -92,7 +92,7 @@ namespace BetterMatchMaking.Library.Data
             foreach (var p in t.GetProperties())
             {
                 var o = p.GetValue(source);
-                if(p.CanWrite) p.SetValue(target, o);
+                if (p.CanWrite) p.SetValue(target, o);
             }
         }
 
@@ -104,39 +104,47 @@ namespace BetterMatchMaking.Library.Data
         /// <returns></returns>
         public static List<Data.Split> SplitsCloner(List<Data.Split> splits, int numberofsplitsneeded)
         {
-            
 
-            List <Data.Split> ret = new List<Split>();
+
+            List<Data.Split> ret = new List<Split>();
             for (int i = 0; i < Math.Min(splits.Count, numberofsplitsneeded); i++)
             {
                 var source = splits[i];
-                var target = new Data.Split();
-                CopyAllProperties(source, target);
-                // rebuild new array to not share pointer on same reference
-                if (target.Class1Cars != null)
-                {
-                    target.Class1Cars = new List<Line>();
-                    target.Class1Cars.AddRange(source.Class1Cars);
-                }
-                if (target.Class2Cars != null)
-                {
-                    target.Class2Cars = new List<Line>();
-                    target.Class2Cars.AddRange(source.Class2Cars);
-                }
-                if (target.Class3Cars != null)
-                {
-                    target.Class3Cars = new List<Line>();
-                    target.Class3Cars.AddRange(source.Class3Cars);
-                }
-                if (target.Class4Cars != null)
-                {
-                    target.Class4Cars = new List<Line>();
-                    target.Class4Cars.AddRange(source.Class4Cars);
-                }
-                // -->
+                var target = SplitCloner(source);
                 ret.Add(target);
             }
             return ret;
+        }
+
+
+        public static Data.Split SplitCloner(Data.Split source)
+        {
+            var target = new Data.Split();
+            CopyAllProperties(source, target);
+            // rebuild new array to not share pointer on same reference
+            if (target.Class1Cars != null)
+            {
+                target.Class1Cars = new List<Line>();
+                target.Class1Cars.AddRange(source.Class1Cars);
+            }
+            if (target.Class2Cars != null)
+            {
+                target.Class2Cars = new List<Line>();
+                target.Class2Cars.AddRange(source.Class2Cars);
+            }
+            if (target.Class3Cars != null)
+            {
+                target.Class3Cars = new List<Line>();
+                target.Class3Cars.AddRange(source.Class3Cars);
+            }
+            if (target.Class4Cars != null)
+            {
+                target.Class4Cars = new List<Line>();
+                target.Class4Cars.AddRange(source.Class4Cars);
+            }
+            // -->
+            return target;
+
         }
 
 

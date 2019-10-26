@@ -119,7 +119,11 @@ namespace BetterMatchMaking.Library.Calc
             choices = (from r in choices orderby r.DiffBetweenClassesPercent ascending select r).ToList();
             
 
-            return choices.First();
+            var bestpred = choices.First();
+
+
+
+            return bestpred;
         }
 
 

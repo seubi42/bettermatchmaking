@@ -41,9 +41,9 @@ namespace BetterMatchMaking.UI
             parser = new Library.Data.CsvParser();
 
             sspP = new SyncSliderBox(lblParameterP, tbxParameterP, sldParameterP, 5, 66, 37);
-            sspMinCars = new SyncSliderBox(lblParameterMinCars, tbxParameterMinCars, sldParameterMinCars, 1, 30, 10);
-            sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 800, 3200, 1900);
-            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 3, 100, 20);
+            sspMinCars = new SyncSliderBox(lblParameterMinCars, tbxParameterMinCars, sldParameterMinCars, 1, 20, 10);
+            sspIR = new SyncSliderBox(lblParameterIR, tbxParameterIR, sldParameterIR, 0, 3200, 1900);
+            sspMaxSofDiff = new SyncSliderBox(lblParameterMaxSoffDiff, tbxParameterMaxSoffDiff, sldParameterMaxSoffDiff, 3, 100, 15);
             sspMaxSofFunctExtraThresoldPerK = new SyncSliderBox(lblParameterMaxSoffFunctExtrPctPerK, tbxParameterMaxSoffFunctExtrPctPerK, sldParameterMaxSoffFunctExtrPctPerK, 0, 50, 11);
             sspMaxSofFunctStartingIRValue = new SyncSliderBox(lblParameterMaxSoffFunctStartIR, tbxParameterMaxSoffFunctStartIR, sldParameterMaxSoffFunctStartIR, 500, 9000, 2800);
             sspMaxSofFunctStartingThreshold = new SyncSliderBox(lblParameterMaxSoffFunctStartPct, tbxParameterMaxSoffFunctStartPct, sldParameterMaxSoffFunctStartPct, 0, 50, 20);

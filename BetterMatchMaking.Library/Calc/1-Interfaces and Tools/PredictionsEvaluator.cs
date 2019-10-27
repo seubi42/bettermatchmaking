@@ -150,11 +150,13 @@ namespace BetterMatchMaking.Library.Calc
 
             for (int i = remClassWithCars; i >= 1; i--)
             {
+                OutputDebugDecisionMessage("[?] Try to get predictions with " + i + " classes contains car");
+                OutputDebugDecisionMessage("    and Diff is lower than MaxSof or MaxSofFunct");
+
                 filter = (from r in choices where r.NumberOfClasses == i select r).ToList();
                 if (filter.Count > 0)
                 {
-                    OutputDebugDecisionMessage("[?] Try to get predictions with " + i + " classes contains car");
-                    OutputDebugDecisionMessage("    and Diff is lower than MaxSof or MaxSofFunct");
+                    
                     filter = (from r in filter where r.DiffBetweenClassesPercent < GetLimit(r) select r).ToList();
                     if (filter.Count > 0)
                     {
@@ -167,10 +169,15 @@ namespace BetterMatchMaking.Library.Calc
                     }
                     else
                     {
-                        OutputDebugDecisionMessage(" - Not found, continue with previous predictions (" + choices.Count + ")");
+                        OutputDebugDecisionMessage(" - Not found (higher than allowed diff), continue with previous predictions (" + choices.Count + ")");
                         OutputDebugDecisionMessage("");
 
                     }
+                }
+                else
+                {
+                    OutputDebugDecisionMessage(" - Not found (not with " + i + " classes), continue with previous predictions (" + choices.Count + ")");
+                    OutputDebugDecisionMessage("");
                 }
             }
 

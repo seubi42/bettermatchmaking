@@ -67,6 +67,19 @@ namespace BetterMatchMaking.Library.Data
 
         public List<int> ClassesCuttedAroundRatingThreshold { get; set; }
 
+        string _id;
+        public string Id
+        {
+            get
+            {
+                if(_id == null)
+                {
+                    _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+                }
+                return _id;
+            }
+        }
+
 
         #endregion
 

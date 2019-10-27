@@ -25,6 +25,7 @@ namespace BetterMatchMaking.Sample
             calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;
             calculator.ParameterTopSplitExceptionValue = 0;
             calculator.ParameterNoMiddleClassesEmptyValue = 0;
+            calculator.ParameterRatingThresholdValue = 1700;
 
             // 3 : Launch
             int fieldSize = 45;

@@ -62,5 +62,7 @@ namespace BetterMatchMaking.Library.Calc
         {
             return Convert.ToInt32(Math.Ceiling(Convert.ToDouble(a) / Convert.ToDouble(divisor)));
         }
+
+
     }
 }

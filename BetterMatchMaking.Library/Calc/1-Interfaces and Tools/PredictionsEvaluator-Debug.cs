@@ -28,6 +28,47 @@ namespace BetterMatchMaking.Library.Calc
             }
         }
 
+
+        static string[] debugCsvCarClassesName;
+        static Dictionary<int, string> cacheClassNames = new Dictionary<int, string>();
+
+        private string ReadClassName(int id)
+        {
+            if (cacheClassNames.ContainsKey(id)) return cacheClassNames[id];
+
+            if (debugCsvCarClassesName == null)
+            {
+                string path = "carclasses.csv";
+                try
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        debugCsvCarClassesName = System.IO.File.ReadAllLines(path);
+                        
+                    }
+                }
+                catch { }
+            }
+
+            try
+            {
+                if (debugCsvCarClassesName != null)
+                {
+                    var line = (from r in debugCsvCarClassesName where r.StartsWith(id + ";") select r).FirstOrDefault();
+                    if (!String.IsNullOrWhiteSpace(line))
+                    {
+                        string ret = line.Split(';').LastOrDefault().Trim();
+                        cacheClassNames.Add(id, ret);
+                        return ret;
+                    }
+                }
+            }
+            catch { }
+
+            return id.ToString();
+
+        }
+
         private void WriteDebugsFiles()
         {
           
@@ -40,12 +81,11 @@ namespace BetterMatchMaking.Library.Calc
 
             StringBuilder sb = new StringBuilder();
 
-            int countPrediction = 0;
             foreach (var item in _predictions)
             {
-                countPrediction++;
+                
 
-                sb.AppendLine(" > PREDICTION " + countPrediction);
+                sb.AppendLine(" > PREDICTION " + item.Id);
 
 
                 /*
@@ -61,7 +101,7 @@ namespace BetterMatchMaking.Library.Calc
                 columns.Add("SPLIT");
                 foreach (var c in _classesQueues)
                 {
-                    columns.Add(c.CarClassId.ToString());
+                    columns.Add(ReadClassName(c.CarClassId));
                 }
 
 
@@ -154,21 +194,21 @@ namespace BetterMatchMaking.Library.Calc
 
                 table.AddRow("Number of Classes", item.NumberOfClasses);
                 table.AddRow("No Middle Classes Missing", item.NoMiddleClassesMissing);
-                table.AddRow("Diff Between Classes (%)", item.DiffBetweenClassesPercent);
+                table.AddRow("Diff Between Classes (%)", Math.Round(item.DiffBetweenClassesPercent,2));
                 table.AddRow("Diff Between Classes (pts)", item.DiffBetweenClassesPoints);
                 table.AddRow("All SoFs are Lower than Previous split Max", item.AllSofsLowerThanPrevSplitMax);
                 table.AddRow("All SoFs are Higher than Next split Min", item.AllSofsHigherThanNextSplitMax);
                 table.AddRow("Most Populated Class has the Max Split SoF", item.MostPopulatedClassIsTheMaxSox);
-                table.AddRow("Diff between Current split Min Sof and Next split Max Sof (%)", item.DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof);
+                table.AddRow("Diff between Current split Min Sof and Next split Max Sof (%)", Math.Round(item.DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof,2));
                 
                 foreach (var rd in item.RatingDiffPerClassPercent)
                 {
-                    table.AddRow("iRating diff in class Percent (class " + rd.Key +")", rd.Value);
-                    table.AddRow("iRating diff in class Points (class " + rd.Key + ")", item.RatingDiffPerClassPoints[rd.Key]);
+                    table.AddRow("iRating diff in class Percent (" + ReadClassName(rd.Key) +")", Math.Round(rd.Value,2));
+                    table.AddRow("iRating diff in class Points (" + ReadClassName(rd.Key) + ")", item.RatingDiffPerClassPoints[rd.Key]);
                 }
                 foreach (var cut in item.ClassesCuttedAroundRatingThreshold)
                 {
-                    table.AddRow("Variation with class cutted around rating threshold", "(class " + cut + ")");
+                    table.AddRow("Variation with class cutted around rating threshold", "(" + ReadClassName(cut) + ")");
                 }
 
                 sb.AppendLine(table.ToString());
@@ -183,5 +223,88 @@ namespace BetterMatchMaking.Library.Calc
             System.IO.File.WriteAllText(file, sb.ToString());
 
         }
+
+
+        StringBuilder sbDecisions = new StringBuilder();
+
+        private void OutputDebugDecisionMessage(string testdescription)
+        {
+            if (ParameterDebugFileValue == 1)
+            {
+                sbDecisions.AppendLine(testdescription);
+            }
+        }
+
+        private void CommitDebugDecisions(int split)
+        {
+            if (ParameterDebugFileValue == 1)
+            {
+                string splitNumber = _predictions.First().CurrentSplit.Number.ToString();
+                while (splitNumber.Length < 2) splitNumber = "0" + splitNumber;
+
+                DirectoryInfo di = new DirectoryInfo("predictlogs");
+                if (!di.Exists) di.Create();
+
+
+                string file = Path.Combine(di.FullName, splitNumber + ".txt");
+                System.IO.File.AppendAllText(file, sbDecisions.ToString());
+
+
+                sbDecisions.Clear();
+            }
+        }
+
+        private void OutputDebugDecisionResults(List<Data.PredictionOfSplits> predictions, int? take)
+        {
+            List<Data.PredictionOfSplits> choices = predictions;
+            if (take != null) choices = choices.Take(take.Value).ToList();
+
+            List<string> columns = new List<string>();
+            columns.Add("Prediction");
+            foreach (var carClass in _classesQueues)
+            {
+                columns.Add(ReadClassName(carClass.CarClassId) + " cars");
+                columns.Add(ReadClassName(carClass.CarClassId) + " SoF");
+            }
+            columns.Add("Diff.");
+
+
+            var opt = new ConsoleTableOptions
+            {
+                Columns = columns.ToArray(),
+                EnableCount = false,
+                NumberAlignment = Alignment.Right
+            };
+            var table = new ConsoleTable(opt);
+            foreach (var c in choices)
+            {
+                columns.Clear();
+                columns.Add(c.Id);
+                foreach (var carClass in _classesQueues)
+                {
+                    int classIndex = c.CurrentSplit.GetClassIndexOfId(carClass.CarClassId);
+                    if (classIndex > -1)
+                    {
+
+                        columns.Add(c.CurrentSplit.CountClassCars(classIndex).ToString());
+                        columns.Add(c.CurrentSplit.GetClassSof(classIndex).ToString());
+                        
+                    }
+                    else
+                    {
+                        columns.Add("x");
+                        columns.Add("");
+                    }
+
+                }
+                columns.Add(c.CurrentSplit.ClassesSofDifference);
+                table.AddRow2(columns.ToArray());
+            }
+            
+            
+            sbDecisions.AppendLine(table.ToString());
+        }
+
+
     }
 }

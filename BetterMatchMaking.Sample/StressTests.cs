@@ -81,6 +81,7 @@ namespace BetterMatchMaking.Sample
                 calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;
                 calculator.ParameterTopSplitExceptionValue = 0;
                 calculator.ParameterNoMiddleClassesEmptyValue = 0;
+                calculator.ParameterRatingThresholdValue = 1700;
                 calculator.Compute(entrylist, fieldSize);
                 var audit = calculator.GetAudit();
                 Console.WriteLine(audit.ToString());

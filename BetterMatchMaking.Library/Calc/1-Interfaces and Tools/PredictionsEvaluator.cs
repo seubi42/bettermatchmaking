@@ -157,7 +157,7 @@ namespace BetterMatchMaking.Library.Calc
                 if (filter.Count > 0)
                 {
                     
-                    filter = (from r in filter where r.DiffBetweenClassesPercent < GetLimit(r) select r).ToList();
+                    filter = (from r in filter where CheckLimit(r, r.DiffBetweenClassesPercent) select r).ToList();
                     if (filter.Count > 0)
                     {
                         choices = filter;
@@ -205,10 +205,13 @@ namespace BetterMatchMaking.Library.Calc
 
         
 
-        public double GetLimit(Data.PredictionOfSplits prediction)
+        public bool CheckLimit(Data.PredictionOfSplits prediction, double diff)
         {
+            
             //double splitSof = prediction.CurrentSplit.GlobalSof;
             int splitSof = prediction.CurrentSplit.GetMinClassSof();
+            OutputDebugDecisionMessage("");
+            OutputDebugDecisionMessage("       - Prediction " + prediction.Id + " has a Min SoF of " + splitSof);
 
             double maxDiff = ParameterMaxSofDiffValue;
             if (splitSof > ParameterMaxSofFunctStartingIRValue)
@@ -217,8 +220,23 @@ namespace BetterMatchMaking.Library.Calc
                     ParameterMaxSofFunctStartingThreshold,
                     ParameterMaxSofFunctExtraThresoldPerK,
                     splitSof);
+                OutputDebugDecisionMessage("       Max allowed Diff is " + maxDiff + " (corresponding to MaxSofDiffValueFunction)");
             }
-            return maxDiff;
+            else
+            {
+                OutputDebugDecisionMessage("       Max allowed Diff is " + maxDiff + " (corresponding to MaxSofDiffValue)");
+            }
+            bool result = diff < maxDiff;
+            if (result)
+            {
+                OutputDebugDecisionMessage("       => OK. (under the limit)");
+            }
+            else
+            {
+                OutputDebugDecisionMessage("       => Not Ok. (higher than the limit)");
+            }
+            OutputDebugDecisionMessage("");
+            return result;
         }
 
     }

@@ -12,7 +12,7 @@ namespace BetterMatchMaking.Library.Calc
 {
     /// <summary>
     /// This algorithm is based on the SmartMoveDownAffineDistribution.
-    /// Please see and tun the SmartMoveDownProportionsRuled algorithm first to understand the process.
+    /// Please see and tun the ClassicAffineDistribution algorithm first to understand the process.
     /// 
     /// The process is the same but the TakeCars implementation is base on a ClassicProportionnalBalanced
     /// which allows the use of the UseParameterClassPropMinPercent parameter.

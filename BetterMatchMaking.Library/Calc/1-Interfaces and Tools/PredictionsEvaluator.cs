@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Better Splits Project - https://board.ipitting.com/bettersplits
+// Written by Sebastien Mallet (seubiracing@gmail.com - iRacer #281664)
+// --------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +14,7 @@ namespace BetterMatchMaking.Library.Calc
 {
     partial class PredictionsEvaluator
     {
-        
+
 
         List<Data.PredictionOfSplits> _predictions;
         List<Data.ClassCarsQueue> _classesQueues;
@@ -71,12 +74,14 @@ namespace BetterMatchMaking.Library.Calc
             if (splitNumber == 1 && ParameterTopSplitExceptionValue == 1)
             {
                 OutputDebugDecisionMessage("[?] TopSplitException is enabled, and it is the Top Split, get the prediction with all complete classes.");
-                filter = (from r in choices where r.NumberOfClasses == remClassWithCars
-                          && r.ClassesCuttedAroundRatingThreshold.Count == 0
-                          orderby r.DiffBetweenClassesPercent select r).ToList();
+                filter = (from r in choices
+                          where r.NumberOfClasses == remClassWithCars
+        && r.ClassesCuttedAroundRatingThreshold.Count == 0
+                          orderby r.DiffBetweenClassesPercent
+                          select r).ToList();
                 if (filter.Count > 0)
                 {
-                    
+
                     choices = filter;
                     OutputDebugDecisionMessage(" - Found (" + choices.Count + ")");
                     OutputDebugDecisionResults(choices, 1);
@@ -87,7 +92,7 @@ namespace BetterMatchMaking.Library.Calc
                 }
                 else
                 {
-                    OutputDebugDecisionMessage(" - Not found, continue with all predictions ("+choices.Count+")");
+                    OutputDebugDecisionMessage(" - Not found, continue with all predictions (" + choices.Count + ")");
                 }
                 OutputDebugDecisionMessage("");
             }
@@ -124,15 +129,15 @@ namespace BetterMatchMaking.Library.Calc
             OutputDebugDecisionMessage("    The Max SoF of the split is not the most Populated class");
 
             filter = (from r in choices
-                        where 
-                        r.CurrentSplit.GlobalSof > ParameterMaxSofFunctStartingIRValue
-                        || 
-                        //r.AllSofsHigherThanNextSplitMax
-                        //||
-                        r.DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof <= 2
-                        ||
-                        r.MostPopulatedClassIsTheMaxSox == false
-                        select r).ToList();
+                      where
+                      r.CurrentSplit.GlobalSof > ParameterMaxSofFunctStartingIRValue
+                      ||
+                      //r.AllSofsHigherThanNextSplitMax
+                      //||
+                      r.DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof <= 2
+                      ||
+                      r.MostPopulatedClassIsTheMaxSox == false
+                      select r).ToList();
             if (filter.Count > 0)
             {
                 choices = filter;
@@ -156,7 +161,7 @@ namespace BetterMatchMaking.Library.Calc
                 filter = (from r in choices where r.NumberOfClasses == i select r).ToList();
                 if (filter.Count > 0)
                 {
-                    
+
                     filter = (from r in filter where CheckLimit(r, r.DiffBetweenClassesPercent) select r).ToList();
                     if (filter.Count > 0)
                     {
@@ -203,11 +208,11 @@ namespace BetterMatchMaking.Library.Calc
             return bestpred;
         }
 
-        
+
 
         public bool CheckLimit(Data.PredictionOfSplits prediction, double diff)
         {
-            
+
             //double splitSof = prediction.CurrentSplit.GlobalSof;
             int splitSof = prediction.CurrentSplit.GetMinClassSof();
             OutputDebugDecisionMessage("");

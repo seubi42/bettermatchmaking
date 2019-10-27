@@ -87,7 +87,7 @@
                                     <ComboBoxItem Tag="RatingThresholdedProportionnalBalancedTriple" Content="Rating Thresholded Proportionnal Balanced Triple" Foreground="DarkOrchid" />
                                     <ComboBoxItem Tag="SmartMoveDownProportionnalBalanced" Content="SmartMoveDown Proportionnal Balanced" Foreground="SeaGreen" />
                                     <ComboBoxItem Tag="SmartMoveDownAffineDistribution" Content="SmartMoveDown Affine Distribution"  Foreground="SeaGreen" />
-                                    <ComboBoxItem Tag="SmartPredictedMoveDownAffineDistribution" Content="SmartPredictedMoveDown Affine Distribution" FontWeight="Bold" Foreground="DarkGreen" />
+                                    <ComboBoxItem Tag="SmartPredictedMoveDownAffineDistribution" Content="SmartPredictedMoveDown Affine Distribution" FontWeight="Bold" Foreground="DarkGreen"  />
                                 </ComboBox>
                                 <TextBox x:Name="tbxFieldSize" Grid.Row="1" Grid.Column="1" Text="45" Margin="5" />
 

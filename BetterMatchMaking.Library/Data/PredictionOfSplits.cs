@@ -7,49 +7,18 @@ using System.Threading.Tasks;
 
 namespace BetterMatchMaking.Library.Data
 {
+    /// <summary>
+    /// This class describe a Prediction (or a scenario) of two split :
+    /// CurrentSplit : is the split we want to implement
+    /// NextSplit : the following
+    /// </summary>
     class PredictionOfSplits
     {
+
+
         public Split CurrentSplit { get; set; }
         public Split NextSplit { get; set; }
-
-        public List<ClassDiffInPrediction> Differences { get; private set; }
-
-        public double Score { get; private set; }
-        public bool IsPossible { get; private set; }
-
-
-        public void CalcDiff(int classIndex, int classId)
-        {
-            
-            if (Differences == null) Differences = new List<ClassDiffInPrediction>();
-
-            ClassDiffInPrediction diff = new ClassDiffInPrediction();
-
-
-            Calc.SofDifferenceEvaluator eval;
-
-            if (CurrentSplit.CountClassCars(classIndex) > 1)
-            {
-                    diff.ClassId = classId;
-                    eval = new Calc.SofDifferenceEvaluator(CurrentSplit, classIndex);
-                    diff.Diff = eval.PercentDifference;
-                    diff.InSplit = CurrentSplit.Number;
-                    diff.InCurrentSplit = true;
-            }
-            else if (NextSplit.CountClassCars(classIndex) > 1)
-            {
-                    diff.ClassId = classId;
-                    eval = new Calc.SofDifferenceEvaluator(NextSplit, classIndex);
-                    diff.Diff = eval.PercentDifference;
-                    diff.InSplit = NextSplit.Number;
-                    diff.InCurrentSplit = false;
-            }
-            
-
-
-
-            Differences.Add(diff);
-        }
+        
 
 
         #region Statistics which can helps for decision
@@ -66,13 +35,16 @@ namespace BetterMatchMaking.Library.Data
         public bool MostPopulatedClassIsTheMaxSox { get; set; }
 
         public List<int> ClassesCuttedAroundRatingThreshold { get; set; }
+        #endregion
 
+
+        #region Id (to help debugging)
         string _id;
         public string Id
         {
             get
             {
-                if(_id == null)
+                if (_id == null)
                 {
                     _id = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
                 }
@@ -80,9 +52,13 @@ namespace BetterMatchMaking.Library.Data
             }
         }
 
-
         #endregion
 
+
+        /// <summary>
+        /// Calc all the statistics needed to take the right decision
+        /// </summary>
+        /// <param name="prevSplitMaxSof"></param>
         public void CalcStats(int prevSplitMaxSof)
         {
             RatingDiffPerClassPoints = new Dictionary<int, int>();
@@ -124,8 +100,17 @@ namespace BetterMatchMaking.Library.Data
 
         }
 
-        public PredictionOfSplits CuttedVariation(int ratingthreshold, int prevSplitMaxSof)
+
+
+        /// <summary>
+        /// Calc 
+        /// </summary>
+        /// <param name="ratingthreshold"></param>
+        /// <param name="prevSplitMaxSof"></param>
+        /// <returns></returns>
+        public List<PredictionOfSplits> CuttedVariation(int ratingthreshold, int prevSplitMaxSof)
         {
+            List<PredictionOfSplits> ret = new List<PredictionOfSplits>();
             foreach (var classDif in RatingDiffPerClassPercent)
             {
                 if(classDif.Value > 50)
@@ -166,13 +151,13 @@ namespace BetterMatchMaking.Library.Data
 
                                 alternative.CalcStats(prevSplitMaxSof);
                                 ClassesCuttedAroundRatingThreshold.Add(classDif.Key);
-                                return alternative;
+                                ret.Add(alternative);
                             }
                         }
                     }
                 }
             }
-            return null;
+            return ret;
         }
     }
 

@@ -121,7 +121,6 @@ namespace BetterMatchMaking.Library.Calc
 
             // if the Parameter TopSplitExceptionValue is  ON,
             // we only want the scenario with all the classes
-
             if (splitNumber == 1 && ParameterTopSplitExceptionValue == 1)
             {
                 AppendDebugDecisionMessage("[?] TopSplitException is enabled, and it is the Top Split, get the prediction with all complete classes.");
@@ -152,8 +151,9 @@ namespace BetterMatchMaking.Library.Calc
             // if NoMiddleClassesEmpty is enabled
             // we will filter combinations to exclude predictions
             // without middle classes
-
-            if (ParameterNoMiddleClassesEmptyValue == 1)
+            bool noMiddleClassesFiltered = false;
+            var predictionsBeforeMiddleClassesFiltere = choices;
+            if (ParameterNoMiddleClassesEmptyValue >= 1)
             {
                 AppendDebugDecisionMessage("[?] NoMiddleClassesEmpty is enabled, filter predictions with non empty classes betwen less and more populated of each split.");
 
@@ -161,6 +161,7 @@ namespace BetterMatchMaking.Library.Calc
                 if (filter.Count > 0)
                 {
                     choices = filter;
+                    noMiddleClassesFiltered = true;
                     AppendDebugDecisionMessage(" - Found (" + choices.Count + ")");
                     AppendDebugDecisionResults(choices, null);
                 }
@@ -206,45 +207,18 @@ namespace BetterMatchMaking.Library.Calc
 
             }
             AppendDebugDecisionMessage("");
+            bool matchDiff = FilterSofDiffLimit(ref choices, ref filter, remClassWithCars);
 
-
-            // we will try to filter predictions which have % SoF difference allowed
-            // we will start from predictions containing all the classes
-            // if no one match, we will have a look to predictions having 1 class less
-            // etc
-
-            for (int i = remClassWithCars; i >= 1; i--)
+            if (ParameterNoMiddleClassesEmptyValue == 2 && !matchDiff && noMiddleClassesFiltered)
             {
-                AppendDebugDecisionMessage("[?] Try to get predictions with " + i + " classes contains car");
-                AppendDebugDecisionMessage("    and Diff is lower than MaxSof or MaxSofFunct");
-
-                filter = (from r in choices where r.NumberOfClasses == i select r).ToList();
-                if (filter.Count > 0)
-                {
-
-                    filter = (from r in filter where CheckLimit(r, r.DiffBetweenClassesPercent) select r).ToList();
-                    if (filter.Count > 0)
-                    {
-                        choices = filter;
-                        AppendDebugDecisionMessage(" - Found (" + choices.Count + ")");
-                        AppendDebugDecisionResults(choices, null);
-                        AppendDebugDecisionMessage("");
-
-                        break;
-                    }
-                    else
-                    {
-                        AppendDebugDecisionMessage(" - Not found (higher than allowed diff), continue with previous predictions (" + choices.Count + ")");
-                        AppendDebugDecisionMessage("");
-
-                    }
-                }
-                else
-                {
-                    AppendDebugDecisionMessage(" - Not found (not with " + i + " classes), continue with previous predictions (" + choices.Count + ")");
-                    AppendDebugDecisionMessage("");
-                }
+                // restart without 
+                AppendDebugDecisionMessage(" - No predictions match the SoF Diff Limit with the NoMiddleClassesFilter, we will try without");
+                AppendDebugDecisionMessage("");
+                choices = predictionsBeforeMiddleClassesFiltere;
+                FilterSofDiffLimit(ref choices, ref filter, remClassWithCars);
             }
+
+
 
             // we just put the worst score to DiffBetweenClassesPercent for predictions
             // contaning only one class
@@ -270,6 +244,50 @@ namespace BetterMatchMaking.Library.Calc
 
 
             return bestpred;
+        }
+
+        private bool FilterSofDiffLimit(ref List<PredictionOfSplits> choices, ref List<PredictionOfSplits> filter, int remClassWithCars)
+        {
+            // we will try to filter predictions which have % SoF difference allowed
+            // we will start from predictions containing all the classes
+            // if no one match, we will have a look to predictions having 1 class less
+            // etc
+
+            bool matchDiff = false;
+            for (int i = remClassWithCars; i >= 1; i--)
+            {
+                AppendDebugDecisionMessage("[?] Try to get predictions with " + i + " classes contains car");
+                AppendDebugDecisionMessage("    and Diff is lower than MaxSof or MaxSofFunct");
+
+                filter = (from r in choices where r.NumberOfClasses == i select r).ToList();
+                if (filter.Count > 0)
+                {
+
+                    filter = (from r in filter where CheckLimit(r, r.DiffBetweenClassesPercent) select r).ToList();
+                    if (filter.Count > 0)
+                    {
+                        choices = filter;
+                        AppendDebugDecisionMessage(" - Found (" + choices.Count + ")");
+                        AppendDebugDecisionResults(choices, null);
+                        AppendDebugDecisionMessage("");
+                        matchDiff = true;
+                        break;
+                    }
+                    else
+                    {
+                        AppendDebugDecisionMessage(" - Not found (higher than allowed diff), continue with previous predictions (" + choices.Count + ")");
+                        AppendDebugDecisionMessage("");
+
+                    }
+                }
+                else
+                {
+                    AppendDebugDecisionMessage(" - Not found (not with " + i + " classes), continue with previous predictions (" + choices.Count + ")");
+                    AppendDebugDecisionMessage("");
+                }
+            }
+
+            return matchDiff;
         }
 
 

@@ -11,9 +11,33 @@ using ConsoleTables;
 
 namespace BetterMatchMaking.Library.Calc
 {
+
+    /// <summary>
+    /// All methods here are the debug method of the 
+    /// PredictionsEvaluator class
+    /// 
+    /// If ParameterDebugFileValue is set to 0,
+    /// all these methods are disabled.
+    /// 
+    /// It ParameterDebugFileValue is set to 1,
+    /// these methods will build the 'predictlogs'.
+    /// A text file will be generated for each split
+    /// to evaluate. It will contains all the possible
+    /// predictions + all filtering operations to try
+    /// filtering the best option.
+    /// </summary>
     partial class PredictionsEvaluator
     {
+
+        /// <summary>
+        /// Main switch for all the methos bellow
+        /// </summary>
         public int ParameterDebugFileValue { get; private set; }
+
+
+        /// <summary>
+        /// Emtpy the 'predictlogs' folder
+        /// </summary>
         public static void CleanOldDebugFiles()
         {
             DirectoryInfo di = new DirectoryInfo("predictlogs");
@@ -32,12 +56,26 @@ namespace BetterMatchMaking.Library.Calc
         }
 
 
-        static string[] debugCsvCarClassesName;
-        static Dictionary<int, string> cacheClassNames = new Dictionary<int, string>();
-
-        private string ReadClassName(int id)
+        #region string ReadClassName(int classId)
+        /// <summary>
+        /// If a 'carclasses.csv' file is available in the root directory,
+        /// than it try to find the name corresponding to the classId.
+        /// It will give a more intelligible debug/log file.
+        /// 
+        /// CSV file have to contains at leas two columns, following
+        /// this format :
+        /// 
+        /// id;shortname
+        /// 77;C7
+        /// 473;GT3
+        /// 100;GTE
+        /// 
+        /// </summary>
+        /// <param name="classId"></param>
+        /// <returns></returns>
+        private string ReadClassName(int classId)
         {
-            if (cacheClassNames.ContainsKey(id)) return cacheClassNames[id];
+            if (cacheClassNames.ContainsKey(classId)) return cacheClassNames[classId];
 
             if (debugCsvCarClassesName == null)
             {
@@ -57,22 +95,33 @@ namespace BetterMatchMaking.Library.Calc
             {
                 if (debugCsvCarClassesName != null)
                 {
-                    var line = (from r in debugCsvCarClassesName where r.StartsWith(id + ";") select r).FirstOrDefault();
+                    var line = (from r in debugCsvCarClassesName where r.StartsWith(classId + ";") select r).FirstOrDefault();
                     if (!String.IsNullOrWhiteSpace(line))
                     {
                         string ret = line.Split(';').LastOrDefault().Trim();
-                        cacheClassNames.Add(id, ret);
+                        cacheClassNames.Add(classId, ret);
                         return ret;
                     }
                 }
             }
             catch { }
 
-            return id.ToString();
+            return classId.ToString();
 
         }
+        // static variables to optimize / cache the ReadClassName method
+        static string[] debugCsvCarClassesName;
+        static Dictionary<int, string> cacheClassNames = new Dictionary<int, string>();
+        #endregion
 
-        private void WriteDebugsFiles()
+
+        #region WriteSplitPredictionsFile
+        /// <summary>
+        /// This method will allow all predictions possible
+        /// for a split in 'predictlogs\XX.txt'
+        /// XX is the split number, starting from 01.
+        /// </summary>
+        private void WriteSplitPredictionsFile()
         {
           
 
@@ -227,18 +276,27 @@ namespace BetterMatchMaking.Library.Calc
 
         }
 
+        #endregion
 
-        StringBuilder sbDecisions = new StringBuilder();
 
-        private void OutputDebugDecisionMessage(string testdescription)
-        {
-            if (ParameterDebugFileValue == 1)
-            {
-                sbDecisions.AppendLine(testdescription);
-            }
-        }
 
-        private void CommitDebugDecisions(int split)
+        #region xxx
+
+
+        // temporary stores texts generated these both methods :
+        /// AppendDebugDecisionMessage
+        /// AppendDebugDecisionResults
+        StringBuilder sbDecisionsAppends = new StringBuilder();
+
+
+        /// <summary>
+        /// Commit all logs to append to the debugging file from
+        /// including all or call to these both methods :
+        /// AppendDebugDecisionMessage
+        /// AppendDebugDecisionResults
+        /// </summary>
+        /// <param name="split"></param>
+        private void CommitDecisionsAppends(int split)
         {
             if (ParameterDebugFileValue == 1)
             {
@@ -250,14 +308,34 @@ namespace BetterMatchMaking.Library.Calc
 
 
                 string file = Path.Combine(di.FullName, splitNumber + ".txt");
-                System.IO.File.AppendAllText(file, sbDecisions.ToString());
+                System.IO.File.AppendAllText(file, sbDecisionsAppends.ToString());
 
 
-                sbDecisions.Clear();
+                sbDecisionsAppends.Clear();
             }
         }
 
-        private void OutputDebugDecisionResults(List<Data.PredictionOfSplits> predictions, int? take)
+
+        /// <summary>
+        /// This method appends a simple text line to the debug file
+        /// </summary>
+        /// <param name="testdescription"></param>
+        private void AppendDebugDecisionMessage(string testdescription)
+        {
+            if (ParameterDebugFileValue == 1)
+            {
+                sbDecisionsAppends.AppendLine(testdescription);
+            }
+        }
+
+        
+        /// <summary>
+        /// This method appends to the debug file a list of predictions results
+        /// in a compact like table style.
+        /// </summary>
+        /// <param name="predictions">the predictions</param>
+        /// <param name="take">number of predictions to output (null = all)</param>
+        private void AppendDebugDecisionResults(List<Data.PredictionOfSplits> predictions, int? take)
         {
             List<Data.PredictionOfSplits> choices = predictions;
             if (take != null) choices = choices.Take(take.Value).ToList();
@@ -305,9 +383,9 @@ namespace BetterMatchMaking.Library.Calc
             }
             
             
-            sbDecisions.AppendLine(table.ToString());
+            sbDecisionsAppends.AppendLine(table.ToString());
         }
-
+        #endregion
 
     }
 }

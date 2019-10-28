@@ -43,8 +43,8 @@
   <ItemGroup>
     <Compile Include="BetterMatchMakingCalculator.cs" />
     <Compile Include="Calc\1-Interfaces and Tools\ConsoleTable.cs" />
-    <Compile Include="Calc\1-Interfaces and Tools\EveryCombinations.cs" />
-    <Compile Include="Calc\1-Interfaces and Tools\PredictionsEvaluator.cs" />
+    <Compile Include="Calc\5-SmartPredictedMoveDown\EveryCombinations.cs" />
+    <Compile Include="Calc\5-SmartPredictedMoveDown\PredictionsEvaluator.cs" />
     <Compile Include="Calc\1-Interfaces and Tools\SplitsRepartitionOptimizer.cs" />
     <Compile Include="Calc\2-Classic\ClassicEqualitarian.cs" />
     <Compile Include="Calc\3-RatingThresholded\RatingThresholdedEqualitarian.cs" />
@@ -59,8 +59,8 @@
     <Compile Include="Calc\4-SmartMoveDown\SmartMoveDownAffineDistribution.cs" />
     <Compile Include="Calc\1-Interfaces and Tools\Tools.cs" />
     <Compile Include="Calc\3-RatingThresholded\RatingThresholdedProportionnalBalancedTriple.cs" />
-    <Compile Include="Calc\4-SmartMoveDown\SmartPredictedMoveDownAffineDistribution.cs" />
-    <Compile Include="Calc\1-Interfaces and Tools\PredictionsEvaluator-Debug.cs" />
+    <Compile Include="Calc\5-SmartPredictedMoveDown\SmartPredictedMoveDownAffineDistribution.cs" />
+    <Compile Include="Calc\5-SmartPredictedMoveDown\PredictionsEvaluator-Debug.cs" />
     <Compile Include="Data\Audit.cs" />
     <Compile Include="Data\ClassCarsQueue.cs" />
     <Compile Include="Data\CsvParser.cs" />

@@ -9,6 +9,28 @@ using System.Threading.Tasks;
 
 namespace BetterMatchMaking.Library.Calc
 {
+    /// <summary>
+    /// This classe generates Truth table of classes with any combinations,
+    /// (the most populate class is always True)
+    /// 
+    /// Exemple of data generated:
+    /// 
+    ///  C7 | GTE | GTE
+    ///  X     X     X 
+    ///  X           X
+    ///        X     X
+    ///              X
+    ///              
+    /// A second small class bellow convert booleans to
+    /// classes ids avaiable to simplify data querying
+    /// 
+    /// Same exemple gives :
+    /// 77, 473, 100 (=C7, GT3, GTE)
+    /// 77, 100 (=C7, GTE)
+    /// 473, 100 (=GT3, GTE)
+    /// GTE)
+    /// 
+    /// </summary>
     public class EveryCombinations
     {
 
@@ -17,6 +39,7 @@ namespace BetterMatchMaking.Library.Calc
         public EveryCombinations(List<int> classIds)
         {
 
+            // Using lina que generate truth tables :
             if (classIds.Count == 5)
             {
                 Combinations = (from b1 in new[] { false, true }
@@ -54,6 +77,7 @@ namespace BetterMatchMaking.Library.Calc
             }
 
             
+            // Sort the combinations
             Combinations = (from r in Combinations where r.NumberOfTrue > 0 orderby r.NumberOfTrue descending  select r).ToList();
 
 
@@ -62,7 +86,19 @@ namespace BetterMatchMaking.Library.Calc
         }
         
     }
-    
+
+
+    /// <summary>
+    /// This Combinaition class transform a truth table line booleans
+    /// to classes ids.
+    /// 
+    /// Exemple:
+    /// Input : 
+    /// C7 | GTE | GTE
+    ///  X           X
+    /// Output :
+    /// 77, 100 (=C7, GTE)
+    /// </summary>
     public class Combination
     {
 
@@ -76,9 +112,22 @@ namespace BetterMatchMaking.Library.Calc
             ClassesId = classIds;
             Enabled = bools;
         }
+
+        /// <summary>
+        /// Array of Classes Ids (Exemple : 77, 473, 100)
+        /// </summary>
         public int[] ClassesId { get; internal set; }
+
+        /// <summary>
+        /// Truth table line, array indexes matches the 'ClassesId' array.
+        /// (Exemple : True, False, True) means : 77 and 473 are availbe
+        /// </summary>
         public bool[] Enabled { get; internal set; }
 
+
+        /// <summary>
+        /// Number of True in 'Enabled' array
+        /// </summary>
         public int NumberOfTrue
         {
             get
@@ -87,6 +136,11 @@ namespace BetterMatchMaking.Library.Calc
             }
         }
 
+
+        /// <summary>
+        /// Get the Classes Ids which are true only
+        /// (Exemple : 77, 100)
+        /// </summary>
         public List<int> EnabledClassesId
         {
             get
@@ -100,6 +154,14 @@ namespace BetterMatchMaking.Library.Calc
             }
         }
 
+
+        /// <summary>
+        /// Just to help debugging
+        /// Format the data with a concatenation of enabled ClassesIds.
+        /// Disabled ClassesIds are replaces with a dot '.'.
+        /// Exemple : " 77 |  .  | 100"
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string ret = "";

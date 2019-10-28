@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace BetterMatchMaking.Library.Calc
 {
+
+    /// <summary>
+    /// This class help to get SoF differences
+    /// and helper to test if this difference is
+    /// allowed or not.
+    /// </summary>
     public class SofDifferenceEvaluator
     {
         public Data.Split Split { get; private set; }
@@ -52,7 +58,7 @@ namespace BetterMatchMaking.Library.Calc
             if (MaxSofInSplit == 0) MaxSofInSplit = classSof;
             // -->
 
-                // exit if 0
+            // exit if 0
             if (min == 0 && MaxSofInSplit == 0)
             {
                 Evaluated = false; // we can not eval that
@@ -61,7 +67,6 @@ namespace BetterMatchMaking.Library.Calc
             // -->
 
 
-            //double referencesof = (s.GlobalSof + max + classSof) / 3;
             double referencesof = classSof;
             if (classSof == 0) referencesof = min;
             ClassSof = Convert.ToInt32(referencesof);
@@ -85,6 +90,14 @@ namespace BetterMatchMaking.Library.Calc
 
         }
 
+
+        /// <summary>
+        /// Calc SoF difference (in points)
+        /// </summary>
+        /// <param name="d1">min sof</param>
+        /// <param name="d2">max sof</param>
+        /// <param name="abs">absolute value ?</param>
+        /// <returns></returns>
         public static double CalcDiff(double d1, double d2, bool abs=true)
         {
             double a = d1;
@@ -139,6 +152,23 @@ namespace BetterMatchMaking.Library.Calc
             return (PercentDifference >= MaxPercentDifferenceAllowed);
         }
 
+
+        /// <summary>
+        /// This method will compute the Max % SoF difference we can allow on a split
+        /// using 3 parameters:
+        /// 
+        /// startingIr : on how much Rating this formula starts
+        /// startingThreshold : what is the starting % SoF difference threshold we allow when current iRating = startingIr
+        /// extraThresholdPerKilo : how much % SoF difference car we allow more for each 1000ir points
+        /// 
+        /// Formula iss (( iRating - startingIr ) / 100 * extraThresholdPerKilo) + startingThreshold
+        /// </summary>
+        /// <param name="startingIr">on how much Rating this formula starts</param>
+        /// <param name="startingThreshold">what is the starting % SoF difference threshold we allow at this
+        /// startung point (when current startingThreshold == currentIR)</param>
+        /// <param name="extraThresholdPerKilo">how much % SoF difference car we allow more for each 1000ir points</param>
+        /// <param name="currentIR">the input Rating/SoF</param>
+        /// <returns></returns>
         public static double EvalFormula(double startingIr, double startingThreshold, double extraThresholdPerKilo, int currentIR)
         {
             return Math.Round(Math.Max(0, (Convert.ToDouble(currentIR) - startingIr) / 1000 * extraThresholdPerKilo) + startingThreshold);

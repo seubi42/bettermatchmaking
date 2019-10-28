@@ -21,7 +21,7 @@ namespace BetterMatchMaking.Sample
             calculator.ParameterMinCarsValue = 10;
             calculator.ParameterMaxSofDiffValue = 18;
             calculator.ParameterMaxSofFunctStartingIRValue = 2800;
-            calculator.ParameterMaxSofFunctStartingThreshold = 20;
+            calculator.ParameterMaxSofFunctStartingThreshold = 18;
             calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;
             calculator.ParameterTopSplitExceptionValue = 0;
             calculator.ParameterNoMiddleClassesEmptyValue = 0;

@@ -181,8 +181,76 @@ namespace BetterMatchMaking.Library.Calc
             // of cars in the right classes
             Splits = InstanciateSplitsFromNumberedDescription(splitsDescriptions);
 
+
+            // clean emtpy splits
+            CleanEmptySplits(); // just to be sure
+            MergeTheTwoLastSplits(); // because it can happens when differences are quite large on very last split
+            CleanEmptySplits(); // just to be sure
+
             return Splits;
         }
+
+
+        #region Basic Optimization
+
+        /// <summary>
+        /// If the two last splits can fill only one, group them.
+        /// No matter the SoF differences
+        /// /// </summary>
+        private void MergeTheTwoLastSplits()
+        {
+            // doest the race have more than 1 split ?
+            if (Splits.Count > 1)
+            {
+                var lastSplit1 = Splits[Splits.Count - 1];
+                var lastSplit2 = Splits[Splits.Count - 2];
+
+                // if totalcars of 2 lowest splits is less tha field size
+                if (lastSplit1.TotalCarsCount + lastSplit2.TotalCarsCount < fieldSize)
+                {
+                    // merge them
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var pick = lastSplit1.PickClassCars(i);
+                        if (pick.Count > 0)
+                        {
+                            lastSplit2.AppendClassCars(i, pick);
+                        }
+                    }
+                    // -->
+                }
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// Clean Emtpy splits and empty ghost classes on splits
+        /// </summary>
+        private void CleanEmptySplits()
+        {
+            // remove splits with 0 cars
+            var splits = (from r in Splits where r.TotalCarsCount > 0 select r).ToList();
+
+            // reset numbers from 1 to end
+            for (int i = 0; i < splits.Count; i++)
+            {
+                splits[i].Number = i + 1;
+            }
+            Splits = splits;
+            // -->
+
+            // if empty classes on every split
+            foreach (var s in Splits)
+            {
+                // clean them
+                s.CleanEmptyClasses();
+            }
+            // -->
+        }
+
+        #endregion
 
         /// <summary>
         /// This method will convert the current Splits
@@ -568,8 +636,31 @@ namespace BetterMatchMaking.Library.Calc
 
                         if (!solutionfound)
                         {
-                            // main problem here, we have to found a solution
-                            break;
+                            var newsplit = new MultiClassChanges()
+                            {
+                                FromSplit = Splits.Count,
+                                ToSplit = Splits.Count,
+                                ClassCarsTarget = new Dictionary<int, int>()
+
+                            };
+
+                            for (int i = 0; i < carClassesIds.Count; i++)
+                            {
+                                // algo.TakeCars(carClassesIds[i], carClassesIds, fieldSize)
+                                //int cars = 0;
+                                //if (carClassesIds[i] == excess.Key) cars = excess.Value;
+                                newsplit.ClassCarsTarget.Add(carClassesIds[i], 0);
+                            }
+
+                            
+                            splitsDescriptions.Add(newsplit);
+                            SolveSplitsExceedFieldSize(splitsDescriptions);
+                            Split newSplit = new Split(Splits.Count);
+                            Splits.Add(newSplit);
+                            
+                            solutionfound = true;
+                            return;
+                            
                         }
                     }
 

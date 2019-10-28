@@ -179,35 +179,46 @@ namespace BetterMatchMaking.Library.Calc
             // it means we try to only keep predictions where the current split have
             // better SoFs and the next split
             // it is the most important filter
-
-            AppendDebugDecisionMessage("[?] Try to get predictions where :");
-            AppendDebugDecisionMessage("    Diff between Min SoF in current split and Max SoF of in next split is less than 2%.");
-            AppendDebugDecisionMessage("    or");
-            AppendDebugDecisionMessage("    Global SoF can be tester with MaxSofFunct (higher than MaxSofFunctStartingIRValue)");
-            AppendDebugDecisionMessage("    or");
-            AppendDebugDecisionMessage("    The Max SoF of the split is not the most Populated class");
-
-            filter = (from r in choices
-                      where
-                      r.CurrentSplit.GlobalSof > ParameterMaxSofFunctStartingIRValue
-                      ||
-                      r.DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof <= 2
-                      ||
-                      r.MostPopulatedClassIsTheMaxSox == false
-                      select r).ToList();
-            if (filter.Count > 0)
+            if (splitNumber > 1)
             {
-                choices = filter;
-                AppendDebugDecisionMessage(" - Found (" + choices.Count + ")");
-                AppendDebugDecisionResults(choices, null);
-            }
-            else
-            {
-                AppendDebugDecisionMessage(" - Not found, continue with previous predictions (" + choices.Count + ")");
+                AppendDebugDecisionMessage("[?] Try to get predictions where :");
+                AppendDebugDecisionMessage("    Diff between Min SoF in current split and Max SoF of in next split is less than 2%.");
+                AppendDebugDecisionMessage("    or");
+                AppendDebugDecisionMessage("    Global SoF can be tester with MaxSofFunct (higher than MaxSofFunctStartingIRValue)");
+                AppendDebugDecisionMessage("    or");
+                AppendDebugDecisionMessage("    The Max SoF of the split is not the most Populated class");
 
+                filter = (from r in choices
+                          where
+                          r.CurrentSplit.GlobalSof > ParameterMaxSofFunctStartingIRValue
+                          ||
+                          r.DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof <= 2
+                          ||
+                          r.MostPopulatedClassIsTheMaxSox == false
+                          select r).ToList();
+                if (filter.Count > 0)
+                {
+                    choices = filter;
+                    AppendDebugDecisionMessage(" - Found (" + choices.Count + ")");
+                    AppendDebugDecisionResults(choices, null);
+                }
+                else
+                {
+                    AppendDebugDecisionMessage(" - Not found, continue with previous predictions (" + choices.Count + ")");
+
+                }
+                AppendDebugDecisionMessage("");
             }
-            AppendDebugDecisionMessage("");
+
+
+
+            // we will try to filter predictions which have % SoF difference allowed
+            // we will start from predictions containing all the classes
+            // if no one match, we will have a look to predictions having 1 class less
+            // etc
             bool matchDiff = FilterSofDiffLimit(ref choices, ref filter, remClassWithCars);
+
+
 
             if (ParameterNoMiddleClassesEmptyValue == 2 && !matchDiff && noMiddleClassesFiltered)
             {

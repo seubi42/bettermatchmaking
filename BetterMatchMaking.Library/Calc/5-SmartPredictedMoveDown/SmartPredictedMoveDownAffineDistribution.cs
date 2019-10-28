@@ -249,6 +249,8 @@ namespace BetterMatchMaking.Library.Calc
             }
 
 
+            if (predictions2.Count == 0) return null;
+
             // Choose the best now prediction
             PredictionsEvaluator eval = new PredictionsEvaluator(predictions2, classesQueues,
                 ParameterMaxSofDiffValue, 

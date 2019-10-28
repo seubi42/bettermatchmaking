@@ -80,7 +80,7 @@ namespace BetterMatchMaking.Sample
                 calculator.ParameterMaxSofFunctStartingThreshold = 20;
                 calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;
                 calculator.ParameterTopSplitExceptionValue = 0;
-                calculator.ParameterNoMiddleClassesEmptyValue = 0;
+                calculator.ParameterNoMiddleClassesEmptyValue = 1;
                 calculator.ParameterRatingThresholdValue = 1700;
                 calculator.Compute(entrylist, fieldSize);
                 var audit = calculator.GetAudit();

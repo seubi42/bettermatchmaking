@@ -19,7 +19,7 @@ namespace BetterMatchMaking.Sample
             // 2 : instanciate calculator and parameters
             BetterMatchMaking.Library.BetterMatchMakingCalculator calculator = new Library.BetterMatchMakingCalculator("SmartPredictedMoveDownAffineDistribution");
             calculator.ParameterMinCarsValue = 10;
-            calculator.ParameterMaxSofDiffValue = 15;
+            calculator.ParameterMaxSofDiffValue = 17;
             calculator.ParameterMaxSofFunctStartingIRValue = 2800;
             calculator.ParameterMaxSofFunctStartingThreshold = 18;
             calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;

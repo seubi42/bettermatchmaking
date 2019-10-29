@@ -93,7 +93,7 @@ namespace BetterMatchMaking.Library.Data
             }
 
             DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof = Calc.SofDifferenceEvaluator.CalcDiff(CurrentSplit.GetMinClassSof(), NextSplit.GetMaxClassSof(), false);
-            if (DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof < 0) DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof = 999;
+            //if (DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof < 0) DiffBetweenMinCurrentSplitSofAndMaxNextSplitSof = 999;
 
             int mostPopSof = CurrentSplit.GetClassSof(CurrentSplit.GetLastClassIndex());
             MostPopulatedClassIsTheMaxSox = mostPopSof == CurrentSplit.GetMaxClassSof();

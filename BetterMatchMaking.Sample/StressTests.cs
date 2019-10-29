@@ -75,12 +75,12 @@ namespace BetterMatchMaking.Sample
                 Console.WriteLine(new FileInfo(csv).Name);
                 Console.WriteLine("Max Soff Diff = " + p);
                 calculator.ParameterMinCarsValue = p;
-                calculator.ParameterMaxSofDiffValue = 20;
+                calculator.ParameterMaxSofDiffValue = 15;
                 calculator.ParameterMaxSofFunctStartingIRValue = 2800;
-                calculator.ParameterMaxSofFunctStartingThreshold = 20;
+                calculator.ParameterMaxSofFunctStartingThreshold = 18;
                 calculator.ParameterMaxSofFunctExtraThresoldPerK = 11;
                 calculator.ParameterTopSplitExceptionValue = 0;
-                calculator.ParameterNoMiddleClassesEmptyValue = 1;
+                calculator.ParameterNoMiddleClassesEmptyValue = 0;
                 calculator.ParameterRatingThresholdValue = 1700;
                 calculator.Compute(entrylist, fieldSize);
                 var audit = calculator.GetAudit();

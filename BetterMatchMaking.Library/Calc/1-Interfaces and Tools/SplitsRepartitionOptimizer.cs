@@ -349,7 +349,7 @@ namespace BetterMatchMaking.Library.Calc
                             // -->
 
                             // difference exits
-                            if(lastSplitCars > 0 && lastSplitCars < minOfOtherSplits / otherSplits.Count)
+                            if(lastSplitCars > 0 && lastSplitCars < Math.Ceiling(minOfOtherSplits / otherSplits.Count))
                             {
                                 int carstomoveup = Convert.ToInt32(lastSplitCars);
                                 while (lastSplitCars > 0)

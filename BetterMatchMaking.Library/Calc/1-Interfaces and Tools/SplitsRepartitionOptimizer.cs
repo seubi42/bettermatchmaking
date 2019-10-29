@@ -349,7 +349,33 @@ namespace BetterMatchMaking.Library.Calc
                             // -->
 
                             // difference exits
-                            if (minOfOtherSplits - lastSplitCars >= maxAllowedDifference)
+                            if(lastSplitCars > 0 && lastSplitCars < minOfOtherSplits / otherSplits.Count)
+                            {
+                                int carstomoveup = Convert.ToInt32(lastSplitCars);
+                                while (lastSplitCars > 0)
+                                {
+                                    var splitToIncrement = (from r in splitsDescriptions
+                                                            where r.ClassCarsTarget.ContainsKey(classid)
+                                                            && r.ToSplit < lastSplitDescription.FromSplit
+                                                            orderby r.ClassCarsTarget[classid] ascending,
+                                                            r.FromSplit ascending
+                                                            select r).FirstOrDefault();
+
+                                    splitToIncrement.ClassCarsTarget[classid]++;
+                                    lastSplitDescription.ClassCarsTarget[classid]--;
+
+                                    lastSplitCars = lastSplitDescription.ClassCarsTarget[classid];
+                                    if(lastSplitCars == 0)
+                                    {
+                                        lastSplitDescription.ClassCarsTarget.Remove(classid);
+                                        lastSplitDescription = (from r in splitsDescriptions where r.ClassCarsTarget.ContainsKey(classid) select r).LastOrDefault();
+                                        lastSplitCars = lastSplitDescription.ClassCarsTarget[classid];
+                                        break;
+                                    }
+                                }
+                                
+                            }
+                            else if (minOfOtherSplits - lastSplitCars >= maxAllowedDifference)
                             {
                                 // get the split with the more cars in that class,
                                 // lowest split first

@@ -178,6 +178,7 @@ namespace BetterMatchMaking.Library.Calc
                 }
             }
 
+           
             // call the optimizer process (second pass algorithm) for
             // rounding cars number between splits, or fix some issue
             // if some splits exceed the fieldsize

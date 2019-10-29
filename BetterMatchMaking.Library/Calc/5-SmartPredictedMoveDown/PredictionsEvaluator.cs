@@ -219,7 +219,8 @@ namespace BetterMatchMaking.Library.Calc
             bool matchDiff = FilterSofDiffLimit(ref choices, ref filter, remClassWithCars);
 
 
-
+            /*
+             * if set to 2, try first with 1, and than 0... but it is maybe not a good idea
             if (ParameterNoMiddleClassesEmptyValue == 2 && !matchDiff && noMiddleClassesFiltered)
             {
                 // restart without 
@@ -228,6 +229,7 @@ namespace BetterMatchMaking.Library.Calc
                 choices = predictionsBeforeMiddleClassesFiltere;
                 FilterSofDiffLimit(ref choices, ref filter, remClassWithCars);
             }
+            */
 
 
 

@@ -49,7 +49,7 @@ namespace BetterMatchMaking.UI
             sspMaxSofFunctStartingThreshold = new SyncSliderBox(lblParameterMaxSoffFunctStartPct, tbxParameterMaxSoffFunctStartPct, sldParameterMaxSoffFunctStartPct, 0, 50, 18);
             sspTopSplitExc = new SyncSliderBox(lblParameterTopSplitExc, tbxParameterTopSplitExc, sldParameterTopSplitExc, 0, 1, 0);
             sspDebug = new SyncSliderBox(lblParameterDebug, tbxParameterDebug, sldParameterDebug, 0, 1, 1);
-            sspForceMidClass = new SyncSliderBox(lblParameterForceMidClass, tbxParameterForceMidClass, sldParameterForceMidClass, 0, 2, 2);
+            sspForceMidClass = new SyncSliderBox(lblParameterForceMidClass, tbxParameterForceMidClass, sldParameterForceMidClass, 0, 1, 0);
 
             sspP.Visible = false;
             sspMinCars.Visible = false;

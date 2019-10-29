@@ -96,6 +96,7 @@ namespace BetterMatchMaking.Library.Calc
         List<int> classesIds;
         int numberOfSplits = 0;
         int fieldSize = 0;
+        int minCarsToHalfSplits;
 
         public void Compute(List<Line> data, int fieldSize)
         {
@@ -103,6 +104,8 @@ namespace BetterMatchMaking.Library.Calc
             {
                 PredictionsEvaluator.CleanOldDebugFiles();
             }
+
+            minCarsToHalfSplits = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ParameterMinCarsValue) / 2d));
 
             // Calc number of splits required
             // And try to reduce fieldSize, if possible, for the same number of splits
@@ -243,7 +246,7 @@ namespace BetterMatchMaking.Library.Calc
                 if (ParameterRatingThresholdValue > 0) // it the iRating split option is enabled
                 {
                     // compute another prediction with cutting the split
-                    var variations = prediction.CuttedVariation(ParameterRatingThresholdValue, prevMostPopSof);
+                    var variations = prediction.CuttedVariation(ParameterRatingThresholdValue, prevMostPopSof, minCarsToHalfSplits);
                     if (variations != null && variations.Count > 0) predictions2.AddRange(variations); // if available, add this new predictions to the list
                 }
             }

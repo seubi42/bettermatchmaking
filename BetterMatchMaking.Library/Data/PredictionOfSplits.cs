@@ -108,7 +108,7 @@ namespace BetterMatchMaking.Library.Data
         /// <param name="ratingthreshold"></param>
         /// <param name="prevSplitMaxSof"></param>
         /// <returns></returns>
-        public List<PredictionOfSplits> CuttedVariation(int ratingthreshold, int prevSplitMaxSof)
+        public List<PredictionOfSplits> CuttedVariation(int ratingthreshold, int prevSplitMaxSof, int mincars)
         {
             List<PredictionOfSplits> ret = new List<PredictionOfSplits>();
             foreach (var classDif in RatingDiffPerClassPercent)
@@ -133,8 +133,10 @@ namespace BetterMatchMaking.Library.Data
                             alternative.CurrentSplit = Data.Tools.SplitCloner(CurrentSplit);
                             alternative.NextSplit = Data.Tools.SplitCloner(NextSplit);
                             int cars = alternative.CurrentSplit.CountClassCars(classIndex);
-                            int carsToMove = cars / 2;
-                            if (carsToMove > 6)
+
+                            
+                            int carsToMove = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(cars) / 2d));
+                            if (carsToMove >= mincars)
                             {
 
                                 // cut this class and  move down half

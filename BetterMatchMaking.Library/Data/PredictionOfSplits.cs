@@ -134,26 +134,28 @@ namespace BetterMatchMaking.Library.Data
                             alternative.NextSplit = Data.Tools.SplitCloner(NextSplit);
                             int cars = alternative.CurrentSplit.CountClassCars(classIndex);
 
-                            
-                            int carsToMove = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(cars) / 2d));
-                            if (carsToMove >= mincars)
+                            if (cars >= mincars*2)
                             {
-
-                                // cut this class and  move down half
-                                var pick = alternative.CurrentSplit.PickClassCars(classIndex, carsToMove, true);
-                                if (alternative.NextSplit.GetClassId(classIndex) == 0)
+                                int carsToMove = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(cars) / 2d));
+                                if (carsToMove >= mincars)
                                 {
-                                    alternative.NextSplit.SetClass(classIndex, classDif.Key);
+
+                                    // cut this class and  move down half
+                                    var pick = alternative.CurrentSplit.PickClassCars(classIndex, carsToMove, true);
+                                    if (alternative.NextSplit.GetClassId(classIndex) == 0)
+                                    {
+                                        alternative.NextSplit.SetClass(classIndex, classDif.Key);
+                                    }
+                                    alternative.NextSplit.AppendClassCars(classIndex, pick);
+
+                                    // fill available slots with most pop
+                                    pick = alternative.NextSplit.PickClassCars(mostPopClassIndex, carsToMove, false);
+                                    alternative.CurrentSplit.AppendClassCars(mostPopClassIndex, pick);
+
+                                    alternative.CalcStats(prevSplitMaxSof);
+                                    ClassesCuttedAroundRatingThreshold.Add(classDif.Key);
+                                    ret.Add(alternative);
                                 }
-                                alternative.NextSplit.AppendClassCars(classIndex, pick);
-
-                                // fill available slots with most pop
-                                pick = alternative.NextSplit.PickClassCars(mostPopClassIndex, carsToMove, false);
-                                alternative.CurrentSplit.AppendClassCars(mostPopClassIndex, pick);
-
-                                alternative.CalcStats(prevSplitMaxSof);
-                                ClassesCuttedAroundRatingThreshold.Add(classDif.Key);
-                                ret.Add(alternative);
                             }
                         }
                     }
